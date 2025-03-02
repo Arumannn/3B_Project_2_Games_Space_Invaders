@@ -1,9 +1,9 @@
 #include <graphics.h>
+#include <conio.h>
+#include <windows.h>
 #include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
-#include <conio.h>
-#include <windows.h>
 
 int main() {
     showMainMenu();

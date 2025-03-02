@@ -28,6 +28,31 @@ int barrierPattern[BARRIER_HEIGHT][BARRIER_WIDTH] = {
 // Menyimpan status setiap blok dalam setiap barrier
 int barrierState[NUM_BARRIERS][BARRIER_HEIGHT][BARRIER_WIDTH];
 
+// Menghitung posisi awal barrier
+int calculateBarrierStartX() {
+    int totalBarrierWidth = NUM_BARRIERS * BARRIER_WIDTH * BLOCK_SIZE + (NUM_BARRIERS - 1) * BARRIER_SPACING;
+    return (SCREEN_WIDTH - totalBarrierWidth) / 2;
+}
+
+// Menggambar semua barrier
+void drawAllBarriers(int startX, int barrierY) {
+    for (int i = 0; i < NUM_BARRIERS; i++) {
+        drawBarrier(i, startX + i * (BARRIER_WIDTH * BLOCK_SIZE + BARRIER_SPACING), barrierY);
+    }
+}
+
+// Inisialisasi barrier
+void initializeBarrierState() {
+    for (int b = 0; b < NUM_BARRIERS; b++) {
+        for (int i = 0; i < BARRIER_HEIGHT; i++) {
+            for (int j = 0; j < BARRIER_WIDTH; j++) {
+                barrierState[b][i][j] = barrierPattern[i][j];
+            }
+        }
+    }
+}
+
+
 // Fungsi menggambar barrier
 void drawBarrier(int index, int x, int y) {
     setfillstyle(SOLID_FILL, GREEN);
@@ -54,7 +79,7 @@ void drawBullet(Bullet bullet) {
 // Fungsi untuk mengecek tabrakan peluru dengan barrier
 void checkBulletCollision(Bullet *bullet, int startX, int barrierY) {
     for (int b = 0; b < NUM_BARRIERS; b++) {
-        int barrierX = startX + b * (BARRIER_WIDTH * BLOCK_SIZE + 20);
+        int barrierX = startX + b * (BARRIER_WIDTH * BLOCK_SIZE + BARRIER_SPACING);
 
         for (int i = 0; i < BARRIER_HEIGHT; i++) {
             for (int j = 0; j < BARRIER_WIDTH; j++) {

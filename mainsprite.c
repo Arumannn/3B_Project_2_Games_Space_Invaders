@@ -1,10 +1,9 @@
 #include <graphics.h>
 #include "mainsprite.h"
 
-
 Bullet bullets[MAX_BULLETS];
 
-void drawSpaceship(Player *player) {
+void DrawSpaceShip(Player *player) { // Ubah nama jadi DrawSpaceShip
     int x = player->X_Player;
     int y = player->Y_Player;
 
@@ -44,10 +43,10 @@ void drawSpaceship(Player *player) {
 }
 
 void SpaceshipMove(Player *player) {
-    if ((GetAsyncKeyState(VK_LEFT)  & 0x8000 || GetAsyncKeyState('A') & 0x8000) && player->X_Player > 40) {
+    if ((GetAsyncKeyState(VK_LEFT) & 0x8000 || GetAsyncKeyState('A') & 0x8000) && player->X_Player > 40) {
         player->X_Player -= 10;
     }
-    if ((GetAsyncKeyState(VK_RIGHT)  & 0x8000 || GetAsyncKeyState('D') & 0x8000) && player->X_Player < getmaxx() - 40) {
+    if ((GetAsyncKeyState(VK_RIGHT) & 0x8000 || GetAsyncKeyState('D') & 0x8000) && player->X_Player < getmaxx() - 40) {
         player->X_Player += 10;
     }
     if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
@@ -55,12 +54,10 @@ void SpaceshipMove(Player *player) {
     }
 }
 
-
 void SpaceShip(Player *player) {
     int buffer = imagesize(0, 0, getmaxx(), getmaxy());
     void *frameBuffer = malloc(buffer);
-    
-    
+
     while (1) {
         getimage(0, 0, getmaxx(), getmaxy(), frameBuffer);
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
@@ -69,47 +66,45 @@ void SpaceShip(Player *player) {
         cleardevice();
         SpaceshipMove(player);
         updateBullets();
-        drawSpaceship(player);
         drawBullets();
         delay(30);
     }
 }
 
 void initBullets() {
-        for (int i = 0; i < MAX_BULLETS; i++) {
-            bullets[i].active = 0;
-        }
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        bullets[i].active = 0;
     }
-    
+}
+
 void ShootBullet(Player *player) {
-        for (int i = 0; i < MAX_BULLETS; i++) {
-            if (!bullets[i].active) {
-                bullets[i].x = player->X_Player;
-                bullets[i].y = player->Y_Player - 10;
-                bullets[i].active = 1;
-                break;
-            }
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        if (!bullets[i].active) {
+            bullets[i].x = player->X_Player;
+            bullets[i].y = player->Y_Player - 10;
+            bullets[i].active = 1;
+            break;
         }
     }
-    
+}
+
 void updateBullets() {
-        for (int i = 0; i < MAX_BULLETS; i++) {
-            if (bullets[i].active) {
-                bullets[i].y -= 10;
-                if (bullets[i].y < 0) {
-                    bullets[i].active = 0;
-                }
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        if (bullets[i].active) {
+            bullets[i].y -= 10;
+            if (bullets[i].y < 0) {
+                bullets[i].active = 0;
             }
         }
     }
-    
+}
+
 void drawBullets() {
-        setcolor(YELLOW);
-        for (int i = 0; i < MAX_BULLETS; i++) {
-            if (bullets[i].active) {
-                circle(bullets[i].x, bullets[i].y, 2);
-                floodfill(bullets[i].x, bullets[i].y, YELLOW);
-            }
+    setcolor(YELLOW);
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        if (bullets[i].active) {
+            circle(bullets[i].x, bullets[i].y, 2);
+            floodfill(bullets[i].x, bullets[i].y, YELLOW);
         }
     }
-    
+}

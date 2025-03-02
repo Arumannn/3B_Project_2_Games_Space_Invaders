@@ -1,7 +1,7 @@
 #ifndef ALIEN_H
 #define ALIEN_H
 
-#include <windows.h>
+#include <graphics.h>
 
 // Konstanta
 #define ALIEN_ROWS 5
@@ -15,8 +15,11 @@ typedef struct {
 } Alien;
 
 // Variabel global
-extern int WINDOW_WIDTH;
-extern int WINDOW_HEIGHT;
-extern int BLOCK_SIZE;
+extern int BLOCK_SIZE; // Pindah ke sini sebagai extern
 
-#endif // GRAPHICS_H
+// Fungsi untuk alien
+void initAliens(Alien aliens[]);
+void drawAliens(Alien aliens[]);
+void updateAliens(Alien aliens[], int *alienDir);
+
+#endif // ALIEN_H

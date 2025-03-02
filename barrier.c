@@ -1,6 +1,7 @@
 #include <graphics.h>
 #include <conio.h>
 #include <stdio.h>
+#include <windows.h>
 #include "barrier.h"
 
 #define SCREEN_WIDTH  640
@@ -16,6 +17,13 @@ typedef struct {
     int x, y;
     int active;
 } Bullet;
+
+// Mengambil Resolusi Layar dan Ukuran Blok
+void initializeScreen() {
+    SCREEN_WIDTH = GetSystemMetrics(SM_CXSCREEN);  // Lebar layar
+    SCREEN_HEIGHT = GetSystemMetrics(SM_CYSCREEN); // Tinggi layar
+    BLOCK_SIZE = SCREEN_WIDTH / 160; // Skala ukuran blok agar proporsional
+}
 
 // Pola barrier berdasarkan gambar (0 = kosong, 1 = blok ada)
 int barrierPattern[BARRIER_HEIGHT][BARRIER_WIDTH] = {

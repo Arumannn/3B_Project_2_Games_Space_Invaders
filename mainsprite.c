@@ -2,6 +2,7 @@
 #include "mainsprite.h"
 
 
+Bullet bullets[MAX_BULLETS];
 
 void drawSpaceship(Player *player) {
     int x = player->X_Player;
@@ -42,16 +43,18 @@ void drawSpaceship(Player *player) {
     fillpoly(4, thruster);
 }
 
-void SpaceshipMove(Player *player) { // Added void return type
-    if (kbhit()) {
-        char key = getch();
-        if (key == 'a' && player->X_Player > 40) {
-            player->X_Player -= 10;
-        } else if (key == 'd' && player->X_Player < getmaxx() - 40) {
-            player->X_Player += 10;
-        }
+void SpaceshipMove(Player *player) {
+    if ((GetAsyncKeyState(VK_LEFT)  & 0x8000 || GetAsyncKeyState('A') & 0x8000) && player->X_Player > 40) {
+        player->X_Player -= 10;
+    }
+    if ((GetAsyncKeyState(VK_RIGHT)  & 0x8000 || GetAsyncKeyState('D') & 0x8000) && player->X_Player < getmaxx() - 40) {
+        player->X_Player += 10;
+    }
+    if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
+        ShootBullet(player);
     }
 }
+
 
 void SpaceShip(Player *player) {
     int buffer = imagesize(0, 0, getmaxx(), getmaxy());
@@ -60,16 +63,53 @@ void SpaceShip(Player *player) {
     
     while (1) {
         getimage(0, 0, getmaxx(), getmaxy(), frameBuffer);
-            if (kbhit()) {
-                char key = getch();
-                if (key == 27) { 
-                    break; 
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+            break;
+        }
+        cleardevice();
+        SpaceshipMove(player);
+        updateBullets();
+        drawSpaceship(player);
+        drawBullets();
+        delay(30);
+    }
+}
+
+void initBullets() {
+        for (int i = 0; i < MAX_BULLETS; i++) {
+            bullets[i].active = 0;
+        }
+    }
+    
+void ShootBullet(Player *player) {
+        for (int i = 0; i < MAX_BULLETS; i++) {
+            if (!bullets[i].active) {
+                bullets[i].x = player->X_Player;
+                bullets[i].y = player->Y_Player - 10;
+                bullets[i].active = 1;
+                break;
+            }
+        }
+    }
+    
+void updateBullets() {
+        for (int i = 0; i < MAX_BULLETS; i++) {
+            if (bullets[i].active) {
+                bullets[i].y -= 10;
+                if (bullets[i].y < 0) {
+                    bullets[i].active = 0;
                 }
             }
-            cleardevice();
-            SpaceshipMove(player);
-            drawSpaceship(player);
-            
+        }
+    }
+    
+void drawBullets() {
+        setcolor(YELLOW);
+        for (int i = 0; i < MAX_BULLETS; i++) {
+            if (bullets[i].active) {
+                circle(bullets[i].x, bullets[i].y, 2);
+                floodfill(bullets[i].x, bullets[i].y, YELLOW);
+            }
         }
     }
     

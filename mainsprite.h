@@ -1,5 +1,6 @@
 #ifndef MAINSPRITE_H
 #define MAINSPRITE_H
+#define MAX_BULLETS 5
 #include <graphics.h>
 #include <conio.h>
 #include <windows.h>
@@ -11,8 +12,20 @@ typedef struct
 }Player;
 
 
+typedef struct {
+    int x, y;
+    int active;
+} Bullet;
 
-void MoveBullets(Player *player);
+
+
+
+
+
+void initBullets();
+void updateBullets();
+void drawBullets();
+void ShootBullet(Player *player);
 void SpaceshipMove(Player *player);
 void DrawSpaceShip(Player *player);
 void SpaceShip(Player *player);

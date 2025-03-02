@@ -3,15 +3,20 @@
 
 #include <windows.h>
 
+// Konstanta
+#define ALIEN_ROWS 5
+#define ALIEN_COLS 10
+#define MAX_ALIENS (ALIEN_ROWS * ALIEN_COLS)
+
+// Struktur untuk alien
+typedef struct {
+    int x, y;
+    int active;
+} Alien;
+
+// Variabel global
 extern int WINDOW_WIDTH;
 extern int WINDOW_HEIGHT;
+extern int BLOCK_SIZE;
 
-void initWindow();
-void drawRect(int x, int y, int width, int height, COLORREF color);
-void drawEllipse(int x, int y, int width, int height, COLORREF color);
-void drawLine(int x1, int y1, int x2, int y2, COLORREF color);
-void clearScreen();
-void updateScreen();
-int  getKeyInput();
-
-#endif 
+#endif // GRAPHICS_H

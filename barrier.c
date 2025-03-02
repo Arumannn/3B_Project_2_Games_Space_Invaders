@@ -28,6 +28,7 @@ int barrierPattern[BARRIER_HEIGHT][BARRIER_WIDTH] = {
 // Menyimpan status setiap blok dalam setiap barrier
 int barrierState[NUM_BARRIERS][BARRIER_HEIGHT][BARRIER_WIDTH];
 
+
 // Fungsi menggambar barrier
 void drawBarrier(int index, int x, int y) {
     setfillstyle(SOLID_FILL, GREEN);

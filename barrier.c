@@ -5,7 +5,7 @@
 
 #define SCREEN_WIDTH  640
 #define SCREEN_HEIGHT 480
-#define BLOCK_SIZE 6 // Ukuran setiap blok kecil
+#define BLOCK_SIZE 4 // Ukuran setiap blok kecil
 #define BARRIER_WIDTH 9  // Lebar dalam jumlah blok
 #define BARRIER_HEIGHT 4 // Tinggi dalam jumlah blok
 #define NUM_BARRIERS 3

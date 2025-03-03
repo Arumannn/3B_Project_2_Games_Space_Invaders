@@ -45,34 +45,55 @@ void drawBarrier(int index, int x, int y) {
 }
 
 // Fungsi menggambar peluru
-void drawBullet(Bullet bullet) {
-    if (bullet.active) {
-        setfillstyle(SOLID_FILL, WHITE);
-        bar(bullet.x - 2, bullet.y - 5, bullet.x + 2, bullet.y + 5);
-    }
-}
+
 
 // Fungsi untuk mengecek tabrakan peluru dengan barrier
-void checkBulletCollision(Bullet *bullet, int startX, int barrierY) {
-    for (int b = 0; b < NUM_BARRIERS; b++) {
-        int barrierX = startX + b * (BARRIER_WIDTH * BLOCK_SIZE + 20);
 
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "");
+
+    // Posisi barrier di layar
+    int startX = (SCREEN_WIDTH - (NUM_BARRIERS * BARRIER_WIDTH * BLOCK_SIZE + (NUM_BARRIERS - 1) * BARRIER_SPACING)) / 2;
+    int barrierY = SCREEN_HEIGHT - 150;
+
+    // Copy pola barrier ke array state
+    for (int b = 0; b < NUM_BARRIERS; b++) {
         for (int i = 0; i < BARRIER_HEIGHT; i++) {
             for (int j = 0; j < BARRIER_WIDTH; j++) {
-                if (barrierState[b][i][j] == 1) { // Jika blok masih ada
-                    int bx1 = barrierX + j * BLOCK_SIZE;
-                    int by1 = barrierY + i * BLOCK_SIZE;
-                    int bx2 = bx1 + BLOCK_SIZE;
-                    int by2 = by1 + BLOCK_SIZE;
-
-                    // Cek apakah peluru menyentuh blok
-                    if (bullet->x >= bx1 && bullet->x <= bx2 && bullet->y >= by1 && bullet->y <= by2) {
-                        barrierState[b][i][j] = 0; // Hancurkan blok
-                        bullet->active = 0; // Matikan peluru
-                        return;
-                    }
-                }
+                barrierState[b][i][j] = barrierPattern[i][j];
             }
         }
     }
+
+    Bullet bullet = {SCREEN_WIDTH / 2, SCREEN_HEIGHT - 50, 0}; // Peluru awal (tidak aktif)
+
+    while (1) {
+        cleardevice(); // Hapus layar untuk perbaruan frame
+
+        // Gambar barrier
+        for (int i = 0; i < NUM_BARRIERS; i++) {
+            drawBarrier(i, startX + i * (BARRIER_WIDTH * BLOCK_SIZE + BARRIER_SPACING), barrierY);
+        }
+
+        // Gambar peluru jika aktif
+       
+
+        // Kontrol Keyboard
+        if (kbhit()) {
+            char key = getch();
+            if (key == ' ') { // Tombol spasi untuk menembak
+                if (!bullet.active) {
+                    bullet.x = SCREEN_WIDTH / 2;
+                    bullet.y = SCREEN_HEIGHT - 50;
+                    bullet.active = 1;
+                }
+            }
+            if (key == 27) break; // Tombol ESC untuk keluar
+        }
+
+        delay(30);
+    }
+    return 0;
 }

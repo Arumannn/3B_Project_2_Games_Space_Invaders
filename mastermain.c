@@ -7,7 +7,7 @@
 
 int main() {
     showMainMenu();
-    Player SpaceShip_P = {getmaxx() / 2, getmaxy() / 2};
+    Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
 
     // Inisialisasi aliens
     Alien aliens[MAX_ALIENS];

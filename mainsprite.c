@@ -91,7 +91,7 @@ void ShootBullet(Player *player) {
 void updateBullets() {
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (bullets[i].active) {
-            bullets[i].y -= 10;
+            bullets[i].y -= 50;
             if (bullets[i].y < 0) {
                 bullets[i].active = 0;
             }

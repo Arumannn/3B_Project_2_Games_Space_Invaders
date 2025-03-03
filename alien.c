@@ -1,86 +1,89 @@
 #include "alien.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
 
-int WINDOW_WIDTH;
-int WINDOW_HEIGHT;
+// Variabel global untuk BLOCK_SIZE
+int BLOCK_SIZE; // Definisi variabel global
 
-static HWND hwnd;
-static HDC hdc;
-static PAINTSTRUCT ps;
+void initAliens(Alien aliens[]) {
+    BLOCK_SIZE = getmaxy() / 40; // Set nilai BLOCK_SIZE
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-    switch (msg) {
-        case WM_DESTROY:
-            PostQuitMessage(0);
-            break;
-        default:
-            return DefWindowProc(hwnd, msg, wParam, lParam);
+    for (int row = 0; row < ALIEN_ROWS; row++) {
+        for (int col = 0; col < ALIEN_COLS; col++) {
+            int i = row * ALIEN_COLS + col;
+            aliens[i].x = col * BLOCK_SIZE * 2 + getmaxx() / 10;
+            aliens[i].y = row * BLOCK_SIZE * 2 + getmaxy() / 10;
+            aliens[i].active = 1;
+        }
     }
-    return 0;
+
+    srand(time(0));
 }
 
-void initWindow() {
-    WINDOW_WIDTH = GetSystemMetrics(SM_CXSCREEN);
-    WINDOW_HEIGHT = GetSystemMetrics(SM_CYSCREEN);
+void drawAliens(Alien aliens[]) {
+    for (int i = 0; i < MAX_ALIENS; i++) {
+        if (aliens[i].active) {
+            int x = aliens[i].x, y = aliens[i].y;
 
-    WNDCLASS wc = {0};
-    wc.lpfnWndProc = WndProc;
-    wc.hInstance = GetModuleHandle(NULL);
-    wc.lpszClassName = "SpaceInvaders";
-    RegisterClass(&wc);
+            // Badan utama (elips hijau)
+            setcolor(GREEN);
+            setfillstyle(SOLID_FILL, GREEN);
+            fillellipse(x + BLOCK_SIZE / 2, y + BLOCK_SIZE / 2, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
 
-    hwnd = CreateWindow(
-        "SpaceInvaders", "Space Alien Invaders",
-        WS_POPUP | WS_VISIBLE,
-        0, 0, WINDOW_WIDTH, WINDOW_HEIGHT,
-        NULL, NULL, wc.hInstance, NULL
-    );
+            // Mata (elips putih besar)
+            int eyeSize = BLOCK_SIZE / 2;
+            int eyeX = x + BLOCK_SIZE / 4;
+            int eyeY = y + BLOCK_SIZE / 4;
+            setcolor(WHITE);
+            setfillstyle(SOLID_FILL, WHITE);
+            fillellipse(eyeX + eyeSize / 2, eyeY + eyeSize / 2, eyeSize / 2, eyeSize / 2);
 
-    ShowWindow(hwnd, SW_MAXIMIZE);
-    UpdateWindow(hwnd);
-    hdc = GetDC(hwnd);
-}
+            // Pupil (bentuk plus hitam di tengah mata)
+            int pupilSize = eyeSize / 2;
+            int pupilX = eyeX + eyeSize / 4;
+            int pupilY = eyeY + eyeSize / 4;
+            setcolor(BLACK);
+            setfillstyle(SOLID_FILL, BLACK);
+            bar(pupilX, pupilY + pupilSize / 4, pupilX + pupilSize, pupilY + pupilSize / 4 + pupilSize / 4);
+            bar(pupilX + pupilSize / 4, pupilY, pupilX + pupilSize / 4 + pupilSize / 4, pupilY + pupilSize);
 
-void drawRect(int x, int y, int width, int height, COLORREF color) {
-    HBRUSH brush = CreateSolidBrush(color);
-    RECT rect = {x, y, x + width, y + height};
-    FillRect(hdc, &rect, brush);
-    DeleteObject(brush);
-}
-
-void drawEllipse(int x, int y, int width, int height, COLORREF color) {
-    HBRUSH brush = CreateSolidBrush(color);
-    HGDIOBJ oldBrush = SelectObject(hdc, brush);
-    Ellipse(hdc, x, y, x + width, y + height);
-    SelectObject(hdc, oldBrush);
-    DeleteObject(brush);
-}
-
-void drawLine(int x1, int y1, int x2, int y2, COLORREF color) {
-    HPEN pen = CreatePen(PS_SOLID, 1, color);
-    HGDIOBJ oldPen = SelectObject(hdc, pen);
-    MoveToEx(hdc, x1, y1, NULL);
-    LineTo(hdc, x2, y2);
-    SelectObject(hdc, oldPen);
-    DeleteObject(pen);
-}
-
-void clearScreen() {
-    drawRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, RGB(0, 0, 0));
-}
-
-void updateScreen() {
-    MSG msg = {0};
-    while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+            // Duri di sekeliling (8 arah)
+            int spikeSize = BLOCK_SIZE / 4;
+            int radius = BLOCK_SIZE / 2 + spikeSize / 2;
+            setcolor(GREEN);
+            setfillstyle(SOLID_FILL, GREEN);
+            for (int j = 0; j < 8; j++) {
+                float angle = j * (3.14159265 / 4);
+                int spikeX = x + BLOCK_SIZE / 2 + cos(angle) * radius - spikeSize / 2;
+                int spikeY = y + BLOCK_SIZE / 2 + sin(angle) * radius - spikeSize / 2;
+                bar(spikeX, spikeY, spikeX + spikeSize, spikeY + spikeSize);
+            }
+        }
     }
 }
 
-int getKeyInput() {
-    int keys = 0;
-    if (GetAsyncKeyState('W') & 0x8000) keys |= 1;
-    if (GetAsyncKeyState('A') & 0x8000) keys |= 2;
-    if (GetAsyncKeyState('D') & 0x8000) keys |= 4;
-    if (GetAsyncKeyState('X') & 0x8000) keys |= 8;
-    return keys;
+void updateAliens(Alien aliens[], int *alienDir) {
+    int moveDown = 0;
+    for (int i = 0; i < MAX_ALIENS; i++) {
+        if (aliens[i].active) {
+            aliens[i].x += *alienDir * BLOCK_SIZE / 2;
+            if (aliens[i].x <= 0 || aliens[i].x >= getmaxx() - BLOCK_SIZE) moveDown = 1;
+            if (aliens[i].y >= getmaxy() - BLOCK_SIZE) return;
+        }
+    }
+
+    if (moveDown) {
+        *alienDir = -(*alienDir);
+        for (int i = 0; i < MAX_ALIENS; i++) {
+            if (aliens[i].active) aliens[i].y += BLOCK_SIZE;
+        }
+    }
+
+    int allDead = 1;
+    for (int i = 0; i < MAX_ALIENS; i++) {
+        if (aliens[i].active) allDead = 0;
+    }
+    if (allDead) initAliens(aliens);
 }

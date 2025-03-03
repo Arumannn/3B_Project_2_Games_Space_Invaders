@@ -59,7 +59,7 @@ void showMainMenu() {
     int screenHeight = getmaxy();
 
     // Tampilkan judul "SPACE INVADERS" besar
-    drawText(screenWidth / 2, screenHeight / 6, "SPACE INVADERS", 6, GREEN);
+    drawText(screenWidth / 2, screenHeight / 6, "SPACE INVADERS", 6, WHITE);
 
     // Buat tombol "Play" yang lebih besar dan tengah
     int btn_width = screenWidth / 5;
@@ -67,12 +67,12 @@ void showMainMenu() {
     int btn_x = (screenWidth - btn_width) / 2;
     int btn_y = screenHeight / 3;
     
-    setcolor(GREEN);
+    setcolor(WHITE);
     rectangle(btn_x, btn_y, btn_x + btn_width, btn_y + btn_height);
-    setfillstyle(SOLID_FILL, GREEN);
-    floodfill(btn_x + 1, btn_y + 1, GREEN);
+    setfillstyle(SOLID_FILL, WHITE);
+    floodfill(btn_x + 1, btn_y + 1, WHITE);
 
-    setbkcolor(GREEN);
+    setbkcolor(WHITE);
     drawText(btn_x + btn_width / 2, btn_y + btn_height / 2, "Play", 4, BLACK);
 
     // Gambar 3 alien secara simetris di bawah tombol Play

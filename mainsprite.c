@@ -55,11 +55,7 @@ void SpaceshipMove(Player *player) {
 }
 
 void SpaceShip(Player *player) {
-    int buffer = imagesize(0, 0, getmaxx(), getmaxy());
-    void *frameBuffer = malloc(buffer);
-
     while (1) {
-        getimage(0, 0, getmaxx(), getmaxy(), frameBuffer);
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
             break;
         }

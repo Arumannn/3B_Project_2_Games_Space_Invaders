@@ -17,13 +17,12 @@ int main() {
     // Inisialisasi peluru
     initBullets();
 
-    // Buffer untuk double buffering
-    int buffer = imagesize(0, 0, getmaxx(), getmaxy());
-    void *frameBuffer = malloc(buffer);
+    
+    
 
     int gameOver = 0;
     while (!gameOver) {
-        getimage(0, 0, getmaxx(), getmaxy(), frameBuffer);
+        
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
             break;
         }
@@ -45,7 +44,7 @@ int main() {
         delay(30);
     }
 
-    free(frameBuffer);
+    
     closegraph(); // WinBGIm biasanya ga perlu parameter
     return 0;
 }

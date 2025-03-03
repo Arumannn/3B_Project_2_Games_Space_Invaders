@@ -1,21 +1,31 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Build and Run C++ with graphics.h",
-            "type": "shell",
-            "command": "g++",
-            "args": [
-                "${file}", "mainmenu.c", "mainsprite.c", "alien.c",
-                "-o", "${fileDirname}/output.exe",
-                "-lbgi", "-lgdi32", "-lcomdlg32", "-luuid", "-loleaut32", "-lole32"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": ["$gcc"],
-            "detail": "Compile C++ with graphics.h in VS Code"
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build and Run C++ with graphics.h",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "${file}",
+        "mainmenu.c",
+        "mainsprite.c",
+        "alien.c", // Tambah alien.c
+        "-o",
+        "${fileDirname}/output.exe",
+        "-lbgi",
+        "-lgdi32",
+        "-lcomdlg32",
+        "-luuid",
+        "-loleaut32",
+        "-lole32",
+        "-mwindows" // Tambah flag ini
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"],
+      "detail": "Compile C++ with graphics.h in VS Code"
+    }
+  ]
 }

@@ -35,12 +35,6 @@ void drawBullet(int bx, int by) {
     fillellipse(bx, by, 3, 3);
 }
 
-void drawHeader() {
-    setcolor(WHITE);
-    settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 2);  // FIX ERROR DI SINI!
-    outtextxy(10, 10, (char*)"UFO Shooter");      // FIX CONVERSION ERROR!
-}
-
 int main() {
     int width = GetSystemMetrics(SM_CXSCREEN);  // Ambil ukuran layar width
     int height = GetSystemMetrics(SM_CYSCREEN); // Ambil ukuran layar height
@@ -60,7 +54,6 @@ int main() {
     while (!kbhit() || getch() != 27) {
         setactivepage(page);
         cleardevice();
-        drawHeader();
         
         x += direction * 5;
         if (x > getmaxx() - 60 || x < 60) direction *= -1;

@@ -1,7 +1,8 @@
 #include <graphics.h>
 #include "mainsprite.h"
 
-Bullet bullets[MAX_BULLETS];
+Bullet bullets_player[MAX_BULLETS]; // Definisi variabel
+
 
 void DrawSpaceShip(Player *player) { // Ubah nama jadi DrawSpaceShip
     int x = player->X_Player;
@@ -69,16 +70,16 @@ void SpaceShip(Player *player) {
 
 void initBullets() {
     for (int i = 0; i < MAX_BULLETS; i++) {
-        bullets[i].active = 0;
+        bullets_player[i].active = 0;
     }
 }
 
 void ShootBullet(Player *player) {
     for (int i = 0; i < MAX_BULLETS; i++) {
-        if (!bullets[i].active) {
-            bullets[i].x = player->X_Player;
-            bullets[i].y = player->Y_Player - 10;
-            bullets[i].active = 1;
+        if (!bullets_player[i].active) {
+            bullets_player[i].x = player->X_Player;
+            bullets_player[i].y = player->Y_Player - 10;
+            bullets_player[i].active = 1;
             break;
         }
     }
@@ -86,10 +87,10 @@ void ShootBullet(Player *player) {
 
 void updateBullets() {
     for (int i = 0; i < MAX_BULLETS; i++) {
-        if (bullets[i].active) {
-            bullets[i].y -= 50;
-            if (bullets[i].y < 0) {
-                bullets[i].active = 0;
+        if (bullets_player[i].active) {
+            bullets_player[i].y -= 50;
+            if (bullets_player[i].y < 0) {
+                bullets_player[i].active = 0;
             }
         }
     }
@@ -98,9 +99,9 @@ void updateBullets() {
 void drawBullets() {
     setcolor(YELLOW);
     for (int i = 0; i < MAX_BULLETS; i++) {
-        if (bullets[i].active) {
-            circle(bullets[i].x, bullets[i].y, 2);
-            floodfill(bullets[i].x, bullets[i].y, YELLOW);
+        if (bullets_player[i].active) {
+            circle(bullets_player[i].x, bullets_player[i].y, 2);
+            floodfill(bullets_player[i].x, bullets_player[i].y, YELLOW);
         }
     }
 }

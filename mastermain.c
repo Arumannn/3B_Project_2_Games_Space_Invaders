@@ -19,9 +19,6 @@ int main() {
     // Inisialisasi peluru
     initBullets();
 
-    // Inisialisasi UFO
-    int ufoX = 100, ufoY = 100, ufoDirection = 1;
-    int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
     srand(time(0));
 
     int gameOver = 0;
@@ -44,22 +41,9 @@ int main() {
         DrawSpaceShip(&SpaceShip_P); 
         drawBullets();
         drawAliens(aliens);
+        moveUFO();
 
-        // Update dan gambar UFO
-        ufoX += ufoDirection * 5;
-        if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;
-        drawUFO(ufoX, ufoY);
-
-        // UFO menembak
-        if (ufoBulletActive) {
-            ufoBulletY += 10;
-            drawBullet(ufoBulletX, ufoBulletY);
-            if (ufoBulletY > getmaxy()) ufoBulletActive = 0;
-        } else {
-            ufoBulletX = ufoX;
-            ufoBulletY = ufoY + 20;
-            ufoBulletActive = 1;
-        }
+        
 
         delay(30);
     }

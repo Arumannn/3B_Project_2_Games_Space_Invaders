@@ -2,8 +2,10 @@
 #include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
+#include "ufo.h"
 #include <conio.h>
 #include <windows.h>
+#include <time.h>
 
 int main() {
     showMainMenu();
@@ -17,12 +19,13 @@ int main() {
     // Inisialisasi peluru
     initBullets();
 
-    
-    
+    // Inisialisasi UFO
+    int ufoX = 100, ufoY = 100, ufoDirection = 1;
+    int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
+    srand(time(0));
 
     int gameOver = 0;
     while (!gameOver) {
-        
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
             break;
         }
@@ -38,13 +41,29 @@ int main() {
         SpaceshipMove(&SpaceShip_P);
         updateBullets();
         updateAliens(aliens, &alienDir);
-        DrawSpaceShip(&SpaceShip_P); // Ubah jadi DrawSpaceShip
+        DrawSpaceShip(&SpaceShip_P); 
         drawBullets();
         drawAliens(aliens);
+
+        // Update dan gambar UFO
+        ufoX += ufoDirection * 5;
+        if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;
+        drawUFO(ufoX, ufoY);
+
+        // UFO menembak
+        if (ufoBulletActive) {
+            ufoBulletY += 10;
+            drawBullet(ufoBulletX, ufoBulletY);
+            if (ufoBulletY > getmaxy()) ufoBulletActive = 0;
+        } else {
+            ufoBulletX = ufoX;
+            ufoBulletY = ufoY + 20;
+            ufoBulletActive = 1;
+        }
+
         delay(30);
     }
 
-    
-    closegraph(); // WinBGIm biasanya ga perlu parameter
+    closegraph();
     return 0;
 }

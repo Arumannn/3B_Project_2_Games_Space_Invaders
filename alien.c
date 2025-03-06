@@ -1,8 +1,11 @@
 #include "alien.h"
+#include "mainsprite.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+
+
 
 // Variabel global untuk BLOCK_SIZE
 int BLOCK_SIZE; // Definisi variabel global
@@ -66,24 +69,45 @@ void drawAliens(Alien aliens[]) {
 
 void updateAliens(Alien aliens[], int *alienDir) {
     int moveDown = 0;
+    
     for (int i = 0; i < MAX_ALIENS; i++) {
         if (aliens[i].active) {
+            // Pergerakan alien
             aliens[i].x += *alienDir * BLOCK_SIZE / 2;
-            if (aliens[i].x <= 0 || aliens[i].x >= getmaxx() - BLOCK_SIZE) moveDown = 1;
+            
+            // Jika mencapai batas layar, turun ke bawah
+            if (aliens[i].x <= 0 || aliens[i].x >= getmaxx() - BLOCK_SIZE) {
+                moveDown = 1;
+            }
+            
+            // Jika alien mencapai dasar layar, game over
             if (aliens[i].y >= getmaxy() - BLOCK_SIZE) return;
+
+            // **Cek tabrakan dengan peluru**
+            for (int j = 0; j < MAX_BULLETS; j++) {
+                if (bullets_player[j].active &&
+                    bullets_player[j].x > aliens[i].x &&
+                    bullets_player[j].x < aliens[i].x + BLOCK_SIZE &&
+                    bullets_player[j].y > aliens[i].y &&
+                    bullets_player[j].y < aliens[i].y + BLOCK_SIZE) {
+                    
+                    // Hapus alien yang terkena peluru
+                    aliens[i].active = 0;
+                    
+                    // Nonaktifkan peluru yang mengenai alien
+                    bullets_player[j].active = 0;
+                    
+                    // Jika ada sistem skor, bisa ditambah di sini
+                }
+            }
         }
     }
 
+    // Jika harus turun, semua alien turun satu baris
     if (moveDown) {
-        *alienDir = -(*alienDir);
+        *alienDir *= -10; // Balik arah
         for (int i = 0; i < MAX_ALIENS; i++) {
-            if (aliens[i].active) aliens[i].y += BLOCK_SIZE;
+            aliens[i].y += BLOCK_SIZE / 2; // Turunkan posisi alien
         }
     }
-
-    int allDead = 1;
-    for (int i = 0; i < MAX_ALIENS; i++) {
-        if (aliens[i].active) allDead = 0;
-    }
-    if (allDead) initAliens(aliens);
 }

@@ -1,6 +1,7 @@
 #include <graphics.h>
 #include <conio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "mainmenu.h"
 
 // Fungsi untuk menggambar teks di tengah koordinat tertentu
@@ -16,45 +17,37 @@ void drawText(int x, int y, const char* text, int size, int color) {
     outtextxy(x, y, tempText);
 }
 
-// Fungsi untuk menggambar alien
+// Fungsi untuk menggambar alien sederhana
 void drawAlien(int x, int y, int size, int color) {
     setcolor(color);
-    for (int i = 0; i < size / 10; i++) {
-        rectangle(x + i, y + i, x + size - i, y + size - i);
-    }
+    rectangle(x, y, x + size, y + size);
     floodfill(x + size / 2, y + size / 2, color);
 }
 
-// Fungsi untuk menggambar bintang berbentuk segi lima
-void drawStar(int x, int y, int size, int color) {
-    setcolor(color);
-    int starPoints[] = {
-        x, y - size,
-        x + size, y + size / 2,
-        x - size, y + size / 2,
-        x + size / 2, y + size,
-        x - size / 2, y + size,
-        x, y - size
-    };
-    drawpoly(6, starPoints);
-    floodfill(x, y, color);
-}
-
-// Fungsi untuk menggambar bintang di latar belakang
+// Fungsi untuk menggambar bintang kecil sebagai background
 void drawStars(int numStars) {
     int screenWidth = getmaxx();
     int screenHeight = getmaxy();
+    
     for (int i = 0; i < numStars; i++) {
         int x = rand() % screenWidth;
         int y = rand() % screenHeight;
-        drawStar(x, y, 5, WHITE);
+        putpixel(x, y, WHITE);
     }
+}
+
+// Fungsi untuk menampilkan score di pojok kanan atas
+void drawScore(int score) {
+    char scoreText[20];
+    sprintf(scoreText, "Score: %d", score);
+    drawText(getmaxx() - 100, 20, scoreText, 2, WHITE);
 }
 
 // Fungsi untuk menampilkan menu utama dalam mode fullscreen
 void showMainMenu() {
     int gd = DETECT, gm;
     initwindow(getmaxwidth(), getmaxheight(), "Space Invaders");
+    srand(time(NULL));
 
     if (graphresult() != grOk) {
         printf("Graphics initialization failed\n");
@@ -67,21 +60,19 @@ void showMainMenu() {
     int screenWidth = getmaxx();
     int screenHeight = getmaxy();
 
-    drawStars(100);
-
+    drawStars(200);
     drawText(screenWidth / 2, screenHeight / 6, "SPACE INVADERS", 6, WHITE);
+    drawScore(0);
 
     int btn_width = screenWidth / 5;
-    int btn_height = screenHeight / 12;
+    int btn_height = screenHeight / 10;
     int btn_x = (screenWidth - btn_width) / 2;
     int btn_y = screenHeight / 3;
-
-    setcolor(WHITE);
+    
+    setcolor(GREEN);
     rectangle(btn_x, btn_y, btn_x + btn_width, btn_y + btn_height);
-    line(btn_x, btn_y, btn_x + btn_width, btn_y + btn_height);
-    line(btn_x + btn_width, btn_y, btn_x, btn_y + btn_height);
-    floodfill(btn_x + 1, btn_y + 1, WHITE);
-
+    setfillstyle(SOLID_FILL, GREEN);
+    floodfill(btn_x + 1, btn_y + 1, GREEN);
     setbkcolor(BLACK);
     drawText(btn_x + btn_width / 2, btn_y + btn_height / 2, "Play", 4, WHITE);
 
@@ -109,7 +100,6 @@ void showMainMenu() {
             if (mx >= btn_x && mx <= btn_x + btn_width &&
                 my >= btn_y && my <= btn_y + btn_height) {
                 cleardevice();
-                drawStars(100);
                 drawText(screenWidth / 2, screenHeight / 2, "Game Started...", 4, WHITE);
                 delay(2000);
                 isRunning = 0;

@@ -96,8 +96,6 @@ void updateAliens(Alien aliens[], int *alienDir) {
                     
                     // Nonaktifkan peluru yang mengenai alien
                     bullets_player[j].active = 0;
-                    
-                    // Jika ada sistem skor, bisa ditambah di sini
                 }
             }
         }
@@ -105,7 +103,7 @@ void updateAliens(Alien aliens[], int *alienDir) {
 
     // Jika harus turun, semua alien turun satu baris
     if (moveDown) {
-        *alienDir *= -10; // Balik arah
+        *alienDir *= -1; // Balik arah (hanya -1, bukan -10)
         for (int i = 0; i < MAX_ALIENS; i++) {
             aliens[i].y += BLOCK_SIZE / 2; // Turunkan posisi alien
         }

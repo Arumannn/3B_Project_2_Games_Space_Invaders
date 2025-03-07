@@ -3,7 +3,7 @@
 
 // Definisi variabel global
 Bullet bullets_player[MAX_BULLETS];
-int shootCooldown = 0; // Inisialisasi cooldown
+int shootCooldown = 0;
 
 void DrawSpaceShip(Player *player) {
     int x = player->X_Player;
@@ -40,14 +40,14 @@ void DrawSpaceShip(Player *player) {
 
 void SpaceshipMove(Player *player) {
     if ((GetAsyncKeyState(VK_LEFT) & 0x8000 || GetAsyncKeyState('A') & 0x8000) && player->X_Player > 40) {
-        player->X_Player -= 10;
+        player->X_Player -= 15; // Lebih cepat (dari 10 ke 15)
     }
     if ((GetAsyncKeyState(VK_RIGHT) & 0x8000 || GetAsyncKeyState('D') & 0x8000) && player->X_Player < getmaxx() - 40) {
-        player->X_Player += 10;
+        player->X_Player += 15; // Lebih cepat (dari 10 ke 15)
     }
-    if (GetAsyncKeyState(VK_SPACE) & 0x8000 && shootCooldown <= 0) { // Cek cooldown
+    if (GetAsyncKeyState(VK_SPACE) & 0x8000 && shootCooldown <= 0) {
         ShootBullet(player);
-        shootCooldown = 3; // Set cooldown ke 3 frame, sama seperti versi dua file
+        shootCooldown = 3;
     }
 }
 
@@ -73,8 +73,8 @@ void initBullets() {
 void ShootBullet(Player *player) {
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (!bullets_player[i].active) {
-            bullets_player[i].x = player->X_Player; // Posisi dari tengah kapal
-            bullets_player[i].y = player->Y_Player - 10; // Mulai dari atas kapal
+            bullets_player[i].x = player->X_Player;
+            bullets_player[i].y = player->Y_Player - 10;
             bullets_player[i].active = 1;
             break;
         }
@@ -84,26 +84,26 @@ void ShootBullet(Player *player) {
 void updateBullets() {
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (bullets_player[i].active) {
-            extern int BLOCK_SIZE; // Ambil BLOCK_SIZE dari alien.c
-            bullets_player[i].y -= BLOCK_SIZE; // Kecepatan sama seperti versi dua file
+            extern int BLOCK_SIZE;
+            bullets_player[i].y -= BLOCK_SIZE;
             if (bullets_player[i].y < 0) {
                 bullets_player[i].active = 0;
             }
         }
     }
-    if (shootCooldown > 0) { // Kurangi cooldown setiap frame
+    if (shootCooldown > 0) {
         shootCooldown--;
     }
 }
 
 void drawBullets() {
-    extern int BLOCK_SIZE; // Ambil BLOCK_SIZE dari alien.c
+    extern int BLOCK_SIZE;
     setcolor(YELLOW);
     setfillstyle(SOLID_FILL, YELLOW);
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (bullets_player[i].active) {
             bar(bullets_player[i].x - BLOCK_SIZE / 4, bullets_player[i].y, 
-                bullets_player[i].x + BLOCK_SIZE / 4, bullets_player[i].y + BLOCK_SIZE); // Bentuk persegi panjang
+                bullets_player[i].x + BLOCK_SIZE / 4, bullets_player[i].y + BLOCK_SIZE);
         }
     }
 }

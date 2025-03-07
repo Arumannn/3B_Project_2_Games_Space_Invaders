@@ -1,12 +1,14 @@
 #include <graphics.h>
+#include "mainsprite.h"
 #include "ufo.h"
+#include "score.h"
 #include "alien.h"
+ // Inisialisasi UFO
+ float ufoX = 100.0, ufoY = 100.0;
+ float ufoSpeed = 2.5;
+ int ufoDirection = 1;    
+ int page = 0; // Untuk double buffering
 
-// Inisialisasi UFO
-float ufoX = 100.0, ufoY = 70.0; // Geser ke bawah sedikit (sebelumnya 30.0)
-float ufoSpeed = 2.5;
-int ufoDirection = 1;    
-int page = 0; // Untuk double buffering
 
 // Inisialisasi peluru UFO
 int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
@@ -42,7 +44,32 @@ void drawBullet(int bx, int by) {
     fillellipse(bx, by, 3, 3);
 }
 
-void UFO(Alien aliens[]) {
+void UFO(){
+    
+    if (!ufoActive) return; // Jangan update jika UFO sudah mati
+
+    // Update dan gambar UFO
+    ufoX += ufoDirection * ufoSpeed;
+    if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;
+    drawUFO((int)ufoX, (int)ufoY);
+
+    // **Cek jika UFO terkena tembakan**
+    for (int j = 0; j < MAX_BULLETS; j++) {
+        if (bullets_player[j].active &&
+            bullets_player[j].x > ufoX - 60 &&
+            bullets_player[j].x < ufoX + 60 &&
+            bullets_player[j].y > ufoY - 25 &&
+            bullets_player[j].y < ufoY + 25) {
+            
+            bullets_player[j].active = 0; // Nonaktifkan peluru
+            ufoActive = 0; // Matikan UFO
+            
+            addUFOScore(); // Tambah skor
+        }
+    }
+
+
+
     // Update dan gambar UFO
     ufoX += ufoDirection * ufoSpeed;
     if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;

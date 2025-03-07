@@ -1,5 +1,6 @@
 #include "alien.h"
 #include "mainsprite.h"
+#include "score.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

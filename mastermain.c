@@ -46,8 +46,6 @@ int main() {
         DrawSpaceShip(&SpaceShip_P);
         drawBullets();
         drawAliens(aliens);
-        
-        // Panggil UFO setelah semua objek utama digambar
         UFO(); 
     
         // Tampilkan buffer yang sudah digambar

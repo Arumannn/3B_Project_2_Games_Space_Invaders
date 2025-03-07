@@ -13,6 +13,7 @@ AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 typedef struct {
     int x, y;
     int active;
+    int lifetime; // Tambahkan penghitung frame
 } Explosion;
 
 static Explosion alienExplosions[MAX_ALIENS]; // Static agar hanya digunakan di alien.c
@@ -36,6 +37,7 @@ void initAliens(Alien aliens[]) {
     // Inisialisasi ledakan
     for (int i = 0; i < MAX_ALIENS; i++) {
         alienExplosions[i].active = 0;
+        alienExplosions[i].lifetime = 0;
     }
 
     srand(time(0));
@@ -62,8 +64,8 @@ void drawAliens(Alien aliens[]) {
                 int pupilY = eyeY + eyeSize / 4;
                 setcolor(BLACK);
                 setfillstyle(SOLID_FILL, BLACK);
-                bar(pupilX, pupilY + pupilSize / 4, pupilX + pupilSize, pupilY + pupilSize / 2); // Perbaiki baris ini
-                bar(pupilX + pupilSize / 4, pupilY, pupilX + pupilSize / 2, pupilY + pupilSize); // Perbaiki baris ini
+                bar(pupilX, pupilY + pupilSize / 4, pupilX + pupilSize, pupilY + pupilSize / 2);
+                bar(pupilX + pupilSize / 4, pupilY, pupilX + pupilSize / 2, pupilY + pupilSize);
                 int spikeSize = BLOCK_SIZE / 4;
                 int radius = BLOCK_SIZE / 2 + spikeSize / 2;
                 setcolor(GREEN);
@@ -185,12 +187,13 @@ void checkAlienCollisions(Alien aliens[], Bullet bullets[], int bulletCount) {
                     bullets[j].x < aliens[i].x + BLOCK_SIZE &&
                     bullets[j].y > aliens[i].y &&
                     bullets[j].y < aliens[i].y + BLOCK_SIZE) {
-                    // Tambahkan ledakan
+                    // Tambahkan ledakan dengan durasi 5 frame
                     for (int k = 0; k < MAX_ALIENS; k++) {
                         if (!alienExplosions[k].active) {
                             alienExplosions[k].x = aliens[i].x + BLOCK_SIZE / 2;
                             alienExplosions[k].y = aliens[i].y + BLOCK_SIZE / 2;
                             alienExplosions[k].active = 1;
+                            alienExplosions[k].lifetime = 5; // Bertahan 5 frame (sekitar 50 ms dengan delay 10 ms)
                             break;
                         }
                     }
@@ -201,10 +204,13 @@ void checkAlienCollisions(Alien aliens[], Bullet bullets[], int bulletCount) {
         }
     }
 
-    // Perbarui ledakan (nonaktifkan setelah satu frame)
+    // Perbarui lifetime ledakan
     for (int i = 0; i < MAX_ALIENS; i++) {
         if (alienExplosions[i].active) {
-            alienExplosions[i].active = 0;
+            alienExplosions[i].lifetime--;
+            if (alienExplosions[i].lifetime <= 0) {
+                alienExplosions[i].active = 0;
+            }
         }
     }
 }

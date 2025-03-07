@@ -2,7 +2,7 @@
 #define ALIEN_H
 
 #include <graphics.h>
-#include "mainsprite.h" // Tambahkan ini untuk mendefinisikan Bullet
+#include "mainsprite.h"
 
 // Konstanta
 #define ALIEN_ROWS 6

@@ -5,8 +5,6 @@
 #include <time.h>
 #include <math.h>
 
-
-
 // Variabel global untuk BLOCK_SIZE
 int BLOCK_SIZE; // Definisi variabel global
 
@@ -17,7 +15,7 @@ void initAliens(Alien aliens[]) {
         for (int col = 0; col < ALIEN_COLS; col++) {
             int i = row * ALIEN_COLS + col;
             aliens[i].x = col * BLOCK_SIZE * 2 + getmaxx() / 10;
-            aliens[i].y = row * BLOCK_SIZE * 2 + getmaxy() / 10;
+            aliens[i].y = row * BLOCK_SIZE * 2 + getmaxy() / 5; // Turunkan spawn point (sebelumnya getmaxy() / 10)
             aliens[i].active = 1;
         }
     }
@@ -103,7 +101,7 @@ void updateAliens(Alien aliens[], int *alienDir) {
 
     // Jika harus turun, semua alien turun satu baris
     if (moveDown) {
-        *alienDir *= -1; // Balik arah (hanya -1, bukan -10)
+        *alienDir *= -1; // Balik arah
         for (int i = 0; i < MAX_ALIENS; i++) {
             aliens[i].y += BLOCK_SIZE / 2; // Turunkan posisi alien
         }

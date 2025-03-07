@@ -1,22 +1,15 @@
 #include <graphics.h>
 #include "ufo.h"
+#include "alien.h"
 
- // Inisialisasi UFO
- float ufoX = 100.0, ufoY = 100.0;
- float ufoSpeed = 2.5;
- int ufoDirection = 1;    
- int page = 0; // Untuk double buffering
+// Inisialisasi UFO
+float ufoX = 100.0, ufoY = 70.0; // Geser ke bawah sedikit (sebelumnya 30.0)
+float ufoSpeed = 2.5;
+int ufoDirection = 1;    
+int page = 0; // Untuk double buffering
 
-
- // Inisialisasi peluru UFO
- int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
-
- 
-
-
-
-
- 
+// Inisialisasi peluru UFO
+int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
 
 void drawUFO(int x, int y) {
     setcolor(RED);
@@ -49,7 +42,7 @@ void drawBullet(int bx, int by) {
     fillellipse(bx, by, 3, 3);
 }
 
-void UFO(){
+void UFO(Alien aliens[]) {
     // Update dan gambar UFO
     ufoX += ufoDirection * ufoSpeed;
     if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;
@@ -64,5 +57,27 @@ void UFO(){
         ufoBulletX = (int)ufoX;
         ufoBulletY = (int)ufoY + 20;
         ufoBulletActive = 1;
+    }
+
+    // Deteksi tabrakan dengan alien
+    for (int i = 0; i < MAX_ALIENS; i++) {
+        if (aliens[i].active) {
+            int ufoLeft = (int)ufoX - 60;   // Batas kiri UFO
+            int ufoRight = (int)ufoX + 60;  // Batas kanan UFO
+            int ufoTop = (int)ufoY - 25;    // Batas atas UFO
+            int ufoBottom = (int)ufoY + 25; // Batas bawah UFO
+
+            int alienLeft = aliens[i].x;
+            int alienRight = aliens[i].x + BLOCK_SIZE;
+            int alienTop = aliens[i].y;
+            int alienBottom = aliens[i].y + BLOCK_SIZE;
+
+            // Cek apakah ada tabrakan
+            if (ufoRight > alienLeft && ufoLeft < alienRight &&
+                ufoBottom > alienTop && ufoTop < alienBottom) {
+                // Tabrakan terjadi, nonaktifkan alien
+                aliens[i].active = 0; // Alien dihancurkan saat tabrakan
+            }
+        }
     }
 }

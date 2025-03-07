@@ -4,7 +4,7 @@
 #include <graphics.h>
 
 // Konstanta
-#define ALIEN_ROWS 5
+#define ALIEN_ROWS 6
 #define ALIEN_COLS 10
 #define MAX_ALIENS (ALIEN_ROWS * ALIEN_COLS)
 

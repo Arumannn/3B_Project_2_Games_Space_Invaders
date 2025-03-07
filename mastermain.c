@@ -31,7 +31,6 @@ int main() {
         setactivepage(page);
         cleardevice();
 
-        // Cek game over hanya untuk alien mencapai bawah (tanpa nyawa)
         for (int i = 0; i < MAX_ALIENS; i++) {
             if (aliens[i].active && aliens[i].y >= getmaxy() - BLOCK_SIZE) {
                 gameOver = 1;
@@ -40,7 +39,36 @@ int main() {
 
         SpaceshipMove(&SpaceShip_P);
         updateBullets();
-        updateAliens(aliens, &alienDir); // Tanpa parameter Player
+        updateAliens(aliens, &alienDir);
+
+        // Deteksi tabrakan dan efek ledakan
+        for (int i = 0; i < MAX_ALIENS; i++) {
+            if (aliens[i].active) {
+                for (int j = 0; j < MAX_BULLETS; j++) {
+                    if (bullets_player[j].active &&
+                        bullets_player[j].x > aliens[i].x &&
+                        bullets_player[j].x < aliens[i].x + BLOCK_SIZE &&
+                        bullets_player[j].y > aliens[i].y &&
+                        bullets_player[j].y < aliens[i].y + BLOCK_SIZE) {
+                        // Efek ledakan: lingkaran kuning dengan merah di tengah
+                        setcolor(YELLOW);
+                        setfillstyle(SOLID_FILL, YELLOW);
+                        fillellipse(aliens[i].x + BLOCK_SIZE / 2, aliens[i].y + BLOCK_SIZE / 2, 
+                                    BLOCK_SIZE, BLOCK_SIZE); // Lingkaran kuning (diameter BLOCK_SIZE * 2)
+                        setcolor(RED);
+                        setfillstyle(SOLID_FILL, RED);
+                        fillellipse(aliens[i].x + BLOCK_SIZE / 2, aliens[i].y + BLOCK_SIZE / 2, 
+                                    BLOCK_SIZE / 2, BLOCK_SIZE / 2); // Lingkaran merah (diameter BLOCK_SIZE)
+                        setvisualpage(page); // Tampilkan efek seketika
+                        delay(100);
+
+                        aliens[i].active = 0;
+                        bullets_player[j].active = 0;
+                    }
+                }
+            }
+        }
+
         DrawSpaceShip(&SpaceShip_P);
         drawBullets();
         drawAliens(aliens);

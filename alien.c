@@ -21,6 +21,7 @@ void initAliens(Alien aliens[]) {
         }
     }
 
+    // Inisialisasi peluru alien
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         alienBullets[i].active = 0;
     }
@@ -113,7 +114,6 @@ void drawAliens(Alien aliens[]) {
         }
     }
 
-    // Gambar peluru alien
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {
             setcolor(RED);
@@ -126,7 +126,6 @@ void drawAliens(Alien aliens[]) {
 void updateAliens(Alien aliens[], int *alienDir) {
     int moveDown = 0;
 
-    // Update peluru alien
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {
             alienBullets[i].y += BLOCK_SIZE / 2;
@@ -136,7 +135,6 @@ void updateAliens(Alien aliens[], int *alienDir) {
         }
     }
 
-    // Update pergerakan alien dan tembakan
     for (int i = 0; i < MAX_ALIENS; i++) {
         if (aliens[i].active) {
             aliens[i].x += *alienDir * BLOCK_SIZE / 2;
@@ -144,8 +142,7 @@ void updateAliens(Alien aliens[], int *alienDir) {
                 moveDown = 1;
             }
 
-            // Tembakan acak alien (lebih jarang untuk level 1)
-            if (rand() % 5000 < 10) { // Dari 1000 jadi 5000, peluang 0,2%
+            if (rand() % 5000 < 10) {
                 for (int j = 0; j < MAX_ALIEN_BULLETS; j++) {
                     if (!alienBullets[j].active) {
                         alienBullets[j].x = aliens[i].x + BLOCK_SIZE / 4;
@@ -156,7 +153,6 @@ void updateAliens(Alien aliens[], int *alienDir) {
                 }
             }
 
-            // Cek tabrakan dengan peluru pemain
             for (int j = 0; j < MAX_BULLETS; j++) {
                 if (bullets_player[j].active &&
                     bullets_player[j].x > aliens[i].x &&
@@ -173,7 +169,7 @@ void updateAliens(Alien aliens[], int *alienDir) {
     if (moveDown) {
         *alienDir *= -1;
         for (int i = 0; i < MAX_ALIENS; i++) {
-            aliens[i].y += BLOCK_SIZE / 2;
+            aliens[i].y += BLOCK_SIZE * 2; // Turun lebih jauh
         }
     }
 }

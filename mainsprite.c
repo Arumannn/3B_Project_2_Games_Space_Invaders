@@ -40,10 +40,10 @@ void DrawSpaceShip(Player *player) {
 
 void SpaceshipMove(Player *player) {
     if ((GetAsyncKeyState(VK_LEFT) & 0x8000 || GetAsyncKeyState('A') & 0x8000) && player->X_Player > 40) {
-        player->X_Player -= 15; // Lebih cepat (dari 10 ke 15)
+        player->X_Player -= 15;
     }
     if ((GetAsyncKeyState(VK_RIGHT) & 0x8000 || GetAsyncKeyState('D') & 0x8000) && player->X_Player < getmaxx() - 40) {
-        player->X_Player += 15; // Lebih cepat (dari 10 ke 15)
+        player->X_Player += 15;
     }
     if (GetAsyncKeyState(VK_SPACE) & 0x8000 && shootCooldown <= 0) {
         ShootBullet(player);

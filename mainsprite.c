@@ -1,42 +1,37 @@
 #include <graphics.h>
 #include "mainsprite.h"
 
-Bullet bullets_player[MAX_BULLETS]; // Definisi variabel
+// Definisi variabel global
+Bullet bullets_player[MAX_BULLETS];
+int shootCooldown = 0; // Inisialisasi cooldown
 
-
-void DrawSpaceShip(Player *player) { // Ubah nama jadi DrawSpaceShip
+void DrawSpaceShip(Player *player) {
     int x = player->X_Player;
     int y = player->Y_Player;
 
-    // Warna utama badan kapal
     setcolor(CYAN);
     setfillstyle(SOLID_FILL, CYAN);
     int body[] = {x, y, x - 20, y + 40, x + 20, y + 40, x, y};
     fillpoly(4, body);
 
-    // Kokpit
     setcolor(WHITE);
     setfillstyle(SOLID_FILL, WHITE);
     fillellipse(x, y + 10, 7, 10);
 
-    // Sayap kiri
     setcolor(RED);
     setfillstyle(SOLID_FILL, RED);
     int leftWing[] = {x - 20, y + 40, x - 40, y + 60, x - 20, y + 60, x - 20, y + 40};
     fillpoly(4, leftWing);
 
-    // Sayap kanan
     setcolor(RED);
     setfillstyle(SOLID_FILL, RED);
     int rightWing[] = {x + 20, y + 40, x + 40, y + 60, x + 20, y + 60, x + 20, y + 40};
     fillpoly(4, rightWing);
 
-    // Mesin
     setcolor(YELLOW);
     setfillstyle(SOLID_FILL, YELLOW);
     bar(x - 10, y + 40, x + 10, y + 50);
 
-    // Cahaya mesin (api thruster)
     setcolor(LIGHTBLUE);
     setfillstyle(SOLID_FILL, LIGHTBLUE);
     int thruster[] = {x - 5, y + 50, x + 5, y + 50, x, y + 70, x - 5, y + 50};
@@ -50,8 +45,9 @@ void SpaceshipMove(Player *player) {
     if ((GetAsyncKeyState(VK_RIGHT) & 0x8000 || GetAsyncKeyState('D') & 0x8000) && player->X_Player < getmaxx() - 40) {
         player->X_Player += 10;
     }
-    if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
+    if (GetAsyncKeyState(VK_SPACE) & 0x8000 && shootCooldown <= 0) { // Cek cooldown
         ShootBullet(player);
+        shootCooldown = 3; // Set cooldown ke 3 frame, sama seperti versi dua file
     }
 }
 
@@ -77,8 +73,8 @@ void initBullets() {
 void ShootBullet(Player *player) {
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (!bullets_player[i].active) {
-            bullets_player[i].x = player->X_Player;
-            bullets_player[i].y = player->Y_Player - 10;
+            bullets_player[i].x = player->X_Player; // Posisi dari tengah kapal
+            bullets_player[i].y = player->Y_Player - 10; // Mulai dari atas kapal
             bullets_player[i].active = 1;
             break;
         }
@@ -88,20 +84,26 @@ void ShootBullet(Player *player) {
 void updateBullets() {
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (bullets_player[i].active) {
-            bullets_player[i].y -= 50;
+            extern int BLOCK_SIZE; // Ambil BLOCK_SIZE dari alien.c
+            bullets_player[i].y -= BLOCK_SIZE; // Kecepatan sama seperti versi dua file
             if (bullets_player[i].y < 0) {
                 bullets_player[i].active = 0;
             }
         }
     }
+    if (shootCooldown > 0) { // Kurangi cooldown setiap frame
+        shootCooldown--;
+    }
 }
 
 void drawBullets() {
+    extern int BLOCK_SIZE; // Ambil BLOCK_SIZE dari alien.c
     setcolor(YELLOW);
+    setfillstyle(SOLID_FILL, YELLOW);
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (bullets_player[i].active) {
-            circle(bullets_player[i].x, bullets_player[i].y, 2);
-            floodfill(bullets_player[i].x, bullets_player[i].y, YELLOW);
+            bar(bullets_player[i].x - BLOCK_SIZE / 4, bullets_player[i].y, 
+                bullets_player[i].x + BLOCK_SIZE / 4, bullets_player[i].y + BLOCK_SIZE); // Bentuk persegi panjang
         }
     }
 }

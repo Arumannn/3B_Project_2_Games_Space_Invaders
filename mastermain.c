@@ -22,14 +22,6 @@ int main() {
     // Inisialisasi peluru
     initBullets();
 
-    // Inisialisasi UFO
-    float ufoX = 100.0, ufoY = 100.0;
-    float ufoSpeed = 2.5;
-    int ufoDirection = 1;    
-
-    // Inisialisasi peluru UFO
-    int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
-
     int gameOver = 0;
     int page = 0; // Untuk double buffering
 
@@ -37,48 +29,34 @@ int main() {
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
             break;
         }
-
-        // Gunakan double buffering untuk mencegah kedap-kedip
+    
         setactivepage(page);
         cleardevice();
-
-        // Cek kalau aliens nyampe bawah (game over)
+    
+        // Cek game over
         for (int i = 0; i < MAX_ALIENS; i++) {
             if (aliens[i].active && aliens[i].y >= getmaxy() - BLOCK_SIZE) {
                 gameOver = 1;
             }
         }
-
+    
         SpaceshipMove(&SpaceShip_P);
         updateBullets();
         updateAliens(aliens, &alienDir);
-        DrawSpaceShip(&SpaceShip_P); 
+        DrawSpaceShip(&SpaceShip_P);
         drawBullets();
         drawAliens(aliens);
-
-        // Update dan gambar UFO
-        ufoX += ufoDirection * ufoSpeed;
-        if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;
-        drawUFO((int)ufoX, (int)ufoY);
-
-        // UFO menembak
-        if (ufoBulletActive) {
-            ufoBulletY += 10;
-            drawBullet(ufoBulletX, ufoBulletY);
-            if (ufoBulletY > getmaxy()) ufoBulletActive = 0;
-        } else {
-            ufoBulletX = (int)ufoX;
-            ufoBulletY = (int)ufoY + 20;
-            ufoBulletActive = 1;
-        }
-
+        
+        // Panggil UFO setelah semua objek utama digambar
+        UFO(); 
+    
         // Tampilkan buffer yang sudah digambar
         setvisualpage(page);
-        page = 1 - page; // Tukar halaman untuk frame berikutnya
-
+        page = 1 - page;
+    
         delay(10);
     }
-
+    
     closegraph();
     return 0;
 }

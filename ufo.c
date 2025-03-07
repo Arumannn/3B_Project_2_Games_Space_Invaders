@@ -14,8 +14,7 @@
  
 
 
- // Inisialisasi peluru UFO
- int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
+
 
  
 

@@ -8,6 +8,9 @@
 #include <time.h>
 
 int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, ""); // Inisialisasi graphics mode
+
     showMainMenu();
     Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
 
@@ -19,35 +22,41 @@ int main() {
     // Inisialisasi peluru
     initBullets();
 
-    srand(time(0));
+    
 
     int gameOver = 0;
+    int page = 0; // Untuk double buffering
+
     while (!gameOver) {
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
             break;
         }
-
-        // Cek kalau aliens nyampe bawah (game over)
+    
+        setactivepage(page);
+        cleardevice();
+    
+        // Cek game over
         for (int i = 0; i < MAX_ALIENS; i++) {
             if (aliens[i].active && aliens[i].y >= getmaxy() - BLOCK_SIZE) {
                 gameOver = 1;
             }
         }
-
-        cleardevice();
+    
         SpaceshipMove(&SpaceShip_P);
         updateBullets();
         updateAliens(aliens, &alienDir);
-        DrawSpaceShip(&SpaceShip_P); 
+        DrawSpaceShip(&SpaceShip_P);
         drawBullets();
         drawAliens(aliens);
-        moveUFO();
-
-        
-
-        delay(30);
+        UFO(); 
+    
+        // Tampilkan buffer yang sudah digambar
+        setvisualpage(page);
+        page = 1 - page;
+    
+        delay(10);
     }
-
+    
     closegraph();
     return 0;
 }

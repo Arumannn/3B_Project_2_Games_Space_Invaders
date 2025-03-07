@@ -1,11 +1,22 @@
 #include <graphics.h>
 #include "ufo.h"
 
+ // Inisialisasi UFO
+ float ufoX = 100.0, ufoY = 100.0;
+ float ufoSpeed = 2.5;
+ int ufoDirection = 1;    
+ int page = 0; // Untuk double buffering
 
-// Inisialisasi UFO
-int ufoX = 100, ufoY = 100, ufoDirection = 1;
-int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
 
+ // Inisialisasi peluru UFO
+ int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
+
+ 
+
+
+
+
+ 
 
 void drawUFO(int x, int y) {
     setcolor(RED);
@@ -38,11 +49,11 @@ void drawBullet(int bx, int by) {
     fillellipse(bx, by, 3, 3);
 }
 
-void moveUFO(){
+void UFO(){
     // Update dan gambar UFO
-    ufoX += ufoDirection * 5;
-    if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -100;
-    drawUFO(ufoX, ufoY);
+    ufoX += ufoDirection * ufoSpeed;
+    if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;
+    drawUFO((int)ufoX, (int)ufoY);
 
     // UFO menembak
     if (ufoBulletActive) {
@@ -50,8 +61,8 @@ void moveUFO(){
         drawBullet(ufoBulletX, ufoBulletY);
         if (ufoBulletY > getmaxy()) ufoBulletActive = 0;
     } else {
-        ufoBulletX = ufoX;
-        ufoBulletY = ufoY + 20;
+        ufoBulletX = (int)ufoX;
+        ufoBulletY = (int)ufoY + 20;
         ufoBulletActive = 1;
     }
 }

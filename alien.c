@@ -21,7 +21,6 @@ void initAliens(Alien aliens[]) {
         }
     }
 
-    // Inisialisasi peluru alien
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         alienBullets[i].active = 0;
     }
@@ -137,7 +136,8 @@ void updateAliens(Alien aliens[], int *alienDir) {
 
     for (int i = 0; i < MAX_ALIENS; i++) {
         if (aliens[i].active) {
-            aliens[i].x += *alienDir * BLOCK_SIZE / 2;
+            aliens[i].x += *alienDir * BLOCK_SIZE / 2; // Kembalikan kecepatan asli
+
             if (aliens[i].x <= 0 || aliens[i].x >= getmaxx() - BLOCK_SIZE) {
                 moveDown = 1;
             }
@@ -159,6 +159,13 @@ void updateAliens(Alien aliens[], int *alienDir) {
                     bullets_player[j].x < aliens[i].x + BLOCK_SIZE &&
                     bullets_player[j].y > aliens[i].y &&
                     bullets_player[j].y < aliens[i].y + BLOCK_SIZE) {
+                    // Efek ledakan
+                    setcolor(YELLOW);
+                    setfillstyle(SOLID_FILL, YELLOW);
+                    fillellipse(aliens[i].x + BLOCK_SIZE / 2, aliens[i].y + BLOCK_SIZE / 2, 
+                                BLOCK_SIZE, BLOCK_SIZE); // Lingkaran kuning diameter BLOCK_SIZE * 2
+                    delay(100); // Delay 100 ms seperti versi dua file
+
                     aliens[i].active = 0;
                     bullets_player[j].active = 0;
                 }
@@ -169,7 +176,7 @@ void updateAliens(Alien aliens[], int *alienDir) {
     if (moveDown) {
         *alienDir *= -1;
         for (int i = 0; i < MAX_ALIENS; i++) {
-            aliens[i].y += BLOCK_SIZE * 2; // Turun lebih jauh
+            aliens[i].y += BLOCK_SIZE * 2;
         }
     }
 }

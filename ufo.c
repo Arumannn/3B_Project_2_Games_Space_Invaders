@@ -1,12 +1,17 @@
 #include <graphics.h>
 #include "ufo.h"
 
-
  // Inisialisasi UFO
  float ufoX = 100.0, ufoY = 100.0;
  float ufoSpeed = 2.5;
  int ufoDirection = 1;    
  int page = 0; // Untuk double buffering
+
+
+ // Inisialisasi peluru UFO
+ int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
+
+ 
 
 
  // Inisialisasi peluru UFO

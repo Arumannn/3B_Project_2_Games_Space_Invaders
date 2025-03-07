@@ -6,6 +6,7 @@
 #include <windows.h>
 
 
+
 typedef struct
 {
     int X_Player, Y_Player;
@@ -18,6 +19,7 @@ typedef struct {
 } Bullet;
 
 
+extern Bullet bullets_player[MAX_BULLETS]; // Deklarasi eksternal
 
 
 

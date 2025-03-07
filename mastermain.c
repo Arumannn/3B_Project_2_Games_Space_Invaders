@@ -22,6 +22,8 @@ int main() {
     // Inisialisasi peluru
     initBullets();
 
+    
+
     int gameOver = 0;
     int page = 0; // Untuk double buffering
 

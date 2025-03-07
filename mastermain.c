@@ -9,7 +9,8 @@
 
 int main() {
     int gd = DETECT, gm;
-    initgraph(&gd, &gm, ""); // Inisialisasi graphics mode
+    initgraph(&gd, &gm, (char*)""); // Tambahkan casting (char*) untuk menghindari warning
+    // Inisialisasi graphics mode
 
     showMainMenu();
     Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
@@ -21,8 +22,6 @@ int main() {
 
     // Inisialisasi peluru
     initBullets();
-
-    
 
     int gameOver = 0;
     int page = 0; // Untuk double buffering
@@ -48,7 +47,7 @@ int main() {
         DrawSpaceShip(&SpaceShip_P);
         drawBullets();
         drawAliens(aliens);
-        UFO(); 
+        UFO(aliens); // Panggil UFO dengan parameter aliens
     
         // Tampilkan buffer yang sudah digambar
         setvisualpage(page);

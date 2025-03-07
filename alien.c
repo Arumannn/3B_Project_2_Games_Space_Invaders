@@ -1,5 +1,6 @@
 #include "alien.h"
 #include "mainsprite.h"
+#include "score.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -97,7 +98,8 @@ void updateAliens(Alien aliens[], int *alienDir) {
                     // Nonaktifkan peluru yang mengenai alien
                     bullets_player[j].active = 0;
                     
-                    // Jika ada sistem skor, bisa ditambah di sini
+                    // Sistem skor
+                    addAlienScore();
                 }
             }
         }

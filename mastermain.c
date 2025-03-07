@@ -2,6 +2,7 @@
 #include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
+#include "score.h"
 #include "ufo.h"
 #include <conio.h>
 #include <windows.h>
@@ -18,9 +19,10 @@ int main() {
     Alien aliens[MAX_ALIENS];
     int alienDir = 1;
     initAliens(aliens);
-
     // Inisialisasi peluru
     initBullets();
+    // Inisialisasi Score
+    initScore();
 
     
 

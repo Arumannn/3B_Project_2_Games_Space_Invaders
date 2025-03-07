@@ -8,6 +8,9 @@
 #include <time.h>
 
 int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, ""); // Inisialisasi graphics mode
+
     showMainMenu();
     Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
 
@@ -20,15 +23,24 @@ int main() {
     initBullets();
 
     // Inisialisasi UFO
-    int ufoX = 100, ufoY = 100, ufoDirection = 1;
+    float ufoX = 100.0, ufoY = 100.0;
+    float ufoSpeed = 2.5;
+    int ufoDirection = 1;    
+
+    // Inisialisasi peluru UFO
     int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
-    srand(time(0));
 
     int gameOver = 0;
+    int page = 0; // Untuk double buffering
+
     while (!gameOver) {
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
             break;
         }
+
+        // Gunakan double buffering untuk mencegah kedap-kedip
+        setactivepage(page);
+        cleardevice();
 
         // Cek kalau aliens nyampe bawah (game over)
         for (int i = 0; i < MAX_ALIENS; i++) {
@@ -37,7 +49,6 @@ int main() {
             }
         }
 
-        cleardevice();
         SpaceshipMove(&SpaceShip_P);
         updateBullets();
         updateAliens(aliens, &alienDir);
@@ -46,9 +57,9 @@ int main() {
         drawAliens(aliens);
 
         // Update dan gambar UFO
-        ufoX += ufoDirection * 5;
+        ufoX += ufoDirection * ufoSpeed;
         if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;
-        drawUFO(ufoX, ufoY);
+        drawUFO((int)ufoX, (int)ufoY);
 
         // UFO menembak
         if (ufoBulletActive) {
@@ -56,12 +67,16 @@ int main() {
             drawBullet(ufoBulletX, ufoBulletY);
             if (ufoBulletY > getmaxy()) ufoBulletActive = 0;
         } else {
-            ufoBulletX = ufoX;
-            ufoBulletY = ufoY + 20;
+            ufoBulletX = (int)ufoX;
+            ufoBulletY = (int)ufoY + 20;
             ufoBulletActive = 1;
         }
 
-        delay(30);
+        // Tampilkan buffer yang sudah digambar
+        setvisualpage(page);
+        page = 1 - page; // Tukar halaman untuk frame berikutnya
+
+        delay(10);
     }
 
     closegraph();

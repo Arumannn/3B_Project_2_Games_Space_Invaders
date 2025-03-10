@@ -3,6 +3,5 @@
 
 void showMainMenu(); // Menampilkan menu utama
 void startGame();    // Fungsi untuk memulai permainan
-void handleMainMenu();
 
 #endif

@@ -1,6 +1,7 @@
 #include <graphics.h>
 #include "mainsprite.h"
 #include "mainmenu.h"
+<<<<<<< HEAD
 #include "alien.h"
 #include "ufo.h"
 #include "score.h"
@@ -109,13 +110,10 @@ int main() {
 
     closegraph();
 }
+=======
+>>>>>>> parent of aad475c (Arman work)
 
 int main() {
-    
-
-    showMainMenu();
-    handleMainMenu();  // Memastikan menu utama bisa berpindah ke game
-
-    closegraph();
+    showMainMenu();  // Menjalankan menu utama
     return 0;
 }

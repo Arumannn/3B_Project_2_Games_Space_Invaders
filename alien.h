@@ -8,18 +8,28 @@
 #define ALIEN_ROWS 5
 #define ALIEN_COLS 10
 #define MAX_ALIENS (ALIEN_ROWS * ALIEN_COLS)
+#define MAX_ALIEN_BULLETS 10  // Ditambahkan agar tidak error
 
 typedef struct {
     int x, y;
     int active;
 } Alien;
 
-// Variabel global
-extern int BLOCK_SIZE; // Pindah ke sini sebagai extern
+typedef struct {
+    int x, y;
+    int active;
+    int lifetime; // Ditambahkan karena dipakai di alien.c
+} Explosion;
 
+// Variabel global
+extern Bullet alienBullets[MAX_ALIEN_BULLETS];
+extern Explosion alienExplosions[MAX_ALIEN_BULLETS];
+extern int BLOCK_SIZE;  // Pastikan ini didefinisikan di file .c
+
+// Fungsi
 void initAliens(Alien aliens[]);
 void drawAliens(Alien aliens[]);
-void updateAliens(Alien aliens[], int *alienDir, int *alienDirLast);
+void updateAliens(Alien aliens[], int *alienDirFirst, int *alienDirRest);
 void checkAlienCollisions(Alien aliens[], Bullet bullets[], int bulletCount);
 void drawAlienExplosions();
 

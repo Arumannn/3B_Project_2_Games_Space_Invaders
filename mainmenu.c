@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "mainmenu.h"
 
 // Definisi warna kuning jika belum tersedia
 #ifndef YELLOW
@@ -64,14 +65,6 @@ void drawLeaderboard() {
 // Deklarasi fungsi sebelum digunakan
 void showMainMenu();  
 
-// Fungsi untuk mulai game
-void startGame() {
-    cleardevice();
-    drawStars();
-    drawText(getmaxx() / 2, getmaxy() / 2, "GAME DIMULAI!", 5, WHITE);
-    delay(2000);  // Simulasi loading game
-    showMainMenu();  // Pastikan sudah dideklarasikan sebelumnya
-}
 
 // Fungsi untuk menampilkan panduan
 void showGuide() {

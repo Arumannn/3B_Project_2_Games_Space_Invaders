@@ -1,9 +1,7 @@
-#include <graphics.h>
-#include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
-#include "score.h"
 #include "ufo.h"
+#include "score.h"
 #include <conio.h>
 #include <windows.h>
 #include <time.h>

@@ -22,6 +22,7 @@ void drawText(int x, int y, const char* text, int size, int color) {
     char tempText[100];
     strncpy(tempText, text, sizeof(tempText) - 1);
     tempText[sizeof(tempText) - 1] = '\0';
+    tempText[sizeof(tempText) - 1] = '\0';
 
     outtextxy(x, y, tempText);
 }

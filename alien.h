@@ -19,6 +19,8 @@ extern int BLOCK_SIZE; // Pindah ke sini sebagai extern
 
 void initAliens(Alien aliens[]);
 void drawAliens(Alien aliens[]);
-void updateAliens(Alien aliens[], int *alienDir);
+void updateAliens(Alien aliens[], int *alienDir, int *alienDirLast);
+void checkAlienCollisions(Alien aliens[], Bullet bullets[], int bulletCount);
+void drawAlienExplosions();
 
 #endif // ALIEN_H

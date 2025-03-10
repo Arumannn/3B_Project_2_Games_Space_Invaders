@@ -9,6 +9,160 @@
 #include <windows.h>
 #include <time.h>
 
+<<<<<<<<< Temporary merge branch 1
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, (char*)"");
+
+    showMainMenu();
+    Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
+=========
+void startGame() {
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN); // Ambil resolusi layar penuh
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    
+    // ✅ Tambahkan kembali mode grafik setelah keluar dari menu
+    initwindow(screenWidth, screenHeight, "Space Invaders", -3, -3);
+    
+    cleardevice();
+>>>>>>>>> Temporary merge branch 2
+
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80};
+    Alien aliens[MAX_ALIENS];
+    int alienDir = 1;
+    initAliens(aliens);
+    initBullets();
+<<<<<<<<< Temporary merge branch 1
+=========
+    initScore();
+>>>>>>>>> Temporary merge branch 2
+
+    int gameOver = 0;
+    int page = 0;
+
+    while (!gameOver) {
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+            break;
+        }
+
+        setactivepage(page);
+        cleardevice();
+
+        for (int i = 0; i < MAX_ALIENS; i++) {
+            if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
+                gameOver = 1;
+            }
+        }
+
+        SpaceshipMove(&SpaceShip_P);
+        updateBullets();
+        updateAliens(aliens, &alienDir);
+<<<<<<<<< Temporary merge branch 1
+        checkAlienCollisions(aliens, bullets_player, MAX_BULLETS); // Tabrakan dan ledakan
+
+        DrawSpaceShip(&SpaceShip_P);
+        drawBullets();
+        drawAliens(aliens);
+        drawAlienExplosions(); // Gambar ledakan
+=========
+        DrawSpaceShip(&SpaceShip_P);
+        drawBullets();
+        drawAliens(aliens);
+>>>>>>>>> Temporary merge branch 2
+        UFO(aliens);
+
+        setvisualpage(page);
+        page = 1 - page;
+
+        delay(10);
+    }
+
+    closegraph();
+}
+
+int main() {
+    showMainMenu();  // Menjalankan menu utama
+    return 0;
+}*/
+
+
+/*
+#include "mainmenu.h"
+#include "alien.h"
+#include "ufo.h"
+#include "score.h"
+#include <conio.h>
+#include <windows.h>
+#include <time.h>
+
+void startGame() {
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN); // Ambil resolusi layar penuh
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    
+    // ✅ Tambahkan kembali mode grafik setelah keluar dari menu
+    initwindow(screenWidth, screenHeight, "Space Invaders", -3, -3);
+    
+    cleardevice();
+
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80};
+    Alien aliens[MAX_ALIENS];
+    int alienDir = 1;
+    initAliens(aliens);
+    initBullets();
+    initScore();
+
+    int gameOver = 0;
+    int page = 0;
+
+    while (!gameOver) {
+        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+            break;
+        }
+
+        setactivepage(page);
+        cleardevice();
+        drawScore();
+
+        for (int i = 0; i < MAX_ALIENS; i++) {
+            if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
+                gameOver = 1;
+            }
+        }
+
+        SpaceshipMove(&SpaceShip_P);
+        updateBullets();
+        updateAliens(aliens, &alienDir);
+        DrawSpaceShip(&SpaceShip_P);
+        drawBullets();
+        drawAliens(aliens);
+        UFO(aliens);
+
+        setvisualpage(page);
+        page = 1 - page;
+
+        delay(10);
+    }
+
+    closegraph();
+}
+
+int main() {
+    
+
+    showMainMenu();
+    handleMainMenu();  // Memastikan menu utama bisa berpindah ke game
+
+    closegraph();
+}
+
+/*#include "mainmenu.h"
+#include "alien.h"
+#include "ufo.h"
+#include "score.h"
+#include <conio.h>
+#include <windows.h>
+#include <time.h>
+
 // Struktur untuk menyimpan posisi ledakan
 typedef struct {
     int x, y;
@@ -38,13 +192,15 @@ void drawExplosions() {
 }
 
 int main() {
-    i
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, (char*)"");
 
     showMainMenu();
     Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
 
     Alien aliens[MAX_ALIENS];
-    int alienDir = 1;
+    int alienDirFirst = 1;  // Arah untuk baris 0-1 (kiri ke kanan)
+    int alienDirRest = -1;  // Arah untuk baris 2-5 (kanan ke kiri)
     initAliens(aliens);
     initBullets();
     initExplosions(); // Inisialisasi ledakan
@@ -52,7 +208,14 @@ int main() {
     int gameOver = 0;
     int page = 0;
 
+    // Kontrol frame rate
+    const int TARGET_FPS = 30; // Target 30 FPS
+    const int FRAME_TIME = 1000 / TARGET_FPS; // Waktu per frame dalam milidetik (33 ms)
+    clock_t startTime, endTime;
+
     while (!gameOver) {
+        startTime = clock(); // Catat waktu mulai frame
+
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
             break;
         }
@@ -61,7 +224,7 @@ int main() {
         cleardevice();
 
         for (int i = 0; i < MAX_ALIENS; i++) {
-            if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
+            if (aliens[i].active && aliens[i].y >= getmaxy() - BLOCK_SIZE) {
                 gameOver = 1;
             }
         }
@@ -69,7 +232,7 @@ int main() {
         SpaceshipMove(&SpaceShip_P);
         updateBullets();
         updateAliens(aliens, &alienDir);
-        checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
+
         // Deteksi tabrakan dan tambahkan ledakan
         for (int i = 0; i < MAX_ALIENS; i++) {
             if (aliens[i].active) {
@@ -98,22 +261,31 @@ int main() {
         DrawSpaceShip(&SpaceShip_P);
         drawBullets();
         drawAliens(aliens);
-        drawAlienExplosions(); // Gambar ledakan
-
+        drawExplosions(); // Gambar efek ledakan
         UFO(aliens);
 
         setvisualpage(page);
         page = 1 - page;
 
-        delay(10);
+        // Kontrol frame rate: Tunggu hingga waktu frame selesai
+        endTime = clock();
+        int elapsedTime = (endTime - startTime) * 1000 / CLOCKS_PER_SEC; // Konversi ke ms
+        int delayTime = FRAME_TIME - elapsedTime;
+        if (delayTime > 0) {
+            delay(delayTime); // Delay hanya jika waktu pemrosesan kurang dari target
+        }
     }
 
     closegraph();
 }
-=======
->>>>>>> parent of aad475c (Arman work)
 
 int main() {
-    showMainMenu();  // Menjalankan menu utama
+    
+
+    showMainMenu();
+    handleMainMenu();  // Memastikan menu utama bisa berpindah ke game
+
+    closegraph();
     return 0;
-}
+}*/
+*/

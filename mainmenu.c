@@ -3,6 +3,13 @@
 #include <stdlib.h>
 #include "mainmenu.h"
 
+#ifndef YELLOW
+#define YELLOW COLOR(255, 255, 0)
+#endif
+
+char playername[30] = "";
+int score = 0;
+
 // Fungsi untuk menggambar teks di tengah
 void drawText(int x, int y, const char* text, int size, int color) {
     setcolor(color);

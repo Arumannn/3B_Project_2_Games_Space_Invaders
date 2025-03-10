@@ -4,6 +4,7 @@
 #include "alien.h"
 #include "score.h"
 #include "ufo.h"
+#include "barrier.h"
 #include <conio.h>
 #include <windows.h>
 #include <time.h>
@@ -100,6 +101,7 @@ int main() {
         }
 
         DrawSpaceShip(&SpaceShip_P);
+        barBarrier();
         drawBullets();
         drawAliens(aliens);
         drawExplosions(); // Gambar efek ledakan

@@ -1,112 +1,149 @@
 #include <graphics.h>
 #include <conio.h>
 #include <stdlib.h>
-#include "mainmenu.h"
+#include <string.h>
+#include <time.h>
+#include "mainsprite.h"
+#include "alien.h"
 #include "score.h"
+#include "ufo.h"
+#include "mainmenu.h"
 
-// Fungsi untuk menggambar teks di tengah koordinat tertentu
+
+
+char playerName[30] = "";
+
+// Fungsi untuk menggambar teks di tengah
 void drawText(int x, int y, const char* text, int size, int color) {
     setcolor(color);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, size);
     settextjustify(CENTER_TEXT, CENTER_TEXT);
 
-    // Salin string ke buffer lokal untuk menghindari error tipe data
     char tempText[100];
     strncpy(tempText, text, sizeof(tempText) - 1);
-    tempText[sizeof(tempText) - 1] = '\0'; // Pastikan null-terminated
+    tempText[sizeof(tempText) - 1] = '\0';
 
-    // Tampilkan teks di koordinat tengah
     outtextxy(x, y, tempText);
 }
 
-// Fungsi untuk menggambar alien sederhana
-void drawAlien(int x, int y, int size, int color) {
-    setcolor(color);
-    
-    // Kepala alien
-    rectangle(x, y, x + size, y + size);
-    floodfill(x + size / 2, y + size / 2, color);
-
-    // Mata
-    setcolor(BLACK);
-    rectangle(x + size / 4, y + size / 3, x + size / 4 + size / 5, y + size / 3 + size / 5);
-    rectangle(x + size - size / 4 - size / 5, y + size / 3, x + size - size / 4, y + size / 3 + size / 5);
-    floodfill(x + size / 4 + 1, y + size / 3 + 1, BLACK);
-    floodfill(x + size - size / 4, y + size / 3 + 1, BLACK);
-
-    // Kaki
-    setcolor(color);
-    rectangle(x + size / 4, y + size, x + size / 4 + size / 5, y + size + size / 4);
-    rectangle(x + size - size / 4 - size / 5, y + size, x + size - size / 4, y + size + size / 4);
-    floodfill(x + size / 4 + 1, y + size + 1, color);
-    floodfill(x + size - size / 4, y + size + 1, color);
+// Fungsi untuk menggambar tombol
+void drawButton(int x, int y, int width, int height, int color, const char *label) {
+    setcolor(WHITE);
+    rectangle(x, y, x + width, y + height);
+    setfillstyle(SOLID_FILL, color);
+    floodfill(x + 1, y + 1, WHITE);
+    setbkcolor(color);
+    drawText(x + width / 2, y + height / 2, label, 3, BLACK);
+    setbkcolor(BLACK);
 }
 
-// Fungsi untuk menampilkan menu utama dalam mode fullscreen
-void showMainMenu() {
-    int gd = DETECT, gm;
-    initwindow(getmaxwidth(), getmaxheight(), "Space Invaders");
-
-    if (graphresult() != grOk) {
-        printf("Graphics initialization failed\n");
-        exit(1);
-    }
-    
-    // Set latar belakang
-    setbkcolor(BLACK);
+// Fungsi untuk menggambar background bintang
+void drawStars() {
     cleardevice();
+    for (int i = 0; i < 200; i++) {
+        int x = rand() % getmaxwidth();
+        int y = rand() % getmaxheight();
+        putpixel(x, y, WHITE);
+    }
+}
 
-    int screenWidth = getmaxx();
-    int screenHeight = getmaxy();
+// Fungsi untuk menampilkan leaderboard
+void drawLeaderboard() {
+    int x = getmaxwidth() - 320;
+    int y = 100;
+    rectangle(x, y, x + 300, y + 200);
+    char names[3][30] = {"Arman", "Nazriel", "Rina"};
+    int scores[3] = {2000, 1500, 1000};
+    for (int i = 0; i < 3; i++) {
+        char scoreText[50];
+        sprintf(scoreText, "%d. %s - %d", i + 1, names[i], scores[i]);
+        drawText(x + 150, y + 30 + (i * 40), scoreText, 2, WHITE);
+    }
+}
 
-    // Tampilkan judul "SPACE INVADERS" besar
-    drawText(screenWidth / 2, screenHeight / 6, "SPACE INVADERS", 6, GREEN);
+// Fungsi untuk menampilkan menu utama dalam fullscreen
+void showMainMenu() {
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN); // Ambil resolusi layar penuh
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-    // Buat tombol "Play" yang lebih besar dan tengah
-    int btn_width = screenWidth / 5;
-    int btn_height = screenHeight / 10;
-    int btn_x = (screenWidth - btn_width) / 2;
-    int btn_y = screenHeight / 3;
+    initwindow(screenWidth, screenHeight, "Space Invaders", -3, -3); // Fullscreen
+
+    setviewport(0, 0, screenWidth, screenHeight, 1);
+    cleardevice();
+    drawStars();
     
-    setcolor(GREEN);
-    rectangle(btn_x, btn_y, btn_x + btn_width, btn_y + btn_height);
-    setfillstyle(SOLID_FILL, GREEN);
-    floodfill(btn_x + 1, btn_y + 1, GREEN);
+    drawText(screenWidth / 2, 100, "SPACE INVADERS", 8, WHITE);
+    
+    int btn_width = 400, btn_height = 80;
+    int centerX = screenWidth / 2 - btn_width / 2;
+    int startY = screenHeight / 2 - 160;
+    int spacing = 30;
 
-    setbkcolor(BLACK);
-    drawText(btn_x + btn_width / 2, btn_y + btn_height / 2, "Play", 4, WHITE);
+    drawButton(centerX, startY, btn_width, btn_height, LIGHTBLUE, "INPUT NAMA");
+    drawButton(centerX, startY + btn_height + spacing, btn_width, btn_height, LIGHTGREEN, "START");
+    drawButton(centerX, startY + (btn_height + spacing) * 2, btn_width, btn_height, YELLOW, "GUIDE");
+    drawButton(centerX, startY + (btn_height + spacing) * 3, btn_width, btn_height, WHITE, "EXIT");
 
-    // Gambar 3 alien secara simetris di bawah tombol Play
-    int alien_size = screenWidth / 12;
-    int alien_y = btn_y + btn_height + screenHeight / 10;
+    drawLeaderboard();
+}
 
-    drawAlien(screenWidth / 3 - alien_size / 2, alien_y, alien_size, WHITE);
-    drawAlien(screenWidth / 2 - alien_size / 2, alien_y, alien_size, WHITE);
-    drawAlien(2 * screenWidth / 3 - alien_size / 2, alien_y, alien_size, WHITE);
 
-    // Loop untuk menangkap input pengguna
-    int isRunning = 1;
-    while (isRunning) {
-        if (kbhit()) {
-            char key = getch();
-            if (key == 27) { // ESC untuk keluar
-                isRunning = 0;
+// Fungsi untuk menangani input menu utama
+void handleMainMenu() {
+    int screenWidth = getmaxwidth();
+    int screenHeight = getmaxheight();
+
+    int btn_width = 400, btn_height = 80;
+    int centerX = screenWidth / 2 - btn_width / 2;
+    int startY = screenHeight / 2 - 160;
+    int spacing = 30;
+
+    int choice = -1; // Tidak ada pilihan awal
+
+    while (1) {
+        if (ismouseclick(WM_LBUTTONDOWN)) { // Deteksi klik mouse
+            int x, y;
+            getmouseclick(WM_LBUTTONDOWN, x, y);
+
+            if (x >= centerX && x <= centerX + btn_width) {
+                if (y >= startY && y <= startY + btn_height) { // "INPUT NAMA"
+                    printf("Input Nama dipilih\n");
+                } else if (y >= startY + btn_height + spacing && y <= startY + 2 * (btn_height + spacing)) { // "START"
+                    startGame(); // Masuk ke gameplay TANPA closegraph()
+                    return;
+                } else if (y >= startY + 2 * (btn_height + spacing) && y <= startY + 3 * (btn_height + spacing)) { // "GUIDE"
+                    printf("Guide dipilih\n");
+                } else if (y >= startY + 3 * (btn_height + spacing) && y <= startY + 4 * (btn_height + spacing)) { // "EXIT"
+                    closegraph();
+                    exit(0);
+                }
             }
         }
 
-        // Cek jika tombol "Play" diklik
-        if (ismouseclick(WM_LBUTTONDOWN)) {
-            int mx = mousex();
-            int my = mousey();
-            clearmouseclick(WM_LBUTTONDOWN);
-    
-            if (mx >= btn_x && mx <= btn_x + btn_width &&
-                my >= btn_y && my <= btn_y + btn_height) {
-                cleardevice();
-                drawText(screenWidth / 2, screenHeight / 2, "Game Started...", 4, WHITE);
-                delay(2000);
-                isRunning = 0;
+        if (kbhit()) { // Navigasi dengan keyboard
+            char key = getch();
+            if (key == 13 && choice != -1) { // Enter untuk memilih
+                if (choice == 1) {
+                    startGame(); // Masuk ke gameplay
+                    return;
+                } else if (choice == 3) {
+                    closegraph();
+                    exit(0);
+                }
+            } else if (key == 72) { // Panah atas
+                choice = (choice > 0) ? choice - 1 : 3;
+            } else if (key == 80) { // Panah bawah
+                choice = (choice < 3) ? choice + 1 : 0;
             }
+
+            showMainMenu();
+            setcolor(RED);
+            rectangle(centerX, startY + (btn_height + spacing) * choice, 
+                      centerX + btn_width, startY + (btn_height + spacing) * choice + btn_height);
         }
     }
 }
+
+
+
+

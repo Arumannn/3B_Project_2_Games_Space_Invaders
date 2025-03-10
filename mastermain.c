@@ -59,7 +59,6 @@ int main() {
 
         setactivepage(page);
         cleardevice();
-        drawScore();
 
         for (int i = 0; i < MAX_ALIENS; i++) {
             if (aliens[i].active && aliens[i].y >= getmaxy() - BLOCK_SIZE) {

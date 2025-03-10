@@ -1,17 +1,7 @@
 #include <graphics.h>
 #include <conio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <time.h>
-
-// Definisi warna kuning jika belum tersedia
-#ifndef YELLOW
-#define YELLOW COLOR(255, 255, 0)
-#endif
-
-// Variabel global
-char playerName[30] = "";
-int score = 0;
+#include "mainmenu.h"
 
 // Fungsi untuk menggambar teks di tengah
 void drawText(int x, int y, const char* text, int size, int color) {
@@ -61,20 +51,18 @@ void drawLeaderboard() {
     }
 }
 
-// Deklarasi fungsi sebelum digunakan
-void showMainMenu();  
+// Fungsi untuk menampilkan menu utama dalam mode fullscreen
+void showMainMenu() {
+    int gd = DETECT, gm;
+    initwindow(getmaxwidth(), getmaxheight(), "Space Invaders");
 
-// Fungsi untuk mulai game
-void startGame() {
-    cleardevice();
-    drawStars();
-    drawText(getmaxx() / 2, getmaxy() / 2, "GAME DIMULAI!", 5, WHITE);
-    delay(2000);  // Simulasi loading game
-    
-}
+    if (graphresult() != grOk) {
+        printf("Graphics initialization failed\n");
+        exit(1);
+    }
 
-// Fungsi untuk menampilkan panduan
-void showGuide() {
+    // Set latar belakang
+    setbkcolor(BLACK);
     cleardevice();
     drawStars();
     drawText(getmaxx() / 2, 100, "PANDUAN", 5, WHITE);

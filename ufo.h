@@ -1,11 +1,7 @@
 #ifndef UFO_H
 #define UFO_H
-#include "alien.h"
-
-
-extern int ufoActive;
-
-
+#include <graphics.h>
+#include "alien.h" // Tambahkan ini untuk mendeklarasikan struct Alien
 
 void drawUFO(int x, int y);
 void drawBullet(int bx, int by);

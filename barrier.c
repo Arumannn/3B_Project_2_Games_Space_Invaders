@@ -16,7 +16,7 @@ void barBarrier(){
     
     // Posisi barrier berdasarkan ukuran layar
     int startX = screenWidth / 5;
-    int startY = screenHeight - 1000;
+    int startY = screenHeight - 100;
     int gap = screenWidth / 5; // Jarak antar barrier
     
     // Menggambar beberapa barrier

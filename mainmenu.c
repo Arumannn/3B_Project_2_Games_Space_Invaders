@@ -45,7 +45,7 @@ void drawAlien(int x, int y, int size, int color) {
 void showMainMenu() {
     int gd = DETECT, gm;
     initwindow(getmaxwidth(), getmaxheight(), "Space Invaders");
-
+~
     if (graphresult() != grOk) {
         printf("Graphics initialization failed\n");
         exit(1);

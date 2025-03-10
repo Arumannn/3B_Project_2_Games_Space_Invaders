@@ -10,6 +10,15 @@
 int BLOCK_SIZE;
 AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 
+// Struktur dan array untuk ledakan
+typedef struct {
+    int x, y;
+    int active;
+    int lifetime; // Tambahkan penghitung frame
+} Explosion;
+
+static Explosion alienExplosions[MAX_ALIENS]; // Static agar hanya digunakan di alien.c
+
 void initAliens(Alien aliens[]) {
     BLOCK_SIZE = getmaxy() / 40;
 
@@ -24,6 +33,12 @@ void initAliens(Alien aliens[]) {
 
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         alienBullets[i].active = 0;
+    }
+
+    // Inisialisasi ledakan
+    for (int i = 0; i < MAX_ALIENS; i++) {
+        alienExplosions[i].active = 0;
+        alienExplosions[i].lifetime = 0;
     }
 
     srand(time(0));
@@ -50,8 +65,8 @@ void drawAliens(Alien aliens[]) {
                 int pupilY = eyeY + eyeSize / 4;
                 setcolor(BLACK);
                 setfillstyle(SOLID_FILL, BLACK);
-                bar(pupilX, pupilY + pupilSize / 4, pupilX + pupilSize, pupilY + pupilSize / 4 + pupilSize / 4);
-                bar(pupilX + pupilSize / 4, pupilY, pupilX + pupilSize / 4 + pupilSize / 4, pupilY + pupilSize);
+                bar(pupilX, pupilY + pupilSize / 4, pupilX + pupilSize, pupilY + pupilSize / 2);
+                bar(pupilX + pupilSize / 4, pupilY, pupilX + pupilSize / 2, pupilY + pupilSize);
                 int spikeSize = BLOCK_SIZE / 4;
                 int radius = BLOCK_SIZE / 2 + spikeSize / 2;
                 setcolor(GREEN);
@@ -160,6 +175,56 @@ void updateAliens(Alien aliens[], int *alienDir) {
         *alienDir *= -1;
         for (int i = 0; i < MAX_ALIENS; i++) {
             aliens[i].y += BLOCK_SIZE * 2;
+        }
+    }
+}
+
+void checkAlienCollisions(Alien aliens[], Bullet bullets[], int bulletCount) {
+    for (int i = 0; i < MAX_ALIENS; i++) {
+        if (aliens[i].active) {
+            for (int j = 0; j < bulletCount; j++) {
+                if (bullets[j].active &&
+                    bullets[j].x > aliens[i].x &&
+                    bullets[j].x < aliens[i].x + BLOCK_SIZE &&
+                    bullets[j].y > aliens[i].y &&
+                    bullets[j].y < aliens[i].y + BLOCK_SIZE) {
+                    // Tambahkan ledakan dengan durasi 5 frame
+                    for (int k = 0; k < MAX_ALIENS; k++) {
+                        if (!alienExplosions[k].active) {
+                            alienExplosions[k].x = aliens[i].x + BLOCK_SIZE / 2;
+                            alienExplosions[k].y = aliens[i].y + BLOCK_SIZE / 2;
+                            alienExplosions[k].active = 1;
+                            alienExplosions[k].lifetime = 5; // Bertahan 5 frame (sekitar 50 ms dengan delay 10 ms)
+                            break;
+                        }
+                    }
+                    aliens[i].active = 0;
+                    bullets[j].active = 0;
+                }
+            }
+        }
+    }
+
+    // Perbarui lifetime ledakan
+    for (int i = 0; i < MAX_ALIENS; i++) {
+        if (alienExplosions[i].active) {
+            alienExplosions[i].lifetime--;
+            if (alienExplosions[i].lifetime <= 0) {
+                alienExplosions[i].active = 0;
+            }
+        }
+    }
+}
+
+void drawAlienExplosions() {
+    for (int i = 0; i < MAX_ALIENS; i++) {
+        if (alienExplosions[i].active) {
+            setcolor(YELLOW);
+            setfillstyle(SOLID_FILL, YELLOW);
+            fillellipse(alienExplosions[i].x, alienExplosions[i].y, BLOCK_SIZE, BLOCK_SIZE); // Lingkaran kuning
+            setcolor(RED);
+            setfillstyle(SOLID_FILL, RED);
+            fillellipse(alienExplosions[i].x, alienExplosions[i].y, BLOCK_SIZE / 2, BLOCK_SIZE / 2); // Lingkaran merah
         }
     }
 }

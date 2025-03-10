@@ -1,3 +1,5 @@
+#include <graphics.h>
+#include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
 #include "score.h"

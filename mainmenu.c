@@ -70,7 +70,7 @@ void startGame() {
     drawStars();
     drawText(getmaxx() / 2, getmaxy() / 2, "GAME DIMULAI!", 5, WHITE);
     delay(2000);  // Simulasi loading game
-    showMainMenu();  // Pastikan sudah dideklarasikan sebelumnya
+    
 }
 
 // Fungsi untuk menampilkan panduan

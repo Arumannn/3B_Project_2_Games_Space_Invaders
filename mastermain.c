@@ -37,9 +37,6 @@ void drawExplosions() {
 }
 
 int main() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, (char*)"");
-
     showMainMenu();
     Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
 

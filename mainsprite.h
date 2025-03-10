@@ -5,24 +5,17 @@
 #include <conio.h>
 #include <windows.h>
 
-
-
-typedef struct
-{
+typedef struct {
     int X_Player, Y_Player;
-}Player;
-
+} Player;
 
 typedef struct {
     int x, y;
     int active;
 } Bullet;
 
-
-extern Bullet bullets_player[MAX_BULLETS]; // Deklarasi eksternal
-
-
-
+extern Bullet bullets_player[MAX_BULLETS];
+extern int shootCooldown; // Tambahkan deklarasi untuk cooldown
 
 void initBullets();
 void updateBullets();
@@ -31,9 +24,5 @@ void ShootBullet(Player *player);
 void SpaceshipMove(Player *player);
 void DrawSpaceShip(Player *player);
 void SpaceShip(Player *player);
-
-
-
-
 
 #endif

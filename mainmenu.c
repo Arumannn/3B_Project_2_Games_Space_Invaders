@@ -2,6 +2,7 @@
 #include <conio.h>
 #include <stdlib.h>
 #include "mainmenu.h"
+#include "score.h"
 
 // Fungsi untuk menggambar teks di tengah koordinat tertentu
 void drawText(int x, int y, const char* text, int size, int color) {
@@ -50,7 +51,7 @@ void showMainMenu() {
         printf("Graphics initialization failed\n");
         exit(1);
     }
-
+    
     // Set latar belakang
     setbkcolor(BLACK);
     cleardevice();

@@ -1,7 +1,8 @@
 {
   "files.associations": {
     "graphics.h": "c",
-    "mainmenu.h": "c"
+    "mainmenu.h": "c",
+    "alien.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

@@ -1,5 +1,3 @@
-#include <graphics.h>
-#include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
 #include "score.h"
@@ -41,76 +39,76 @@ int main() {
     initgraph(&gd, &gm, (char*)"");
 
     showMainMenu();
-    Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
+//     Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
 
-    Alien aliens[MAX_ALIENS];
-    int alienDir = 1;
-    initAliens(aliens);
-    // Inisialisasi peluru
-    initBullets();
+//     Alien aliens[MAX_ALIENS];
+//     int alienDir = 1;
+//     initAliens(aliens);
+//     // Inisialisasi peluru
+//     initBullets();
 
-    initExplosions();
-    initScore();
+//     initExplosions();
+//     initScore();
 
-    int gameOver = 0;
-    int page = 0;
+//     int gameOver = 0;
+//     int page = 0;
 
-    while (!gameOver) {
-        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
-            break;
-        }
+//     while (!gameOver) {
+//         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+//             break;
+//         }
 
-        setactivepage(page);
-        cleardevice();
-        drawScore();
+//         setactivepage(page);
+//         cleardevice();
+//         drawScore();
 
-        for (int i = 0; i < MAX_ALIENS; i++) {
-            if (aliens[i].active && aliens[i].y >= getmaxy() - BLOCK_SIZE) {
-                gameOver = 1;
-            }
-        }
+//         for (int i = 0; i < MAX_ALIENS; i++) {
+//             if (aliens[i].active && aliens[i].y >= getmaxy() - BLOCK_SIZE) {
+//                 gameOver = 1;
+//             }
+//         }
 
-        SpaceshipMove(&SpaceShip_P);
-        updateBullets();
-        updateAliens(aliens, &alienDir);
+//         SpaceshipMove(&SpaceShip_P);
+//         updateBullets();
+//         updateAliens(aliens, &alienDir);
 
-        // Deteksi tabrakan dan tambahkan ledakan
-        for (int i = 0; i < MAX_ALIENS; i++) {
-            if (aliens[i].active) {
-                for (int j = 0; j < MAX_BULLETS; j++) {
-                    if (bullets_player[j].active &&
-                        bullets_player[j].x > aliens[i].x &&
-                        bullets_player[j].x < aliens[i].x + BLOCK_SIZE &&
-                        bullets_player[j].y > aliens[i].y &&
-                        bullets_player[j].y < aliens[i].y + BLOCK_SIZE) {
-                        // Tambahkan ledakan ke array
-                        for (int k = 0; k < MAX_ALIENS; k++) {
-                            if (!explosions[k].active) {
-                                explosions[k].x = aliens[i].x + BLOCK_SIZE / 2;
-                                explosions[k].y = aliens[i].y + BLOCK_SIZE / 2;
-                                explosions[k].active = 1;
-                                break;
-                            }
-                        }
-                        aliens[i].active = 0;
-                        bullets_player[j].active = 0;
-                    }
-                }
-            }
-        }
+//         // Deteksi tabrakan dan tambahkan ledakan
+//         for (int i = 0; i < MAX_ALIENS; i++) {
+//             if (aliens[i].active) {
+//                 for (int j = 0; j < MAX_BULLETS; j++) {
+//                     if (bullets_player[j].active &&
+//                         bullets_player[j].x > aliens[i].x &&
+//                         bullets_player[j].x < aliens[i].x + BLOCK_SIZE &&
+//                         bullets_player[j].y > aliens[i].y &&
+//                         bullets_player[j].y < aliens[i].y + BLOCK_SIZE) {
+//                         // Tambahkan ledakan ke array
+//                         for (int k = 0; k < MAX_ALIENS; k++) {
+//                             if (!explosions[k].active) {
+//                                 explosions[k].x = aliens[i].x + BLOCK_SIZE / 2;
+//                                 explosions[k].y = aliens[i].y + BLOCK_SIZE / 2;
+//                                 explosions[k].active = 1;
+//                                 break;
+//                             }
+//                         }
+//                         aliens[i].active = 0;
+//                         bullets_player[j].active = 0;
+//                     }
+//                 }
+//             }
+//         }
 
-        DrawSpaceShip(&SpaceShip_P);
-        drawBullets();
-        drawAliens(aliens);
-        drawExplosions(); // Gambar efek ledakan
-        UFO(aliens);
+//         DrawSpaceShip(&SpaceShip_P);
+//         drawBullets();
+//         drawAliens(aliens);
+//         drawExplosions(); // Gambar efek ledakan
+//         UFO(aliens);
 
-        setvisualpage(page);
-        page = 1 - page;
+//         setvisualpage(page);
+//         page = 1 - page;
 
-        delay(10);
-    }
+//         delay(10);
+//     }
 
-    closegraph();
-    return 0;
+     closegraph();
+//     return 0;
 }

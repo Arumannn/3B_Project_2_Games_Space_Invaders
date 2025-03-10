@@ -3,8 +3,8 @@
 #include "mainmenu.h"
 <<<<<<< HEAD
 #include "alien.h"
-#include "ufo.h"
 #include "score.h"
+#include "ufo.h"
 #include <conio.h>
 #include <windows.h>
 #include <time.h>

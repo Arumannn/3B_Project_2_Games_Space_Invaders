@@ -1,4 +1,4 @@
-#ifndef BARRIER_H
+#define BARRIER_H
 #define BARRIER_H
 
 int calculateBarrierStartX();

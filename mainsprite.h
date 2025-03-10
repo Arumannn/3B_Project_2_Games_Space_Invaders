@@ -1,6 +1,6 @@
 #ifndef MAINSPRITE_H
 #define MAINSPRITE_H
-#define MAX_BULLETS 5
+#define MAX_BULLETS 100
 #include <graphics.h>
 #include <conio.h>
 #include <windows.h>

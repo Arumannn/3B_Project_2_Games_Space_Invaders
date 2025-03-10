@@ -1,25 +1,39 @@
-#include <graphics.h>
-#include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
 #include "ufo.h"
+#include "score.h"
 #include <conio.h>
 #include <windows.h>
 #include <time.h>
 
+<<<<<<< HEAD
 int main() {
     int gd = DETECT, gm;
     initgraph(&gd, &gm, (char*)"");
 
     showMainMenu();
     Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
+=======
+void startGame() {
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN); // Ambil resolusi layar penuh
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    
+    // ✅ Tambahkan kembali mode grafik setelah keluar dari menu
+    initwindow(screenWidth, screenHeight, "Space Invaders", -3, -3);
+    
+    cleardevice();
+>>>>>>> branchrina_mainmenupart2
 
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80};
     Alien aliens[MAX_ALIENS];
     int alienDirFirst = 1;  // Arah untuk baris 0-1 (kiri ke kanan)
     int alienDirRest = -1;  // Arah untuk baris 2-5 (kanan ke kiri)
     initAliens(aliens);
-
     initBullets();
+<<<<<<< HEAD
+=======
+    initScore();
+>>>>>>> branchrina_mainmenupart2
 
     int gameOver = 0;
     int page = 0;
@@ -38,7 +52,9 @@ int main() {
 
         setactivepage(page);
         cleardevice();
+        drawScore();
 
+<<<<<<< HEAD
         SpaceshipMove(&SpaceShip_P);
         updateBullets();
         updateAliens(aliens, &alienDirFirst, &alienDirRest);
@@ -48,6 +64,20 @@ int main() {
         drawBullets();
         drawAliens(aliens);
         drawAlienExplosions();
+=======
+        for (int i = 0; i < MAX_ALIENS; i++) {
+            if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
+                gameOver = 1;
+            }
+        }
+
+        SpaceshipMove(&SpaceShip_P);
+        updateBullets();
+        updateAliens(aliens, &alienDir);
+        DrawSpaceShip(&SpaceShip_P);
+        drawBullets();
+        drawAliens(aliens);
+>>>>>>> branchrina_mainmenupart2
         UFO(aliens);
 
         setvisualpage(page);
@@ -61,6 +91,15 @@ int main() {
             delay(delayTime); // Delay hanya jika waktu pemrosesan kurang dari target
         }
     }
+
+    closegraph();
+}
+
+int main() {
+    
+
+    showMainMenu();
+    handleMainMenu();  // Memastikan menu utama bisa berpindah ke game
 
     closegraph();
     return 0;

@@ -19,91 +19,63 @@
     Alien aliens[MAX_ALIENS];
 
     // **Tambahkan fungsi untuk reset UFO dengan HP random**
-    void resetUFO() {
-        ufoX = 100.0;
-        ufoY = 100.0;
-        ufoSpeed = 3.0;
-        ufoDirection = 1;
-        ufoHealth = 15 + rand() % 6; // Random antara 15-20 hit
-        ufoActive = 1;
-    }
+    void resetUFO();
 
-    void drawUFO(int x, int y) {
-        // Body utama UFO dengan efek gradasi merah metalik
-        setcolor(RED);
-        setfillstyle(SOLID_FILL, RED);
-        fillellipse(x, y, 80, 35);
-        
-        setcolor(LIGHTRED);
-        setfillstyle(SOLID_FILL, LIGHTRED);
-        fillellipse(x, y - 5, 75, 30);
-        
-        setcolor(WHITE);
-        setfillstyle(SOLID_FILL, WHITE);
-        fillellipse(x, y - 10, 70, 25);
-        
-        // Jendela dengan efek refleksi
-        setcolor(WHITE);
-        setfillstyle(SOLID_FILL, CYAN);
-        fillellipse(x, y - 25, 50, 25);
-        setcolor(LIGHTCYAN);
-        fillellipse(x - 20, y - 30, 12, 12);
-        
-        // Alien lebih detail dengan bayangan dan ekspresi
-        setcolor(GREEN);
-        setfillstyle(SOLID_FILL, GREEN);
-        fillellipse(x, y - 25, 22, 25);
-        
-        // Antena
-        setcolor(GREEN);
-        line(x, y - 42, x, y - 55);
-        fillellipse(x, y - 56, 4, 4);
-        
-        // Mata besar dengan highlight
-        setcolor(BLACK);
-        setfillstyle(SOLID_FILL, BLACK);
-        fillellipse(x - 8, y - 30, 6, 9);
-        fillellipse(x + 8, y - 30, 6, 9);
-        
-        setcolor(WHITE);
-        fillellipse(x - 6, y - 33, 3, 4);
-        fillellipse(x + 10, y - 33, 3, 4);
-        
-        // Mulut lebih realistis
-        setcolor(BLACK);
-        arc(x, y - 20, 200, 340, 6);
-        
-        // Lampu LED dengan efek glow
-        for (int i = -55; i <= 55; i += 25) {
-            setcolor(DARKGRAY);
-            setfillstyle(SOLID_FILL, DARKGRAY);
-            fillellipse(x + i, y + 20, 8, 8);
-            
-            setcolor(YELLOW);
-            setfillstyle(SOLID_FILL, YELLOW);
-            fillellipse(x + i, y + 20, 6, 6);
-            
-            setcolor(WHITE);
-            fillellipse(x + i - 2, y + 18, 2, 2);
-        }
-        
-        // Kaki lebih futuristik
-        setcolor(DARKGRAY);
-        setlinestyle(SOLID_LINE, 0, 3);
-        line(x - 60, y + 30, x - 75, y + 60);
-        line(x + 60, y + 30, x + 75, y + 60);
-        rectangle(x - 75, y + 60, x - 65, y + 70);
-        rectangle(x + 65, y + 60, x + 75, y + 70);
-        floodfill(x - 70, y + 65, DARKGRAY);
-        floodfill(x + 70, y + 65, DARKGRAY);
-        
-        // Bayangan di bawah UFO
+void resetUFO() {
+    ufoX = 100.0;
+    ufoY = 100.0;
+    ufoSpeed = 3.0;
+    ufoDirection = 1;
+    ufoHealth = 15 + rand() % 6;
+    ufoActive = 1;
+}
+
+void drawUFO(int x, int y) {
+    // Body utama UFO dengan efek gradasi merah metalik
+    setcolor(RED);
+    setfillstyle(SOLID_FILL, RED);
+    fillellipse(x, y, 80, 35);
+    
+    setcolor(RED);
+    setfillstyle(SOLID_FILL, RED);
+    fillellipse(x, y - 5, 75, 30);
+    
+    setcolor(LIGHTRED);
+    setfillstyle(SOLID_FILL, LIGHTRED);
+    fillellipse(x, y - 10, 70, 25);
+    
+    // Jendela dengan efek refleksi
+    setcolor(WHITE);
+    setfillstyle(SOLID_FILL, CYAN);
+    fillellipse(x, y - 25, 50, 25);
+    setcolor(LIGHTCYAN);
+    fillellipse(x - 20, y - 30, 12, 12);
+    
+    // Lampu LED dengan efek glow
+    for (int i = -55; i <= 55; i += 25) {
         setcolor(DARKGRAY);
         setfillstyle(SOLID_FILL, DARKGRAY);
-        fillellipse(x, y + 45, 55, 12);
-    }    
-    
+        fillellipse(x + i, y + 20, 8, 8);
+        
+        setcolor(YELLOW);
+        setfillstyle(SOLID_FILL, YELLOW);
+        fillellipse(x + i, y + 20, 6, 6);
+        
+        setcolor(WHITE);
+        fillellipse(x + i - 2, y + 18, 2, 2);
+    }
+    // Kaki lebih futuristik
+    setcolor(DARKGRAY);
+    setlinestyle(SOLID_LINE, 0, 3);
+    line(x - 60, y + 30, x - 75, y + 60);
+    line(x + 60, y + 30, x + 75, y + 60);
+    rectangle(x - 75, y + 60, x - 65, y + 70);
+    rectangle(x + 65, y + 60, x + 75, y + 70);
+    floodfill(x - 70, y + 65, DARKGRAY);
+    floodfill(x + 70, y + 65, DARKGRAY);
 
+}       
+    
     void drawBullet(int bx, int by) {
         setcolor(YELLOW);
         setfillstyle(SOLID_FILL, YELLOW);
@@ -134,7 +106,7 @@
                     addUFOScore(); // Tambah skor
                     
                     // Spawn ulang UFO setelah beberapa waktu
-                    delay(1000); // Bisa diatur ulang
+                    delay(10); // Bisa diatur ulang
                     resetUFO();
                 }
             }

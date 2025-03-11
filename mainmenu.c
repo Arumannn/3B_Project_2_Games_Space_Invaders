@@ -157,7 +157,9 @@ void showMainMenu() {
 
             if (mx >= centerX && mx <= centerX + btn_width) {
                 if (my >= startY && my <= startY + btn_height) {
-                    // Input Nama Langsung di Button (Sederhana)
+                    cleardevice();  // Bersihkan layar sebelum masuk game
+                    startGame();  // Panggil fungsi mulai game
+                    return
                     setcolor(WHITE);
                     settextstyle(DEFAULT_FONT, HORIZ_DIR, 2);
                     outtextxy(centerX + 10, startY + 20, (char*)"Masukkan Nama:"); // Tambahkan (char*)
@@ -187,7 +189,9 @@ void showMainMenu() {
                     }
                     strcpy(playerName, input);
                 } else if (my >= startY + 80 && my <= startY + 80 + btn_height) {
+                    printf("START GAME dipanggil!\n");
                     startGame();  // Panggil fungsi mulai game
+                    printf("Selesai");
                 } else if (my >= startY + 160 && my <= startY + 160 + btn_height) {
                     showGuide();  // Panggil fungsi panduan
                 } else if (my >= startY + 240 && my <= startY + 240 + btn_height) {

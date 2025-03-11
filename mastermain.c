@@ -9,15 +9,19 @@
 #include <time.h>
 
 void startGame() {
-    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-    
-    initwindow(screenWidth, screenHeight, "Space Invaders");
-    cleardevice();
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+    initwindow(getmaxwidth(), getmaxheight(), "SPACE INVADERS");
+
+    printf("Game window initialized!\n"); // Debug
+
+    int screenWidth = getmaxx();
+    int screenHeight = getmaxy();
+    printf("Screen width: %d, height: %d\n", screenWidth, screenHeight); // Debug
    
     int alienDirFirst = 1;
     int alienDirRest = 1;
-    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80};
+    Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
     Alien aliens[MAX_ALIENS];
     int alienDir = 1;
     initAliens(aliens);
@@ -28,6 +32,7 @@ void startGame() {
     int page = 0;
 
     while (!gameOver) {
+        printf("Game loop running...\n"); 
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
             break;
         }
@@ -37,7 +42,7 @@ void startGame() {
         drawScore();
 
         for (int i = 0; i < MAX_ALIENS; i++) {
-            if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
+            if (aliens[i].active && aliens[i].y >= getmaxy() - BLOCK_SIZE) {
                 gameOver = 1;
             }
         }
@@ -56,10 +61,12 @@ void startGame() {
         delay(10);
     }
 
-    closegraph();
-}
+   
+} 
 
 int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, (char*)"");
     showMainMenu();
     closegraph();
     return 0;

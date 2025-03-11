@@ -6,147 +6,112 @@
 #include "ufo.h"
 #include <conio.h>
 #include <windows.h>
-#include <stdio.h>
 #include <time.h>
 
-void startGame() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, NULL);  // Inisialisasi mode grafik
-    int errorcode = graphresult();  // Cek apakah ada error
-    if (errorcode != grOk) {
-        printf("Graphics error: %s\n", grapherrormsg(errorcode));
-        return;  // Keluar dari fungsi jika mode grafik gagal
+
+Explosion explosions[MAX_ALIENS]; // Array untuk menyimpan ledakan
+
+void initExplosions() {
+    for (int i = 0; i < MAX_ALIENS; i++) {
+        explosions[i].active = 0;
     }
-    printf("START GAME dipanggil!\n");
-    fflush(stdout);
+}
 
-    cleardevice();  
+void drawExplosions() {
+    for (int i = 0; i < MAX_ALIENS; i++) {
+        if (explosions[i].active) {
+            setcolor(YELLOW);
+            setfillstyle(SOLID_FILL, YELLOW);
+            fillellipse(explosions[i].x, explosions[i].y, BLOCK_SIZE, BLOCK_SIZE); // Lingkaran kuning
+            setcolor(RED);
+            setfillstyle(SOLID_FILL, RED);
+            fillellipse(explosions[i].x, explosions[i].y, BLOCK_SIZE / 2, BLOCK_SIZE / 2); // Lingkaran merah
+            explosions[i].active = 0; // Hanya tampil satu frame
+        }
+    }
+}
 
-    printf("Game window initialized!\n");
-    fflush(stdout);
-    printf("Screen width: %d, height: %d\n", getmaxx(), getmaxy());
-    fflush(stdout);
-
-    int alienDirFirst = 1;
-    int alienDirRest = 1;
+void startGame(){
     Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
+
     Alien aliens[MAX_ALIENS];
     int alienDir = 1;
-    
-    printf("Inisialisasi game...\n");
-    fflush(stdout);
-
+    int alienDirRest = 1;
     initAliens(aliens);
-    printf("Aliens initialized!\n");
-    fflush(stdout);
-
+    // Inisialisasi peluru
     initBullets();
-    printf("Bullets initialized!\n");
-    fflush(stdout);
 
+    initExplosions();
     initScore();
-    printf("Score initialized!\n");
-    fflush(stdout);
 
     int gameOver = 0;
     int page = 0;
 
     while (!gameOver) {
-        printf("Game loop running...\n");
-        fflush(stdout);
-        
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
-            printf("ESC pressed! Exiting game...\n");
-            fflush(stdout);
             break;
         }
 
-        // **TEST TANPA DOUBLE BUFFERING DULU**
-        // cleardevice();
-        
-        printf("Drawing score...\n");
-        fflush(stdout);
+        setactivepage(page);
+        cleardevice();
         drawScore();
 
         for (int i = 0; i < MAX_ALIENS; i++) {
             if (aliens[i].active && aliens[i].y >= getmaxy() - BLOCK_SIZE) {
                 gameOver = 1;
-                printf("Alien reached bottom! Game Over\n");
-                fflush(stdout);
             }
         }
 
-        printf("Calling SpaceshipMove...\n");
-        fflush(stdout);
         SpaceshipMove(&SpaceShip_P);
-        printf("Spaceship moved!\n");
-        fflush(stdout);
-
-        printf("Updating bullets...\n");
-        fflush(stdout);
         updateBullets();
-        
-        printf("Updating aliens...\n");
-        fflush(stdout);
-        updateAliens(aliens, &alienDirFirst, &alienDirRest);
+        updateAliens(aliens, &alienDir, &alienDirRest);
 
-        printf("Drawing spaceship...\n");
-        fflush(stdout);
+        // Deteksi tabrakan dan tambahkan ledakan
+        for (int i = 0; i < MAX_ALIENS; i++) {
+            if (aliens[i].active) {
+                for (int j = 0; j < MAX_BULLETS; j++) {
+                    if (bullets_player[j].active &&
+                        bullets_player[j].x > aliens[i].x &&
+                        bullets_player[j].x < aliens[i].x + BLOCK_SIZE &&
+                        bullets_player[j].y > aliens[i].y &&
+                        bullets_player[j].y < aliens[i].y + BLOCK_SIZE) {
+                        // Tambahkan ledakan ke array
+                        for (int k = 0; k < MAX_ALIENS; k++) {
+                            if (!explosions[k].active) {
+                                explosions[k].x = aliens[i].x + BLOCK_SIZE / 2;
+                                explosions[k].y = aliens[i].y + BLOCK_SIZE / 2;
+                                explosions[k].active = 1;
+                                break;
+                            }
+                        }
+                        aliens[i].active = 0;
+                        bullets_player[j].active = 0;
+                    }
+                }
+            }
+        }
+
         DrawSpaceShip(&SpaceShip_P);
-        
-        printf("Drawing bullets...\n");
-        fflush(stdout);
         drawBullets();
-        
-        printf("Drawing aliens...\n");
-        fflush(stdout);
         drawAliens(aliens);
-        
-        printf("Moving UFO...\n");
-        fflush(stdout);
+        drawExplosions(); // Gambar efek ledakan
         moveUFO();
 
-        delay(30);
+        setvisualpage(page);
+        page = 1 - page;
+
+        delay(10);
     }
 
-    printf("Game loop exited\n");
-    fflush(stdout);
+    
 }
 
 
-// void startGame() {
-//     // Pastikan grafik aktif
-//     if (graphresult() != grOk) {
-//         printf("Graphics mode error!\n");
-//         return;
-//     }
-
-//     printf("START GAME dipanggil!\n");
-//     fflush(stdout);
-//     printf("Game window initialized!\n");
-//     fflush(stdout);
-//     printf("Screen width: %d, height: %d\n", getmaxx(), getmaxy());
-//     fflush(stdout);
-
-//     delay(100); // Tunggu sebelum membersihkan layar
-//     setfillstyle(SOLID_FILL, BLACK);
-//     bar(0, 0, getmaxx(), getmaxy()); // Ganti cleardevice()
-
-//     printf("2 - After cleardevice/bar\n");
-//     fflush(stdout);
-
-//     // Coba teruskan program
-//     drawScore();
-//     printf("3 - After drawScore\n");
-//     fflush(stdout);
-// }
-
-
 int main() {
-    int gd = VGA, gm = VGAHI;
+    int gd = DETECT, gm;
     initgraph(&gd, &gm, (char*)"");
-    showMainMenu();
-    printf("close\n");
-    // closegraph();
+
+    // showMainMenu();
+    startGame();
     return 0;
 }

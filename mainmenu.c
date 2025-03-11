@@ -129,8 +129,6 @@ void exitGame() {
 
 // Fungsi untuk menampilkan menu utama
 void showMainMenu() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, NULL);
     initwindow(getmaxwidth(), getmaxheight(), "SPACE INVADERS");
     srand(time(NULL));
 
@@ -189,9 +187,7 @@ void showMainMenu() {
                     }
                     strcpy(playerName, input);
                 } else if (my >= startY + 80 && my <= startY + 80 + btn_height) {
-                    printf("START GAME dipanggil!\n");
                     startGame();  // Panggil fungsi mulai game
-                    printf("Selesai");
                 } else if (my >= startY + 160 && my <= startY + 160 + btn_height) {
                     showGuide();  // Panggil fungsi panduan
                 } else if (my >= startY + 240 && my <= startY + 240 + btn_height) {

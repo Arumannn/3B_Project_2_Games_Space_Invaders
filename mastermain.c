@@ -9,15 +9,10 @@
 #include <time.h>
 
 void startGame() {
-    int gd = DETECT, gm;
-    initgraph(&gd, &gm, NULL);
-    initwindow(getmaxwidth(), getmaxheight(), "SPACE INVADERS");
-
-    printf("Game window initialized!\n"); // Debug
-
-    int screenWidth = getmaxx();
-    int screenHeight = getmaxy();
-    printf("Screen width: %d, height: %d\n", screenWidth, screenHeight); // Debug
+    cleardevice();
+    printf("START GAME dipanggil!\n");
+    printf("Game window initialized!\n");
+    printf("Screen width: %d, height: %d\n", getmaxx(), getmaxy());
    
     int alienDirFirst = 1;
     int alienDirRest = 1;
@@ -31,25 +26,32 @@ void startGame() {
     int gameOver = 0;
     int page = 0;
 
-    while (!gameOver) {
-        printf("Game loop running...\n"); 
-        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
-            break;
-        }
+    while (TRUE) {
+        printf("Game loop...\n"); 
+        // if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+        //     printf("Break");
+        //     break;
+        // }
 
-        setactivepage(page);
+        //setactivepage(page);
         cleardevice();
+        printf("1");
         drawScore();
+        printf("2");
 
         for (int i = 0; i < MAX_ALIENS; i++) {
             if (aliens[i].active && aliens[i].y >= getmaxy() - BLOCK_SIZE) {
                 gameOver = 1;
+                printf("3");
             }
         }
-
+        printf("4");
         SpaceshipMove(&SpaceShip_P);
+        printf("5");
         updateBullets();
+        printf("6");
         updateAliens(aliens, &alienDirFirst, &alienDirRest);
+        printf("7");
         DrawSpaceShip(&SpaceShip_P);
         drawBullets();
         drawAliens(aliens);
@@ -58,16 +60,16 @@ void startGame() {
         setvisualpage(page);
         page = 1 - page;
 
-        delay(10);
+        delay(30);
     }
-
-   
+    printf("end");
 } 
 
 int main() {
     int gd = DETECT, gm;
-    initgraph(&gd, &gm, (char*)"");
+    initgraph(&gd, &gm, "");
     showMainMenu();
+    printf("close\n");
     closegraph();
     return 0;
 }

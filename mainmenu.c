@@ -20,10 +20,12 @@ void drawText(int x, int y, const char* text, int size, int color) {
     settextstyle(DEFAULT_FONT, HORIZ_DIR, size);
     settextjustify(CENTER_TEXT, CENTER_TEXT);
 
+    // Salin string ke buffer lokal untuk menghindari error tipe data
     char tempText[100];
     strncpy(tempText, text, sizeof(tempText) - 1);
     tempText[sizeof(tempText) - 1] = '\0';
 
+    // Tampilkan teks di koordinat tengah
     outtextxy(x, y, tempText);
 }
 

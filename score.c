@@ -10,6 +10,7 @@ void initScore() {
 
 void updateScore(int points) {
     score += points;
+    printf("test");
 }
 
 void drawScore() {

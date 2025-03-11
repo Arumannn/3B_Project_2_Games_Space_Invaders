@@ -2,6 +2,7 @@
 #include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
+#include "score.h"
 #include "ufo.h"
 #include <conio.h>
 #include <windows.h>
@@ -49,6 +50,7 @@ int main() {
         drawAliens(aliens);
         drawAlienExplosions();
         UFO(aliens);
+        drawScore();
 
         setvisualpage(page);
         page = 1 - page;

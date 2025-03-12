@@ -1,5 +1,6 @@
 #include "mainmenu.h"
 #include "alien.h"
+#include "mainsprite.h"
 #include "ufo.h"
 #include "score.h"
 #include <conio.h>

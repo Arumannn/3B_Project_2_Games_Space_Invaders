@@ -1,5 +1,6 @@
 #include "alien.h"
 #include "mainsprite.h"
+#include "score.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -279,6 +280,7 @@ void drawAlienExplosions() {
             setcolor(RED);
             setfillstyle(SOLID_FILL, RED);
             fillellipse(alienExplosions[i].x, alienExplosions[i].y, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
+            addAlienScore();
         }
     }
 }

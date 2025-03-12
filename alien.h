@@ -2,35 +2,32 @@
 #define ALIEN_H
 
 #include <graphics.h>
-#include "mainsprite.h"
 
 // Konstanta
-#define ALIEN_ROWS 5
+#define ALIEN_ROWS 6
 #define ALIEN_COLS 10
 #define MAX_ALIENS (ALIEN_ROWS * ALIEN_COLS)
-#define MAX_ALIEN_BULLETS 10  // Ditambahkan agar tidak error
+#define MAX_ALIEN_BULLETS 20 // Sama seperti versi dua file
 
+// Struktur untuk alien
 typedef struct {
     int x, y;
     int active;
 } Alien;
 
+// Struktur untuk peluru alien (sama seperti versi dua file)
 typedef struct {
     int x, y;
     int active;
-    int lifetime; // Ditambahkan karena dipakai di alien.c
-} Explosion;
+} AlienBullet;
 
 // Variabel global
-extern Bullet alienBullets[MAX_ALIEN_BULLETS];
-extern Explosion alienExplosions[MAX_ALIEN_BULLETS];
-extern int BLOCK_SIZE;  // Pastikan ini didefinisikan di file .c
+extern int BLOCK_SIZE;
+extern AlienBullet alienBullets[MAX_ALIEN_BULLETS]; // Array untuk peluru alien
 
-// Fungsi
+// Fungsi untuk alien
 void initAliens(Alien aliens[]);
 void drawAliens(Alien aliens[]);
-void updateAliens(Alien aliens[], int *alienDirFirst, int *alienDirRest);
-void checkAlienCollisions(Alien aliens[], Bullet bullets[], int bulletCount);
-void drawAlienExplosions();
+void updateAliens(Alien aliens[], int *alienDir); // Tanpa parameter Player untuk saat ini
 
 #endif // ALIEN_H

@@ -1,13 +1,12 @@
 #include <graphics.h>
+#include <conio.h>
+#include <windows.h>
 #include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
 #include "score.h"
 #include "ufo.h"
 #include "barrier.h"
-#include <conio.h>
-#include <windows.h>
-#include <time.h>
 
 void startGame() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -27,37 +26,57 @@ void startGame() {
     int gameOver = 0;
     int page = 0;
 
+    // Target 30 FPS (33.33ms per frame)
+    const double TARGET_FPS = 30.0;
+    const double FRAME_TIME = 1000.0 / TARGET_FPS; // 33.33ms dalam milidetik
+    LARGE_INTEGER frequency, lastTime;
+    QueryPerformanceFrequency(&frequency); // Dapatkan frekuensi timer
+    QueryPerformanceCounter(&lastTime);    // Waktu mulai
+
     while (!gameOver) {
-        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
-            break;
-        }
+        // Catet waktu sekarang
+        LARGE_INTEGER currentTime;
+        QueryPerformanceCounter(&currentTime);
+        double elapsedMs = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;
 
-        setactivepage(page);
-        cleardevice();
-        drawScore();
+        // Jalankan frame kalo waktunya udah cukup
+        if (elapsedMs >= FRAME_TIME) {
+            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+                break;
+            }
 
-        for (int i = 0; i < MAX_ALIENS; i++) {
-            if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
-                gameOver = 1;
+            setactivepage(page);
+            cleardevice();
+            drawScore();
+
+            for (int i = 0; i < MAX_ALIENS; i++) {
+                if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
+                    gameOver = 1;
+                }
+            }
+
+            SpaceshipMove(&SpaceShip_P);
+            updateBullets();
+            checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
+            updateAliens(aliens, &alienDir, &alienDirLast);
+            DrawSpaceShip(&SpaceShip_P);
+            drawBullets();
+            drawAliens(aliens);
+            drawAlienExplosions();
+            UFO(aliens);
+            barBarrier();
+            setvisualpage(page);
+            page = 1 - page;
+
+            // Update waktu terakhir
+            lastTime = currentTime;
+        } else {
+            // Kalo belum cukup waktunya, delay sisanya
+            double sleepTime = FRAME_TIME - elapsedMs;
+            if (sleepTime > 0) {
+                Sleep((DWORD)sleepTime); // Delay sisanya
             }
         }
-
-        SpaceshipMove(&SpaceShip_P);
-        updateBullets();
-        updateAliens(aliens, &alienDir, &alienDirLast);
-        // Tambahin ini: cek tabrakan peluru player sama alien
-        checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
-        DrawSpaceShip(&SpaceShip_P);
-        drawBullets();
-        drawAliens(aliens);
-        UFO(aliens);
-        barBarrier();
-        // Tambahin ini: gambar efek ledakan
-        drawAlienExplosions();
-        setvisualpage(page);
-        page = 1 - page;
-
-        delay(10);
     }
 
     closegraph();

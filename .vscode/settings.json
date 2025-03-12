@@ -1,8 +1,10 @@
 {
   "files.associations": {
+    "*.embeddedhtml": "html",
     "graphics.h": "c",
     "mainmenu.h": "c",
-    "alien.h": "c"
+    "alien.h": "c",
+    "mainsprite.h": "c"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

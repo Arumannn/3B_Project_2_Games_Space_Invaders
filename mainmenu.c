@@ -66,7 +66,7 @@ void showMainMenu() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN); // Ambil resolusi layar penuh
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-    initwindow(screenWidth, screenHeight, "Space Invaders", -3, -3); // Fullscreen
+    initwindow(screenWidth, screenHeight, "Space Invaders"); // Fullscreen
 
     setviewport(0, 0, screenWidth, screenHeight, 1);
     cleardevice();

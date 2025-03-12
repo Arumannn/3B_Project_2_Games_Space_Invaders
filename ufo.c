@@ -22,59 +22,61 @@ Alien aliens[MAX_ALIENS];
 void resetUFO();
 
 void resetUFO() {
-ufoX = 100.0;
-ufoY = 100.0;
-ufoSpeed = 3.0;
-ufoDirection = 1;
-ufoHealth = 15 + rand() % 6;
-ufoActive = 1;
+    ufoX = 100.0; // Reset posisi horizontal aja
+    ufoSpeed = 3.0;
+    ufoDirection = 1;
+    ufoHealth = 15 + rand() % 6;
+    ufoActive = 1;
 }
 
 void drawUFO(int x, int y) {
-// Body utama UFO dengan efek gradasi merah metalik
-setcolor(RED);
-setfillstyle(SOLID_FILL, RED);
-fillellipse(x, y, 80, 35);
+    // Geser ke atas lebih jauh, dari -20 jadi -40
+    y -= 40;
 
-setcolor(RED);
-setfillstyle(SOLID_FILL, RED);
-fillellipse(x, y - 5, 75, 30);
+    // Body utama UFO (ukuran tetap seperti sebelumnya)
+    setcolor(RED);
+    setfillstyle(SOLID_FILL, RED);
+    fillellipse(x, y, 60, 25);
 
-setcolor(LIGHTRED);
-setfillstyle(SOLID_FILL, LIGHTRED);
-fillellipse(x, y - 10, 70, 25);
+    setcolor(RED);
+    setfillstyle(SOLID_FILL, RED);
+    fillellipse(x, y - 5, 55, 20);
 
-// Jendela dengan efek refleksi
-setcolor(WHITE);
-setfillstyle(SOLID_FILL, CYAN);
-fillellipse(x, y - 25, 50, 25);
-setcolor(LIGHTCYAN);
-fillellipse(x - 20, y - 30, 12, 12);
+    setcolor(LIGHTRED);
+    setfillstyle(SOLID_FILL, LIGHTRED);
+    fillellipse(x, y - 10, 50, 15);
 
-// Lampu LED dengan efek glow
-for (int i = -55; i <= 55; i += 25) {
-    setcolor(DARKGRAY);
-    setfillstyle(SOLID_FILL, DARKGRAY);
-    fillellipse(x + i, y + 20, 8, 8);
-    
-    setcolor(YELLOW);
-    setfillstyle(SOLID_FILL, YELLOW);
-    fillellipse(x + i, y + 20, 6, 6);
-    
+    // Jendela
     setcolor(WHITE);
-    fillellipse(x + i - 2, y + 18, 2, 2);
-}
-// Kaki lebih futuristik
-setcolor(DARKGRAY);
-setlinestyle(SOLID_LINE, 0, 3);
-line(x - 60, y + 30, x - 75, y + 60);
-line(x + 60, y + 30, x + 75, y + 60);
-rectangle(x - 75, y + 60, x - 65, y + 70);
-rectangle(x + 65, y + 60, x + 75, y + 70);
-floodfill(x - 70, y + 65, DARKGRAY);
-floodfill(x + 70, y + 65, DARKGRAY);
+    setfillstyle(SOLID_FILL, CYAN);
+    fillellipse(x, y - 20, 40, 15);
+    setcolor(LIGHTCYAN);
+    fillellipse(x - 15, y - 25, 8, 8);
 
-}       
+    // Lampu LED
+    for (int i = -40; i <= 40; i += 20) {
+        setcolor(DARKGRAY);
+        setfillstyle(SOLID_FILL, DARKGRAY);
+        fillellipse(x + i, y + 15, 6, 6);
+        
+        setcolor(YELLOW);
+        setfillstyle(SOLID_FILL, YELLOW);
+        fillellipse(x + i, y + 15, 4, 4);
+        
+        setcolor(WHITE);
+        fillellipse(x + i - 1, y + 13, 1, 1);
+    }
+
+    // Kaki
+    setcolor(DARKGRAY);
+    setlinestyle(SOLID_LINE, 0, 3);
+    line(x - 45, y + 20, x - 55, y + 45);
+    line(x + 45, y + 20, x + 55, y + 45);
+    rectangle(x - 55, y + 45, x - 50, y + 50);
+    rectangle(x + 50, y + 45, x + 55, y + 50);
+    floodfill(x - 52, y + 47, DARKGRAY);
+    floodfill(x + 52, y + 47, DARKGRAY);
+}    
 
 void drawBullet(int bx, int by) {
     setcolor(YELLOW);
@@ -93,11 +95,11 @@ void UFO(Alien aliens[]) {
     // Cek jika UFO terkena tembakan
     for (int j = 0; j < MAX_BULLETS; j++) {
         if (bullets_player[j].active &&
-            bullets_player[j].x > ufoX - 60 &&
-            bullets_player[j].x < ufoX + 60 &&
-            bullets_player[j].y > ufoY - 25 &&
-            bullets_player[j].y < ufoY + 25) {
-            
+            bullets_player[j].x > ufoX - 45 &&
+            bullets_player[j].x < ufoX + 45 &&
+            bullets_player[j].y > ufoY - 40 && // Dari -20 jadi -40
+            bullets_player[j].y < ufoY + 20) {
+
             bullets_player[j].active = 0; // Nonaktifkan peluru
             ufoHealth--; // Kurangi nyawa UFO
 
@@ -107,7 +109,7 @@ void UFO(Alien aliens[]) {
                 
                 // Spawn ulang UFO setelah beberapa waktu
                 delay(10); // Bisa diatur ulang
-                resetUFO();
+                resetUFO(); // Cuma reset X, health, dll, gak ubah Y
             }
         }
     }
@@ -119,7 +121,7 @@ void UFO(Alien aliens[]) {
         if (ufoBulletY > getmaxy()) ufoBulletActive = 0;
     } else {
         ufoBulletX = (int)ufoX;
-        ufoBulletY = (int)ufoY + 20;
+        ufoBulletY = (int)ufoY + 15; // Dari +20 jadi +15
         ufoBulletActive = 1;
     }
 

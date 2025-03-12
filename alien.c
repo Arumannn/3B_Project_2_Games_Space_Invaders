@@ -230,7 +230,6 @@ void checkAlienCollisions(Alien aliens[], Bullet bullets[], int bulletCount) {
         if (aliens[i].active) {
             for (int j = 0; j < bulletCount; j++) {
                 if (bullets[j].active) {
-                    // Perluas area tabrakan untuk akurasi
                     int alienLeft = aliens[i].x;
                     int alienRight = aliens[i].x + BLOCK_SIZE;
                     int alienTop = aliens[i].y;
@@ -241,10 +240,8 @@ void checkAlienCollisions(Alien aliens[], Bullet bullets[], int bulletCount) {
                     int bulletTop = bullets[j].y;
                     int bulletBottom = bullets[j].y + BLOCK_SIZE;
 
-                    // Cek tabrakan dengan rentang yang lebih jelas
                     if (bulletRight > alienLeft && bulletLeft < alienRight &&
                         bulletBottom > alienTop && bulletTop < alienBottom) {
-                        // Tambahkan ledakan
                         for (int k = 0; k < MAX_ALIENS; k++) {
                             if (!alienExplosions[k].active) {
                                 alienExplosions[k].x = aliens[i].x + BLOCK_SIZE / 2;
@@ -254,17 +251,15 @@ void checkAlienCollisions(Alien aliens[], Bullet bullets[], int bulletCount) {
                                 break;
                             }
                         }
-                        // Nonaktifkan alien dan peluru
                         aliens[i].active = 0;
                         bullets[j].active = 0;
-                        break; // Keluar dari loop peluru setelah tabrakan
+                        break;
                     }
                 }
             }
         }
     }
 
-    // Perbarui lifetime ledakan
     for (int i = 0; i < MAX_ALIENS; i++) {
         if (alienExplosions[i].active) {
             alienExplosions[i].lifetime--;
@@ -280,10 +275,10 @@ void drawAlienExplosions() {
         if (alienExplosions[i].active) {
             setcolor(YELLOW);
             setfillstyle(SOLID_FILL, YELLOW);
-            fillellipse(alienExplosions[i].x, alienExplosions[i].y, BLOCK_SIZE, BLOCK_SIZE); // Lingkaran kuning
+            fillellipse(alienExplosions[i].x, alienExplosions[i].y, BLOCK_SIZE, BLOCK_SIZE);
             setcolor(RED);
             setfillstyle(SOLID_FILL, RED);
-            fillellipse(alienExplosions[i].x, alienExplosions[i].y, BLOCK_SIZE / 2, BLOCK_SIZE / 2); // Lingkaran merah
+            fillellipse(alienExplosions[i].x, alienExplosions[i].y, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
         }
     }
 }

@@ -10,12 +10,10 @@
 #include <time.h>
 
 void startGame() {
-    int screenWidth = GetSystemMetrics(SM_CXSCREEN); // Ambil resolusi layar penuh
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     
-    // ✅ Tambahkan kembali mode grafik setelah keluar dari menu
     initwindow(screenWidth, screenHeight, "Space Invaders");
-    
     cleardevice();
 
     Player SpaceShip_P = {screenWidth / 2, screenHeight - 80};
@@ -47,11 +45,15 @@ void startGame() {
         SpaceshipMove(&SpaceShip_P);
         updateBullets();
         updateAliens(aliens, &alienDir, &alienDirLast);
+        // Tambahin ini: cek tabrakan peluru player sama alien
+        checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
         DrawSpaceShip(&SpaceShip_P);
         drawBullets();
         drawAliens(aliens);
         UFO(aliens);
         barBarrier();
+        // Tambahin ini: gambar efek ledakan
+        drawAlienExplosions();
         setvisualpage(page);
         page = 1 - page;
 

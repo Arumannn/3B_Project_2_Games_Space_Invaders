@@ -4,4 +4,5 @@
 
 void showMainMenu(); // Menampilkan menu utama
 void startGame();
+void handleMainMenu();
 #endif

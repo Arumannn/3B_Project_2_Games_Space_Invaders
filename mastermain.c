@@ -16,7 +16,7 @@ void startGame(){
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     
     // ✅ Tambahkan kembali mode grafik setelah keluar dari menu
-    initwindow(screenWidth, screenHeight, "Space Invaders", -3, -3);
+    initwindow(screenWidth, screenHeight, "Space Invaders");
     
     cleardevice();
     Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};

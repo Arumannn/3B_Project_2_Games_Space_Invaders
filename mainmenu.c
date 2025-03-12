@@ -68,6 +68,38 @@ void drawLeaderboard() {
 // Deklarasi fungsi sebelum digunakan
 
 
+void handleMainMenu() {
+    int screenWidth = getmaxwidth();
+    int screenHeight = getmaxheight();
+
+    int btn_width = 400, btn_height = 80;
+    int centerX = screenWidth / 2 - btn_width / 2;
+    int startY = screenHeight / 2 - 160;
+    int spacing = 30;
+
+    int choice = -1; // Tidak ada pilihan awal
+
+    while (1) {
+        if (ismouseclick(WM_LBUTTONDOWN)) { // Deteksi klik mouse
+            int x, y;
+            getmouseclick(WM_LBUTTONDOWN, x, y);
+
+            if (x >= centerX && x <= centerX + btn_width) {
+                if (y >= startY && y <= startY + btn_height) { // "INPUT NAMA"
+                    printf("Input Nama dipilih\n");
+                } else if (y >= startY + btn_height + spacing && y <= startY + 2 * (btn_height + spacing)) { // "START"
+                    startGame(); // Masuk ke gameplay TANPA closegraph()
+                    return;
+                } else if (y >= startY + 2 * (btn_height + spacing) && y <= startY + 3 * (btn_height + spacing)) { // "GUIDE"
+                    printf("Guide dipilih\n");
+                } else if (y >= startY + 3 * (btn_height + spacing) && y <= startY + 4 * (btn_height + spacing)) { // "EXIT"
+                    closegraph();
+                    exit(0);
+                }
+            }
+        }
+    }
+}
 
 // Fungsi untuk menampilkan panduan
 void showGuide() {

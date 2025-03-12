@@ -15,11 +15,8 @@ int ufoHealth;  // Tambahkan variabel untuk nyawa/hit UFO
 
 // Inisialisasi peluru UFO
 int ufoBulletX = -1, ufoBulletY = -1, ufoBulletActive = 0;
-
-Alien aliens[MAX_ALIENS];
-
 // **Tambahkan fungsi untuk reset UFO dengan HP random**
-void resetUFO();
+
 
 void resetUFO() {
 ufoX = 100.0;

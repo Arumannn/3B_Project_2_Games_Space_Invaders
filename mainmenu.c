@@ -5,6 +5,7 @@
 #include <time.h>
 #include "mainmenu.h"
 
+
 // Definisi warna kuning jika belum tersedia
 #ifndef YELLOW
 #define YELLOW COLOR(255, 255, 0)
@@ -65,7 +66,7 @@ void drawLeaderboard() {
 }
 
 // Deklarasi fungsi sebelum digunakan
-void showMainMenu();  
+
 
 
 // Fungsi untuk menampilkan panduan

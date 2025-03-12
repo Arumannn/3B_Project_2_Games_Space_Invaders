@@ -4,6 +4,7 @@
 #include "alien.h"
 #include "score.h"
 #include "ufo.h"
+
 #include <conio.h>
 #include <windows.h>
 #include <time.h>
@@ -12,7 +13,7 @@ void startGame(){
     Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
 
     Alien aliens[MAX_ALIENS];
-    int alienDir = 1;
+    int alienDirFirst = 1;
     int alienDirRest = 1;
     initAliens(aliens);
 
@@ -47,6 +48,14 @@ void startGame(){
         delay(10);
     }
 
+    
+}
+
+int main(){
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, (char*)"");
+    
+    showMainMenu();
     closegraph();
     return 0;
 }

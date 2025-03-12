@@ -13,13 +13,14 @@ void startGame() {
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     
     // ✅ Tambahkan kembali mode grafik setelah keluar dari menu
-    initwindow(screenWidth, screenHeight, "Space Invaders", -3, -3);
+    initwindow(screenWidth, screenHeight, "Space Invaders");
     
     cleardevice();
 
     Player SpaceShip_P = {screenWidth / 2, screenHeight - 80};
     Alien aliens[MAX_ALIENS];
     int alienDir = 1;
+    int alienDirLast = 1;
     initAliens(aliens);
     initBullets();
     initScore();
@@ -44,7 +45,7 @@ void startGame() {
 
         SpaceshipMove(&SpaceShip_P);
         updateBullets();
-        updateAliens(aliens, &alienDir);
+        updateAliens(aliens, &alienDir, &alienDirLast);
         DrawSpaceShip(&SpaceShip_P);
         drawBullets();
         drawAliens(aliens);

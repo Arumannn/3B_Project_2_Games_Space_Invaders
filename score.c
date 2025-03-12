@@ -10,14 +10,27 @@ void initScore() {
 
 void updateScore(int points) {
     score += points;
+    printf("test");
 }
 
 void drawScore() {
-    char scoreText[20];
-    sprintf(scoreText, "Score: %d", score);
+    printf("Masuk ke drawScore()\n");
+    fflush(stdout);
+
+    printf("Sebelum setcolor\n");
+    fflush(stdout);
     setcolor(WHITE);
-    outtextxy(10, 10, scoreText);
+    printf("setcolor berhasil\n");
+    fflush(stdout);
+
+    printf("Sebelum menggambar kotak\n");
+    fflush(stdout);
+    rectangle(10, 10, 100, 50);
+    printf("Gambar kotak berhasil\n");
+    fflush(stdout);
 }
+
+
 
 int getScore() {
     return score;

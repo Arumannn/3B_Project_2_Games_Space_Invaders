@@ -1,13 +1,17 @@
+#include <graphics.h>
+#include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
 #include "mainsprite.h"
 #include "ufo.h"
 #include "score.h"
+#include "ufo.h"
+
 #include <conio.h>
 #include <windows.h>
 #include <time.h>
 
-void startGame() {
+void startGame(){
     int screenWidth = GetSystemMetrics(SM_CXSCREEN); // Ambil resolusi layar penuh
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     
@@ -15,13 +19,14 @@ void startGame() {
     initwindow(screenWidth, screenHeight, "Space Invaders", -3, -3);
     
     cleardevice();
+    Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80};
 
-    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80};
     Alien aliens[MAX_ALIENS];
-    int alienDir = 1;
+    int alienDirFirst = 1;
+    int alienDirRest = 1;
     initAliens(aliens);
+
     initBullets();
-    initScore();
 
     int gameOver = 0;
     int page = 0;
@@ -33,7 +38,11 @@ void startGame() {
 
         setactivepage(page);
         cleardevice();
-        drawScore();
+
+        SpaceshipMove(&SpaceShip_P);
+        updateBullets();
+        updateAliens(aliens, &alienDirFirst, &alienDirRest);
+        checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
 
         for (int i = 0; i < MAX_ALIENS; i++) {
             if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
@@ -41,13 +50,12 @@ void startGame() {
             }
         }
 
-        SpaceshipMove(&SpaceShip_P);
-        updateBullets();
-        updateAliens(aliens, &alienDir);
         DrawSpaceShip(&SpaceShip_P);
         drawBullets();
         drawAliens(aliens);
+        drawAlienExplosions();
         UFO(aliens);
+        drawScore();
 
         setvisualpage(page);
         page = 1 - page;
@@ -55,14 +63,14 @@ void startGame() {
         delay(10);
     }
 
-    closegraph();
+    
 }
 
-int main() {
+int main(){
     
-
+    
     showMainMenu();
-    handleMainMenu();  // Memastikan menu utama bisa berpindah ke game
+    handleMainMenu();
 
     closegraph();
     return 0;

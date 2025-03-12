@@ -23,8 +23,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/raylib/raylib/projects/VSCode/3B_Project_2_Games",
-      "program": "c:/raylib/raylib/projects/VSCode/3B_Project_2_Games/build/Debug/outDebug",
+      "cwd": "c:/Users/ThinkPad/OneDrive - Politeknik Negeri Bandung/Documents/Arman Private Project/3B_Project_2_Games",
+      "program": "c:/Users/ThinkPad/OneDrive - Politeknik Negeri Bandung/Documents/Arman Private Project/3B_Project_2_Games/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

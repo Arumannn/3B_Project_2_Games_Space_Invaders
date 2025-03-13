@@ -10,7 +10,7 @@
 
 void startGame() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN`);
     
     initwindow(screenWidth, screenHeight, "Space Invaders");
     cleardevice();

@@ -5,8 +5,8 @@
 // Fungsi untuk menggambar barrier
 void drawBarrier(int x, int y) {
     setfillstyle(SOLID_FILL, GREEN);
-    bar(x, y, x + 40, y + 20); // Barrier utama
-    bar(x + 10, y - 10, x + 30, y); // Bagian atas barrier
+    bar(x-15, y-15, x + 40, y + 20); // Barrier utama
+    bar(x + 5, y - 5, x + 30, y); // Bagian atas barrier
 }
 
 void barBarrier(){

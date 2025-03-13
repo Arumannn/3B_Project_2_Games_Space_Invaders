@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdio.h>
+#include <windows.h>
+
 #include "mainsprite.h"
 #include "alien.h"
 #include "score.h"
@@ -10,8 +13,8 @@
 #include "mainmenu.h"
 
 char playerName[30] = "";
+bool nameEntered = true;
 
-// Fungsi untuk menggambar teks di tengah koordinat tertentu
 void drawText(int x, int y, const char* text, int size, int color) {
     setcolor(color);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, size);
@@ -24,7 +27,6 @@ void drawText(int x, int y, const char* text, int size, int color) {
     outtextxy(x, y, tempText);
 }
 
-// Fungsi untuk menggambar tombol
 void drawButton(int x, int y, int width, int height, int color, const char *label) {
     setcolor(WHITE);
     rectangle(x, y, x + width, y + height);
@@ -35,124 +37,119 @@ void drawButton(int x, int y, int width, int height, int color, const char *labe
     setbkcolor(BLACK);
 }
 
-// Fungsi untuk menggambar background bintang
 void drawStars() {
     cleardevice();
     for (int i = 0; i < 200; i++) {
-        int x = rand() % getmaxwidth();
-        int y = rand() % getmaxheight();
-        putpixel(x, y, WHITE);
+        putpixel(rand() % getmaxwidth(), rand() % getmaxheight(), WHITE);
     }
 }
 
-// Fungsi untuk menampilkan leaderboard
-void drawLeaderboard() {
-    int x = getmaxwidth() - 320;
-    int y = 100;
-    rectangle(x, y, x + 300, y + 200);
-    char names[3][30] = {"Arman", "Nazriel", "Rina"};
-    int scores[3] = {2000, 1500, 1000};
-    for (int i = 0; i < 3; i++) {
-        char scoreText[50];
-        sprintf(scoreText, "%d. %s - %d", i + 1, names[i], scores[i]);
-        drawText(x + 150, y + 30 + (i * 40), scoreText, 2, WHITE);
+void savePlayerName() {
+    FILE *file = fopen("players.txt", "a");
+    if (file) {
+        fprintf(file, "%s 0\n", playerName);
+        fclose(file);
     }
 }
 
-// Fungsi untuk memasukkan nama
-void inputName() {
-    cleardevice();
-    drawStars();
-    drawText(getmaxwidth() / 2, 100, "Masukkan Nama Anda: ", 3, WHITE);
+void handleNameInput(int x, int y, int width, int height) {
     setcolor(WHITE);
-    rectangle(400, 200, 900, 250);
+    rectangle(x, y, x + width, y + height);
     setbkcolor(BLACK);
+    drawText(x + width / 2, y + height / 2, "Enter Name:", 2, LIGHTGRAY);
+    
     char tempName[30] = "";
     int index = 0;
     while (1) {
         char key = getch();
-        if (key == 13) break; // Enter
-        if (key == 8 && index > 0) { // Backspace
-            tempName[--index] = '\0';
-        } else if (index < 29) {
-            tempName[index++] = key;
-            tempName[index] = '\0';
-        }
+        if (key == 13 && index > 0) break;
+        if (key == 8 && index > 0) tempName[--index] = '\0';
+        else if (index < 29 && key >= 32 && key <= 126) tempName[index++] = key;
+        tempName[index] = '\0';
         strcpy(playerName, tempName);
         setfillstyle(SOLID_FILL, BLACK);
-        floodfill(405, 205, WHITE);
-        drawText(650, 225, playerName, 2, WHITE);
+        floodfill(x + 5, y + 5, WHITE);
+        drawText(x + width / 2, y + height / 2, playerName, 2, WHITE);
     }
-    showMainMenu();
+    nameEntered = true;
+    savePlayerName();
 }
 
-// Fungsi untuk menampilkan guide
-void showGuide() {
+void drawLeaderboard() {
+    int x = getmaxwidth() - 320;
+    int y = 100;
+    rectangle(x, y, x + 300, y + 200);
+    FILE *file = fopen("players.txt", "r");
+    if (file == NULL) {
+        drawText(x + 150, y + 50, "No Data", 2, WHITE);
+        return;
+    }
+    char name[30];
+    int score, i = 0;
+    while (fscanf(file, "%s %d", name, &score) != EOF) {
+        char scoreText[50];
+        sprintf(scoreText, "%d. %s - %d", i + 1, name, score);
+        drawText(x + 150, y + 30 + (i * 40), scoreText, 2, WHITE);
+        i++;
+    }
+    fclose(file);
+}
+
+void displayGuide() {
     cleardevice();
-    drawStars();
     drawText(getmaxwidth() / 2, 100, "GUIDE", 5, WHITE);
-    drawText(getmaxwidth() / 2, 200, "Gunakan panah untuk bergerak, spasi untuk menembak.", 2, WHITE);
-    drawText(getmaxwidth() / 2, 250, "Hindari tembakan musuh dan kalahkan semua alien!", 2, WHITE);
-    drawText(getmaxwidth() / 2, 400, "Tekan ESC untuk kembali", 2, WHITE);
-    while (getch() != 27); // Menunggu ESC ditekan
-    showMainMenu();
-}
-
-// Fungsi untuk konfirmasi keluar
-void confirmExit() {
-    cleardevice();
-    drawStars();
-    drawText(getmaxwidth() / 2, 200, "Apakah Anda yakin ingin keluar?", 3, WHITE);
-    drawButton(500, 300, 200, 80, LIGHTRED, "YA");
-    drawButton(800, 300, 200, 80, LIGHTGREEN, "TIDAK");
+    drawText(getmaxwidth() / 2, 200, "Gunakan tombol panah untuk bergerak.", 2, WHITE);
+    drawText(getmaxwidth() / 2, 250, "Tekan 'SPASI' untuk menembak.", 2, WHITE);
+    drawText(getmaxwidth() / 2, 300, "Hindari tembakan musuh dan kalahkan semua alien!", 2, WHITE);
+    drawText(getmaxwidth() / 2, getmaxheight() - 100, "Tekan ESC untuk kembali", 2, WHITE);
     while (1) {
-        if (ismouseclick(WM_LBUTTONDOWN)) {
-            int x, y;
-            getmouseclick(WM_LBUTTONDOWN, x, y);
-            if (x >= 500 && x <= 700 && y >= 300 && y <= 380) {
-                closegraph();
-                exit(0);
-            } else if (x >= 800 && x <= 1000 && y >= 300 && y <= 380) {
-                showMainMenu();
-                return;
-            }
+        if (kbhit() && getch() == 27) {
+            showMainMenu();
+            return;
         }
+        delay(100);
     }
 }
 
-// Fungsi untuk menampilkan menu utama dalam fullscreen
 void showMainMenu() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     initwindow(screenWidth, screenHeight, "Space Invaders");
-    setviewport(0, 0, screenWidth, screenHeight, 1);
     cleardevice();
     drawStars();
     drawText(screenWidth / 2, 100, "SPACE INVADERS", 8, WHITE);
-    int btn_width = 400, btn_height = 80;
+    handleNameInput(screenWidth / 2 - 200, screenHeight / 2 - 200, 400, 50);
+    
+    int btn_width = 300, btn_height = 80;
     int centerX = screenWidth / 2 - btn_width / 2;
-    int startY = screenHeight / 2 - 160;
+    int startY = screenHeight / 2 - 50;
     int spacing = 30;
-    drawButton(centerX, startY, btn_width, btn_height, LIGHTBLUE, "INPUT NAMA");
-    drawButton(centerX, startY + btn_height + spacing, btn_width, btn_height, LIGHTGREEN, "START");
-    drawButton(centerX, startY + (btn_height + spacing) * 2, btn_width, btn_height, YELLOW, "GUIDE");
-    drawButton(centerX, startY + (btn_height + spacing) * 3, btn_width, btn_height, WHITE, "EXIT");
+    
+    drawButton(centerX, startY, btn_width, btn_height, LIGHTGREEN, "START");
+    drawButton(centerX, startY + (btn_height + spacing), btn_width, btn_height, YELLOW, "GUIDE");
+    drawButton(centerX, startY + (btn_height + spacing) * 2, btn_width, btn_height, WHITE, "EXIT");
     drawLeaderboard();
-    handleMainMenu();
 }
 
-// Fungsi untuk menangani input menu utama
 void handleMainMenu() {
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
             getmouseclick(WM_LBUTTONDOWN, x, y);
-            if (x >= 440 && x <= 840) {
-                if (y >= 220 && y <= 300) inputName();
-                else if (y >= 330 && y <= 410) startGame();
-                else if (y >= 440 && y <= 520) showGuide();
-                else if (y >= 550 && y <= 630) confirmExit();
+            if (x >= 400 && x <= 700) {
+                if (y >= 250 && y <= 330 && nameEntered) {
+                    startGame();
+                    return;
+                } else if (y >= 350 && y <= 430) {
+                    displayGuide();
+                } else if (y >= 450 && y <= 530) {
+                    if (MessageBox(NULL, "Keluar dari permainan?", "Konfirmasi", MB_YESNO) == IDYES) {
+                        closegraph();
+                        exit(0);
+                    }
+                }
             }
         }
+        delay(100);
     }
 }

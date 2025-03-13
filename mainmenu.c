@@ -25,6 +25,7 @@ void drawText(int x, int y, const char* text, int size, int color) {
     outtextxy(x, y, tempText);
 }
 
+
 void drawButton(int x, int y, int width, int height, int color, const char *label) {
     setcolor(WHITE);
     rectangle(x, y, x + width, y + height);
@@ -43,39 +44,28 @@ void drawStars() {
 }
 
 void drawLeaderboard() {
-    int x = getmaxwidth() - 320;
+    int x = getmaxwidth() - 350;
     int y = 100;
-    rectangle(x, y, x + 300, y + 200);
+    int width = 300, height = 300;
+    setcolor(WHITE);
+    rectangle(x, y, x + width, y + height);
+    drawText(x + width / 2, y + 20, "LEADERBOARD", 3, WHITE);
+    
     FILE *file = fopen("players.txt", "r");
     if (file == NULL) {
-        drawText(x + 150, y + 50, "No Data", 2, WHITE);
+        drawText(x + width / 2, y + 50, "No Data", 2, WHITE);
         return;
     }
+    
     char name[30];
     int score, i = 0;
-    while (fscanf(file, "%s %d", name, &score) != EOF) {
+    while (fscanf(file, "%s %d", name, &score) != EOF && i < 10) {
         char scoreText[50];
         sprintf(scoreText, "%d. %s - %d", i + 1, name, score);
-        drawText(x + 150, y + 30 + (i * 40), scoreText, 2, WHITE);
+        drawText(x + width / 2, y + 60 + (i * 30), scoreText, 2, WHITE);
         i++;
     }
     fclose(file);
-}
-
-void displayGuide() {
-    cleardevice();
-    drawText(getmaxwidth() / 2, 100, "GUIDE", 5, WHITE);
-    drawText(getmaxwidth() / 2, 200, "Gunakan tombol panah untuk bergerak.", 2, WHITE);
-    drawText(getmaxwidth() / 2, 250, "Tekan 'SPASI' untuk menembak.", 2, WHITE);
-    drawText(getmaxwidth() / 2, 300, "Hindari tembakan musuh dan kalahkan semua alien!", 2, WHITE);
-    drawText(getmaxwidth() / 2, getmaxheight() - 100, "Tekan ESC untuk kembali", 2, WHITE);
-    while (1) {
-        if (kbhit() && getch() == 27) {
-            showMainMenu();
-            return;
-        }
-        delay(100);
-    }
 }
 
 void showMainMenu() {
@@ -88,12 +78,13 @@ void showMainMenu() {
     
     int btn_width = 300, btn_height = 80;
     int centerX = screenWidth / 2 - btn_width / 2;
-    int startY = screenHeight / 2 - 50;
-    int spacing = 30;
+    int startY = screenHeight / 2 - 100;
+    int spacing = 20;
     
     drawButton(centerX, startY, btn_width, btn_height, LIGHTGREEN, "START");
     drawButton(centerX, startY + (btn_height + spacing), btn_width, btn_height, YELLOW, "GUIDE");
     drawButton(centerX, startY + (btn_height + spacing) * 2, btn_width, btn_height, WHITE, "EXIT");
+    
     drawLeaderboard();
 }
 

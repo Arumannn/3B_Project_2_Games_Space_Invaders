@@ -12,9 +12,7 @@
 #include "ufo.h"
 #include "mainmenu.h"
 
-char playerName[30] = "";
-bool nameEntered = true;
-
+// Fungsi untuk menggambar teks di tengah koordinat tertentu
 void drawText(int x, int y, const char* text, int size, int color) {
     setcolor(color);
     settextstyle(DEFAULT_FONT, HORIZ_DIR, size);
@@ -42,37 +40,6 @@ void drawStars() {
     for (int i = 0; i < 200; i++) {
         putpixel(rand() % getmaxwidth(), rand() % getmaxheight(), WHITE);
     }
-}
-
-void savePlayerName() {
-    FILE *file = fopen("players.txt", "a");
-    if (file) {
-        fprintf(file, "%s 0\n", playerName);
-        fclose(file);
-    }
-}
-
-void handleNameInput(int x, int y, int width, int height) {
-    setcolor(WHITE);
-    rectangle(x, y, x + width, y + height);
-    setbkcolor(BLACK);
-    drawText(x + width / 2, y + height / 2, "Enter Name:", 2, LIGHTGRAY);
-    
-    char tempName[30] = "";
-    int index = 0;
-    while (1) {
-        char key = getch();
-        if (key == 13 && index > 0) break;
-        if (key == 8 && index > 0) tempName[--index] = '\0';
-        else if (index < 29 && key >= 32 && key <= 126) tempName[index++] = key;
-        tempName[index] = '\0';
-        strcpy(playerName, tempName);
-        setfillstyle(SOLID_FILL, BLACK);
-        floodfill(x + 5, y + 5, WHITE);
-        drawText(x + width / 2, y + height / 2, playerName, 2, WHITE);
-    }
-    nameEntered = true;
-    savePlayerName();
 }
 
 void drawLeaderboard() {
@@ -118,7 +85,6 @@ void showMainMenu() {
     cleardevice();
     drawStars();
     drawText(screenWidth / 2, 100, "SPACE INVADERS", 8, WHITE);
-    handleNameInput(screenWidth / 2 - 200, screenHeight / 2 - 200, 400, 50);
     
     int btn_width = 300, btn_height = 80;
     int centerX = screenWidth / 2 - btn_width / 2;
@@ -137,7 +103,7 @@ void handleMainMenu() {
             int x, y;
             getmouseclick(WM_LBUTTONDOWN, x, y);
             if (x >= 400 && x <= 700) {
-                if (y >= 250 && y <= 330 && nameEntered) {
+                if (y >= 250 && y <= 330) {
                     startGame();
                     return;
                 } else if (y >= 350 && y <= 430) {

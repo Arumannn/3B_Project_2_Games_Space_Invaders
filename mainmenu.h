@@ -1,7 +1,6 @@
 #ifndef MAINMENU_H
 #define MAINMENU_H
 
-void drawFooter();
 void showMainMenu();  // Menampilkan menu utama
 void startGame();     // Fungsi untuk memulai permainan
 void handleMainMenu(); // Menangani input pada menu utama

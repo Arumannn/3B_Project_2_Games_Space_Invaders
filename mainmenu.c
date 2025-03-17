@@ -22,32 +22,6 @@ void drawText(int x, int y, const char* text, int size, int color) {
     outtextxy(x, y, tempText);
 }
 
-// Fungsi untuk menggambar footer di setiap halaman
-void drawFooter() {
-    int screenWidth = getmaxwidth();
-    int screenHeight = getmaxheight();
-    int footerHeight = 20;  // Kembalikan ke ukuran awal
-    int footerY = screenHeight - footerHeight;  
-
-    // Latar belakang footer (putih)
-    setfillstyle(SOLID_FILL, WHITE);
-    bar(0, footerY, screenWidth, screenHeight);
-
-    // Garis batas atas footer (hitam)
-    setcolor(BLACK);
-    line(0, footerY, screenWidth, footerY);  
-
-    // Teks di tengah dengan perhitungan posisi yang lebih akurat
-    setbkcolor(WHITE);
-    setcolor(BLACK);
-    settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 1);  // Ukuran teks kembali ke awal
-    int textWidth = textwidth("Space Invaders | Kelompok 3 | Proyek 2025");
-    int textHeight = textheight("A");  // Untuk memastikan teks sejajar vertikal
-    outtextxy((screenWidth - textWidth) / 2, footerY + (footerHeight - textHeight) / 2, "Space Invaders | Kelompok 3 | Proyek 2025");
-
-    setbkcolor(BLACK); // Kembalikan latar belakang ke hitam setelah footer ditulis
-}
-
 // Fungsi untuk menggambar tombol
 void drawButton(int x, int y, int width, int height, int color, const char *label) {
     setcolor(WHITE);
@@ -134,20 +108,41 @@ void showMainMenu() {
 
     // Leaderboard tetap di pojok kanan atas
     drawLeaderboard();
-    drawFooter(); 
     handleMainMenu();
 }
 
 // Fungsi untuk menangani input menu utama
 void handleMainMenu() {
+    int centerX = getmaxwidth() / 2 - 200;
+    int startY = getmaxheight() / 2 - 120;
+    int buttonWidth = 400;
+    int buttonHeight = 80;
+    int buttonSpacing = 110;
+
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
             getmouseclick(WM_LBUTTONDOWN, x, y);
-            if (x >= 400 && x <= 800) {
-                if (y >= 300 && y <= 380) startGame();
-                else if (y >= 420 && y <= 500) showGuide();
-                else if (y >= 540 && y <= 620) if (confirmExit()) exit(0);
+
+            // Cek apakah klik di tombol "START"
+            if (x >= centerX && x <= centerX + buttonWidth &&
+                y >= startY && y <= startY + buttonHeight) {
+                startGame();
+                return;
+            }
+
+            // Cek apakah klik di tombol "GUIDE"
+            if (x >= centerX && x <= centerX + buttonWidth &&
+                y >= startY + buttonSpacing && y <= startY + buttonSpacing + buttonHeight) {
+                showGuide();
+                return;
+            }
+
+            // Cek apakah klik di tombol "EXIT"
+            if (x >= centerX && x <= centerX + buttonWidth &&
+                y >= startY + 2 * buttonSpacing && y <= startY + 2 * buttonSpacing + buttonHeight) {
+                if (confirmExit()) exit(0);
+                return;
             }
         }
     }

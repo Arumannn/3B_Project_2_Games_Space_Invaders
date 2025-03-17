@@ -4,6 +4,7 @@
 
 
 extern int ufoActive;
+extern int ufoBulletX, ufoBulletY, ufoBulletActive;
 
 
 

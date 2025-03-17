@@ -15,7 +15,7 @@ void startGame() {
     initwindow(screenWidth, screenHeight, "Space Invaders");
     cleardevice();
 
-    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80};
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80, 3};  // Inisialisasi nyawa
     Alien aliens[MAX_ALIENS];
     int alienDir = 1;
     int alienDirLast = 1;
@@ -26,20 +26,17 @@ void startGame() {
     int gameOver = 0;
     int page = 0;
 
-    // Target 30 FPS (33.33ms per frame)
     const double TARGET_FPS = 30.0;
-    const double FRAME_TIME = 1000.0 / TARGET_FPS; // 33.33ms dalam milidetik
+    const double FRAME_TIME = 1000.0 / TARGET_FPS;
     LARGE_INTEGER frequency, lastTime;
-    QueryPerformanceFrequency(&frequency); // Dapatkan frekuensi timer
-    QueryPerformanceCounter(&lastTime);    // Waktu mulai
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&lastTime);
 
     while (!gameOver) {
-        // Catet waktu sekarang
         LARGE_INTEGER currentTime;
         QueryPerformanceCounter(&currentTime);
         double elapsedMs = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;
 
-        // Jalankan frame kalo waktunya udah cukup
         if (elapsedMs >= FRAME_TIME) {
             if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
                 break;
@@ -55,6 +52,12 @@ void startGame() {
                 }
             }
 
+
+            updateExplosions();
+
+             // Render
+            cleardevice();
+            drawExplosions();
             SpaceshipMove(&SpaceShip_P);
             updateBullets();
             checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
@@ -65,16 +68,19 @@ void startGame() {
             drawAlienExplosions();
             UFO(aliens);
             barBarrier();
+            
+
+            // Panggil fungsi untuk memeriksa tabrakan dengan peluru alien/UFO
+            checkPlayerCollisions(&SpaceShip_P);
+
             setvisualpage(page);
             page = 1 - page;
 
-            // Update waktu terakhir
             lastTime = currentTime;
         } else {
-            // Kalo belum cukup waktunya, delay sisanya
             double sleepTime = FRAME_TIME - elapsedMs;
             if (sleepTime > 0) {
-                Sleep((DWORD)sleepTime); // Delay sisanya
+                Sleep((DWORD)sleepTime);
             }
         }
     }

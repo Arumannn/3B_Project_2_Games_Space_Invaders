@@ -21,7 +21,6 @@ typedef struct {
 } AlienBullet;
 
 extern int BLOCK_SIZE;
-extern int numEnemyBullets;
 extern AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 
 void initAliens(Alien aliens[]);

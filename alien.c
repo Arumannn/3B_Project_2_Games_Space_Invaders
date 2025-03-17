@@ -6,7 +6,6 @@
 #include <time.h>
 #include <math.h>
 
-
 // Definisi variabel global
 int BLOCK_SIZE;
 AlienBullet alienBullets[MAX_ALIEN_BULLETS];
@@ -142,7 +141,6 @@ void drawAliens(Alien aliens[]) {
             setcolor(RED);
             setfillstyle(SOLID_FILL, RED);
             bar(alienBullets[i].x, alienBullets[i].y, alienBullets[i].x + BLOCK_SIZE / 2, alienBullets[i].y + BLOCK_SIZE);
-            numEnemyBullets++;
         }
     }
 }
@@ -159,7 +157,6 @@ void updateAliens(Alien aliens[], int *alienDirFirst, int *alienDirRest) {
             alienBullets[i].y += BLOCK_SIZE / 2;
             if (alienBullets[i].y > getmaxy()) {
                 alienBullets[i].active = 0;
-                numEnemyBullets--;
             }
         }
     }
@@ -243,7 +240,6 @@ void checkAlienCollisions(Alien aliens[], Bullet bullets[], int bulletCount) {
                     int bulletRight = bullets[j].x + BLOCK_SIZE / 4;
                     int bulletTop = bullets[j].y;
                     int bulletBottom = bullets[j].y + BLOCK_SIZE;
-                    
 
                     if (bulletRight > alienLeft && bulletLeft < alienRight &&
                         bulletBottom > alienTop && bulletTop < alienBottom) {

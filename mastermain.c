@@ -8,31 +8,15 @@
 #include "ufo.h"
 #include "barrier.h"
 
-int numEnemyBullets = 0; // Definisi
-
-int countActiveEnemyBullets(Bullet enemyBullets[], int maxBullets) {
-    int count = 0;
-    for (int i = 0; i < maxBullets; i++) {
-        if (enemyBullets[i].active) {
-            count++;
-        }
-    }
-    return count;
-}
-
-
 void startGame() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     
     initwindow(screenWidth, screenHeight, "Space Invaders");
     cleardevice();
-    
-    Player SpaceShip_P = {getmaxx() / 2, getmaxy() - 80, 3};
+
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80};
     Alien aliens[MAX_ALIENS];
-    Bullet alienBullets[MAX_ALIEN_BULLETS] = {0};
-    
-    
     int alienDir = 1;
     int alienDirLast = 1;
     initAliens(aliens);
@@ -73,8 +57,7 @@ void startGame() {
 
             SpaceshipMove(&SpaceShip_P);
             updateBullets();
-            checkAlienCollisions(aliens, bullets_player, &MAX_BULLETS);
-            CheckCollision(&SpaceShip_P, &alienBullets);
+            checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
             updateAliens(aliens, &alienDir, &alienDirLast);
             DrawSpaceShip(&SpaceShip_P);
             drawBullets();

@@ -1,12 +1,9 @@
 #include <graphics.h>
-#include <math.h>
-#include "alien.h"
 #include "mainsprite.h"
 
 // Definisi variabel global
 Bullet bullets_player[MAX_BULLETS];
 int shootCooldown = 0;
-
 
 void DrawSpaceShip(Player *player) {
     int x = player->X_Player;
@@ -109,66 +106,4 @@ void drawBullets() {
                 bullets_player[i].x + BLOCK_SIZE / 4, bullets_player[i].y + BLOCK_SIZE);
         }
     }
-}
-
-void drawExplosion(int x, int y, int frame) {
-    int maxRadius = BLOCK_SIZE; // Ukuran maksimum ledakan
-    int currentRadius = frame * (maxRadius / 5); // Ledakan berkembang tiap frame
-
-    // Efek percikan
-    setcolor(YELLOW);
-    for (int i = 0; i < 8; i++) {
-        float angle = i * (3.14159265 / 4); // 8 arah percikan
-        int dx = cos(angle) * currentRadius;
-        int dy = sin(angle) * currentRadius;
-        line(x, y, x + dx, y + dy);
-    }
-
-    // Efek fragmen alien
-    setcolor(WHITE);
-    for (int i = 0; i < 4; i++) {
-        int fragX = x + (rand() % (2 * currentRadius)) - currentRadius;
-        int fragY = y + (rand() % (2 * currentRadius)) - currentRadius;
-        fillellipse(fragX, fragY, 2, 2); // Fragmen kecil
-    }
-
-    // Gelombang kejut
-    if (frame < 3) {
-        setcolor(LIGHTGRAY);
-        circle(x, y, currentRadius);
-    }
-}
-
-
-
-void CheckCollision(Player *player, AlienBullet alienBullets[]) {
-    if (player->Health <= 0) return;
-
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
-        if (alienBullets[i].active) {
-            if (alienBullets[i].x >= player->X_Player - 20 &&
-                alienBullets[i].x <= player->X_Player + 20 &&
-                alienBullets[i].y >= player->Y_Player &&
-                alienBullets[i].y <= player->Y_Player + 40) {
-                
-                alienBullets[i].active = 0;
-                player->Health--;
-                
-                if (player->Health > 0) {
-                    resetPlayer(player);
-                }
-            }
-        }
-    }
-}
-
-void resetPlayer(Player *player){
-    player->X_Player = getmaxx() / 2;    
-    player->Y_Player = getmaxy() - 80;
-    
-    if (player->Health > 0) {
-        player->Health -= 1;
-    }
-    SpaceshipMove(player);
-
 }

@@ -6,6 +6,7 @@
 #include <time.h>
 #include <math.h>
 
+
 // Definisi variabel global
 int BLOCK_SIZE;
 AlienBullet alienBullets[MAX_ALIEN_BULLETS];

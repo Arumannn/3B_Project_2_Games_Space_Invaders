@@ -73,8 +73,8 @@ void startGame() {
 
             SpaceshipMove(&SpaceShip_P);
             updateBullets();
-            checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
-            CheckCollision(&SpaceShip_P, alienBullets, &numEnemyBullets);
+            checkAlienCollisions(aliens, bullets_player, &MAX_BULLETS);
+            CheckCollision(&SpaceShip_P, &alienBullets);
             updateAliens(aliens, &alienDir, &alienDirLast);
             DrawSpaceShip(&SpaceShip_P);
             drawBullets();

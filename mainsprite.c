@@ -1,4 +1,5 @@
 #include <graphics.h>
+#include <math.h>
 #include "alien.h"
 #include "mainsprite.h"
 
@@ -140,25 +141,22 @@ void drawExplosion(int x, int y, int frame) {
 
 
 
-void CheckCollision(Player *player, Bullet *enemyBullets, int *numBullets) {
-    for (int i = 0; i < *numBullets; i++) {
-        if (enemyBullets[i].active && enemyBullets[i].x >= player->X_Player - 20 && 
-            enemyBullets[i].x <= player->X_Player + 20 && 
-            enemyBullets[i].y >= player->Y_Player && enemyBullets[i].y <= player->Y_Player + 40) {
+void CheckCollision(Player *player, AlienBullet alienBullets[]) {
+    if (player->Health <= 0) return;
+
+    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+        if (alienBullets[i].active) {
+            if (alienBullets[i].x >= player->X_Player - 20 &&
+                alienBullets[i].x <= player->X_Player + 20 &&
+                alienBullets[i].y >= player->Y_Player &&
+                alienBullets[i].y <= player->Y_Player + 40) {
                 
-            int explosionFrame = 0; // Mulai dari frame 0
-
-            player->Health--;
-            enemyBullets[i].active = 0;
-            while (explosionFrame < 5) { // Animasi 5 frame
-                drawExplosion(player->X_Player, player->Y_Player, explosionFrame);
-                delay(50); // Tunggu sedikit agar animasi terlihat
-                explosionFrame++; // Naikkan frame
-}
-            resetPlayer(player);
-
-            if (player->Health <= 0) {
-                printf("Game Over!\n");
+                alienBullets[i].active = 0;
+                player->Health--;
+                
+                if (player->Health > 0) {
+                    resetPlayer(player);
+                }
             }
         }
     }

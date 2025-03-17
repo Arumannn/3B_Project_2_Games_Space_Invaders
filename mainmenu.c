@@ -103,7 +103,7 @@ void handleMainMenu() {
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) { // Deteksi klik mouse
             int x, y;
-            getmouseclick(WM_LBUTTONDOWN);
+            getmouseclick(WM_LBUTTONDOWN, x, y); // Ambil koordinat klik
 
             if (x >= centerX && x <= centerX + btn_width) {
                 if (y >= startY && y <= startY + btn_height) { // "INPUT NAMA"
@@ -118,6 +118,7 @@ void handleMainMenu() {
                     exit(0);
                 }
             }
+            clearmouseclick(WM_LBUTTONDOWN); // Bersihkan event klik agar tidak terdeteksi berulang
         }
 
         if (kbhit()) { // Navigasi dengan keyboard

@@ -103,7 +103,7 @@ void handleMainMenu() {
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) { // Deteksi klik mouse
             int x, y;
-            getmouseclick(WM_LBUTTONDOWN);
+            getmouseclick(WM_LBUTTONDOWN, x, y);
 
             if (x >= centerX && x <= centerX + btn_width) {
                 if (y >= startY && y <= startY + btn_height) { // "INPUT NAMA"

@@ -2,7 +2,7 @@
 #include <graphics.h>
 #include <stdio.h>
 
-static int score = 0;
+int score = 0;
 
 void initScore() {
     score = 0;

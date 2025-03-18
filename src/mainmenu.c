@@ -156,7 +156,7 @@ void handleMainMenu() {
 void showGuide() {
     drawStars();
     drawText(getmaxwidth() / 2, 100, "GUIDE", 5, WHITE);
-    drawText(getmaxwidth() / 2, 200, "Gunakan panah untuk bergerak", 3, WHITE);
+    drawText(getmaxwidth() / 2, 200, "Gunakan Tombol A dan D atau panah untuk bergerak", 3, WHITE);
     drawText(getmaxwidth() / 2, 250, "Tekan spasi untuk menembak", 3, WHITE);
     drawText(getmaxwidth() / 2, 300, "Hindari tembakan musuh", 3, WHITE);
     drawButton(getmaxwidth() / 2 - 100, 400, 200, 50, RED, "BACK");

@@ -8,6 +8,10 @@
 #include "score.h"
 #include "ufo.h"
 #include "barrier.h"
+
+// Pastikan untuk menyertakan library untuk suara
+#pragma comment(lib, "winmm.lib") // Untuk menggunakan PlaySound
+
 void startGame() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -30,6 +34,9 @@ void startGame() {
     QueryPerformanceFrequency(&frequency);
     QueryPerformanceCounter(&lastTime);
 
+    // Mulai musik latar saat game dimulai
+    PlaySound(TEXT("sound/background_music.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+
     while (!gameOver) {
         LARGE_INTEGER currentTime;
         QueryPerformanceCounter(&currentTime);
@@ -37,6 +44,8 @@ void startGame() {
 
         if (elapsedMs >= FRAME_TIME) {
             if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+                // Hentikan musik saat keluar dari game
+                PlaySound(NULL, 0, 0);
                 break;
             }
             setactivepage(page);
@@ -71,6 +80,8 @@ void startGame() {
             }
         }
     }
+    // Hentikan musik saat game selesai
+    PlaySound(NULL, 0, 0);
     closegraph();
 }
 

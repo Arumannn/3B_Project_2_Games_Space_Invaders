@@ -9,10 +9,6 @@
 #include "ufo.h"
 #include "mainmenu.h"
 
-
-
-char playerName[30] = "";
-
 // Fungsi untuk menggambar teks di tengah
 void drawText(int x, int y, const char* text, int size, int color) {
     setcolor(color);
@@ -47,104 +43,160 @@ void drawStars() {
     }
 }
 
-// Fungsi untuk menampilkan leaderboard
+// Fungsi Leaderboard
 void drawLeaderboard() {
-    int x = getmaxwidth() - 320;
-    int y = 100;
-    rectangle(x, y, x + 300, y + 200);
+    int x = getmaxwidth() - 320; // Geser lebih ke kiri agar seimbang
+    int y = 150;  
+    int width = 280; // Lebarkan tabel
+    int height = 150; 
+
+    setcolor(GREEN);
+    rectangle(x, y, x + width, y + height); // Kotak utama leaderboard
+
+    // Garis horizontal untuk memisahkan header
+    line(x, y + 30, x + width, y + 30);
+
+    // Garis vertikal pemisah kolom (disesuaikan agar lebih proporsional)
+    line(x + 50, y, x + 50, y + height);  // Kolom "No"
+    line(x + 180, y, x + 180, y + height); // Kolom "Player" (dilebarkan sedikit)
+
+    // Header leaderboard (digeser sedikit ke bawah agar tengah)
+    drawText(x + 25, y + 8, "NO", 2, WHITE);
+    drawText(x + 115, y + 8, "PLAYER", 2, WHITE);
+    drawText(x + 210, y + 8, "SCORE", 2, WHITE);
+
+    // Data leaderboard
     char names[3][30] = {"Arman", "Nazriel", "Rina"};
     int scores[3] = {2000, 1500, 1000};
+
     for (int i = 0; i < 3; i++) {
-        char scoreText[50];
-        sprintf(scoreText, "%d. %s - %d", i + 1, names[i], scores[i]);
-        drawText(x + 150, y + 30 + (i * 40), scoreText, 2, WHITE);
+        char numText[5], scoreText[10];
+        sprintf(numText, "%d", i + 1);
+        sprintf(scoreText, "%d", scores[i]);
+
+        // Posisi teks lebih direnggangkan agar lebih rapi
+        drawText(x + 20, y + 45 + (i * 35), numText, 2, WHITE); // No
+        drawText(x + 100, y + 45 + (i * 35), names[i], 2, WHITE); // Player
+        drawText(x + 225, y + 45 + (i * 35), scoreText, 2, WHITE); // Score
     }
 }
 
-// Fungsi untuk menampilkan menu utama dalam fullscreen
+// Fungsi untuk menampilkan menu utama
 void showMainMenu() {
-    int screenWidth = GetSystemMetrics(SM_CXSCREEN); // Ambil resolusi layar penuh
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-
-    initwindow(screenWidth, screenHeight, "Space Invaders"); // Fullscreen
-
-    setviewport(0, 0, screenWidth, screenHeight, 1);
+    
+    initwindow(screenWidth, screenHeight, "Space Invaders");
     cleardevice();
     drawStars();
-    
-    drawText(screenWidth / 2, 100, "SPACE INVADERS", 8, WHITE);
-    
-    int btn_width = 400, btn_height = 80;
-    int centerX = screenWidth / 2 - btn_width / 2;
-    int startY = screenHeight / 2 - 160;
-    int spacing = 30;
 
-    drawButton(centerX, startY, btn_width, btn_height, LIGHTBLUE, "INPUT NAMA");
-    drawButton(centerX, startY + btn_height + spacing, btn_width, btn_height, LIGHTGREEN, "START");
-    drawButton(centerX, startY + (btn_height + spacing) * 2, btn_width, btn_height, YELLOW, "GUIDE");
-    drawButton(centerX, startY + (btn_height + spacing) * 3, btn_width, btn_height, WHITE, "EXIT");
+    // Judul tetap di posisinya
+    int titleX = getmaxwidth() / 2;
+    int titleY = 120; // Sedikit lebih naik agar terlihat lebih seimbang
+    drawText(titleX, titleY, "SPACE INVADERS", 8, WHITE);
 
+    // Posisi tombol lebih dinaikkan agar dekat dengan judul
+    int centerX = getmaxwidth() / 2 - 200;
+    int startY = getmaxheight() / 2 - 120; // Sebelumnya -80, sekarang lebih naik
+    int buttonWidth = 400;
+    int buttonHeight = 80;
+    int buttonSpacing = 110; // Jarak antar tombol lebih proporsional
+
+    drawButton(centerX, startY, buttonWidth, buttonHeight, LIGHTGREEN, "START");
+    drawButton(centerX, startY + buttonSpacing, buttonWidth, buttonHeight, YELLOW, "GUIDE");
+    drawButton(centerX, startY + (buttonSpacing * 2), buttonWidth, buttonHeight, WHITE, "EXIT");
+
+    // Leaderboard tetap di pojok kanan atas
     drawLeaderboard();
+    handleMainMenu();
 }
-
 
 // Fungsi untuk menangani input menu utama
 void handleMainMenu() {
-    int screenWidth = getmaxwidth();
-    int screenHeight = getmaxheight();
-
-    int btn_width = 400, btn_height = 80;
-    int centerX = screenWidth / 2 - btn_width / 2;
-    int startY = screenHeight / 2 - 160;
-    int spacing = 30;
-
-    int choice = -1; // Tidak ada pilihan awal
+    int centerX = getmaxwidth() / 2 - 200;
+    int startY = getmaxheight() / 2 - 120;
+    int buttonWidth = 400;
+    int buttonHeight = 80;
+    int buttonSpacing = 110;
 
     while (1) {
-        if (ismouseclick(WM_LBUTTONDOWN)) { // Deteksi klik mouse
+        if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
-            getmouseclick(WM_LBUTTONDOWN, x, y); // Ambil koordinat klik
+            getmouseclick(WM_LBUTTONDOWN, x, y);
 
-            if (x >= centerX && x <= centerX + btn_width) {
-                if (y >= startY && y <= startY + btn_height) { // "INPUT NAMA"
-                    printf("Input Nama dipilih\n");
-                } else if (y >= startY + btn_height + spacing && y <= startY + 2 * (btn_height + spacing)) { // "START"
-                    startGame(); // Masuk ke gameplay TANPA closegraph()
-                    return;
-                } else if (y >= startY + 2 * (btn_height + spacing) && y <= startY + 3 * (btn_height + spacing)) { // "GUIDE"
-                    printf("Guide dipilih\n");
-                } else if (y >= startY + 3 * (btn_height + spacing) && y <= startY + 4 * (btn_height + spacing)) { // "EXIT"
-                    closegraph();
-                    exit(0);
-                }
-            }
-            clearmouseclick(WM_LBUTTONDOWN); // Bersihkan event klik agar tidak terdeteksi berulang
-        }
-
-        if (kbhit()) { // Navigasi dengan keyboard
-            char key = getch();
-            if (key == 13 && choice != -1) { // Enter untuk memilih
-                if (choice == 1) {
-                    startGame(); // Masuk ke gameplay
-                    return;
-                } else if (choice == 3) {
-                    closegraph();
-                    exit(0);
-                }
-            } else if (key == 72) { // Panah atas
-                choice = (choice > 0) ? choice - 1 : 3;
-            } else if (key == 80) { // Panah bawah
-                choice = (choice < 3) ? choice + 1 : 0;
+            // Cek apakah klik di tombol "START"
+            if (x >= centerX && x <= centerX + buttonWidth &&
+                y >= startY && y <= startY + buttonHeight) {
+                startGame();
+                return;
             }
 
-            showMainMenu();
-            setcolor(RED);
-            rectangle(centerX, startY + (btn_height + spacing) * choice, 
-                      centerX + btn_width, startY + (btn_height + spacing) * choice + btn_height);
+            // Cek apakah klik di tombol "GUIDE"
+            if (x >= centerX && x <= centerX + buttonWidth &&
+                y >= startY + buttonSpacing && y <= startY + buttonSpacing + buttonHeight) {
+                showGuide();
+                return;
+            }
+
+            // Cek apakah klik di tombol "EXIT"
+            if (x >= centerX && x <= centerX + buttonWidth &&
+                y >= startY + 2 * buttonSpacing && y <= startY + 2 * buttonSpacing + buttonHeight) {
+                    if (confirmExit() == 1) {
+                        exit(0);
+                    } else {
+                        showMainMenu();
+                    }
+                return;
+            }
         }
     }
 }
 
+// Fungsi untuk menampilkan aturan game
+void showGuide() {
+    drawStars();
+    drawText(getmaxwidth() / 2, 100, "GUIDE", 5, WHITE);
+    drawText(getmaxwidth() / 2, 200, "Gunakan panah untuk bergerak", 3, WHITE);
+    drawText(getmaxwidth() / 2, 250, "Tekan spasi untuk menembak", 3, WHITE);
+    drawText(getmaxwidth() / 2, 300, "Hindari tembakan musuh", 3, WHITE);
+    drawButton(getmaxwidth() / 2 - 100, 400, 200, 50, RED, "BACK");
+    while (1) {
+        if (ismouseclick(WM_LBUTTONDOWN)) {
+            int x, y;
+            getmouseclick(WM_LBUTTONDOWN, x, y);
+            if (x >= getmaxwidth() / 2 - 100 && x <= getmaxwidth() / 2 + 100 && y >= 400 && y <= 450) {
+                showMainMenu();
+                return;
+            }
+        }
+    }
+}
 
+// Fungsi untuk EXIT
+int confirmExit() {
+    cleardevice();
+    drawStars();
+    drawText(getmaxwidth() / 2, 200, "Anda yakin ingin keluar?", 3, WHITE);
+    drawButton(getmaxwidth() / 2 - 120, 300, 100, 50, RED, "YES");
+    drawButton(getmaxwidth() / 2 + 20, 300, 100, 50, GREEN, "NO");
 
+    while (1) {
+        if (ismouseclick(WM_LBUTTONDOWN)) {
+            int x, y;
+            getmouseclick(WM_LBUTTONDOWN, x, y);
+            clearmouseclick(WM_LBUTTONDOWN);
 
+            // Jika klik tombol YES (Keluar dari game)
+            if (x >= getmaxwidth() / 2 - 120 && x <= getmaxwidth() / 2 - 20 && y >= 300 && y <= 350) {
+                closegraph(); // Menutup jendela grafis
+                return 1;      // Kembali ke handleMainMenu untuk exit(0)
+            }
+
+            // Jika klik tombol NO (Kembali ke Main Menu)
+            if (x >= getmaxwidth() / 2 + 20 && x <= getmaxwidth() / 2 + 120 && y >= 300 && y <= 350) {
+                cleardevice(); // Bersihkan layar sebelum kembali
+                return 0;      // Kembali ke main menu
+            }
+        }
+    }
+}

@@ -6,10 +6,17 @@
           "type": "shell",
           "command": "g++",
           "args": [
-              "${file}", "mainmenu.c", "mainsprite.c", "alien.c", "ufo.c", "score.c", "barrier.c",
-              "-o", "${fileDirname}/output.exe",
-              "-lbgi", "-lgdi32", "-lcomdlg32", "-luuid", "-loleaut32", "-lole32"
-          ],
+                "mastermain.c",
+                "src/mainmenu.c",
+                "src/mainsprite.c",
+                "src/alien.c",
+                "src/ufo.c",
+                "src/score.c",
+                "src/barrier.c",
+                "-o", "${workspaceFolder}/output.exe",
+                "-I${workspaceFolder}/include",
+                "-lbgi", "-lgdi32", "-lcomdlg32", "-luuid", "-loleaut32", "-lole32"
+                ],
           "group": {
               "kind": "build",
               "isDefault": true

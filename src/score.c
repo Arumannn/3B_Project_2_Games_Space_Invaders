@@ -25,9 +25,9 @@ int getScore() {
 
 // Fungsi untuk menambah skor berdasarkan objek yang dihancurkan
 void addAlienScore() {
-    updateScore(100);
+    updateScore(10);
 }
 
 void addUFOScore() {
-    updateScore(10000);
+    updateScore(100);
 }

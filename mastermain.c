@@ -7,7 +7,6 @@
 #include "score.h"
 #include "ufo.h"
 #include "barrier.h"
-#include "gameover.h"
 
 void startGame() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -90,18 +89,5 @@ int main() {
     handleMainMenu();  // Memastikan menu utama bisa berpindah ke game
 
     closegraph();
-    return 0;
-}
-
-int main() {
-    int score = 3000;  // Skor contoh, bisa berubah sesuai gameplay
-
-    if (score < 5000) {
-        printf("Skor kurang dari 5000, Game Over!\n");
-        showGameOver(score);
-    } else {
-        printf("Anda menang! Skor cukup tinggi.\n");
-    }
-
     return 0;
 }

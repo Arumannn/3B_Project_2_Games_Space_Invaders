@@ -13,6 +13,7 @@
         "src/ufo.c",
         "src/score.c",
         "src/barrier.c",
+        "src/gameover.c",
         "-o",
         "${workspaceFolder}/output.exe",
         "-I${workspaceFolder}/include",

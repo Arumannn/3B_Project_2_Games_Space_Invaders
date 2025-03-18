@@ -9,6 +9,18 @@
 #include "ufo.h"
 #include "mainmenu.h"
 
+void mainMenu() {
+    initwindow(getmaxwidth(), getmaxheight(), "Main Menu");
+    cleardevice();
+    
+    setcolor(WHITE);
+    settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 4);
+    outtextxy(getmaxwidth() / 2 - 100, 100, (char *)"MAIN MENU");
+
+    getch();
+    closegraph();
+}
+
 // Fungsi untuk menggambar teks di tengah
 void drawText(int x, int y, const char* text, int size, int color) {
     setcolor(color);

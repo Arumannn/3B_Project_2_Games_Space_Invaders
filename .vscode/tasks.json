@@ -1,28 +1,35 @@
 {
   "version": "2.0.0",
   "tasks": [
-      {
-          "label": "Build and Run C++ with graphics.h",
-          "type": "shell",
-          "command": "g++",
-          "args": [
-                "mastermain.c",
-                "src/mainmenu.c",
-                "src/mainsprite.c",
-                "src/alien.c",
-                "src/ufo.c",
-                "src/score.c",
-                "src/barrier.c",
-                "-o", "${workspaceFolder}/output.exe",
-                "-I${workspaceFolder}/include",
-                "-lbgi", "-lgdi32", "-lcomdlg32", "-luuid", "-loleaut32", "-lole32"
-                ],
-          "group": {
-              "kind": "build",
-              "isDefault": true
-          },
-          "problemMatcher": ["$gcc"],
-          "detail": "Compile C++ with graphics.h in VS Code"
-      }
+    {
+      "label": "Build and Run C++ with graphics.h",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "mastermain.c",
+        "src/mainmenu.c",
+        "src/mainsprite.c",
+        "src/alien.c",
+        "src/ufo.c",
+        "src/score.c",
+        "src/barrier.c",
+        "-o",
+        "${workspaceFolder}/output.exe",
+        "-I${workspaceFolder}/include",
+        "-lbgi",
+        "-lgdi32",
+        "-lcomdlg32",
+        "-luuid",
+        "-loleaut32",
+        "-lole32",
+        "-lwinmm" // Tambahkan library ini untuk suara
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"],
+      "detail": "Compile C++ with graphics.h in VS Code"
+    }
   ]
 }

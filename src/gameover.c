@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "mainmenu.h" 
+#include "mainmenu.h"
 
 #define MAX_NAME_LENGTH 20
 
@@ -53,13 +53,25 @@ void gameOverScreen() {
     bar(backButtonX1, backButtonY1, backButtonX2, backButtonY2);
     
     setcolor(WHITE);
+    setbkcolor(RED);
     outtextxy(screenWidth / 2 - 30, backButtonY1 + 15, (char *) "BACK");
+    setbkcolor(BLACK);
 
     char playerName[MAX_NAME_LENGTH + 1] = "";
     int index = 0;
     char ch;
+    int lastIndex = -1; // Menyimpan panjang teks sebelumnya untuk mencegah redraw terus-menerus
 
     while (1) {
+        if (index != lastIndex) { // Gambar ulang hanya jika teks berubah
+            setfillstyle(SOLID_FILL, BLACK);
+            bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);
+            
+            setcolor(WHITE);
+            outtextxy(inputBoxX1 + 10, inputBoxY1 + 10, playerName);
+            lastIndex = index;
+        }
+
         if (kbhit()) {
             ch = getch();
 
@@ -80,13 +92,6 @@ void gameOverScreen() {
             }
         }
 
-        // Perbarui isi kotak input tanpa flicker
-        setfillstyle(SOLID_FILL, BLACK);
-        bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);
-
-        setcolor(WHITE);
-        outtextxy(inputBoxX1 + 10, inputBoxY1 + 10, playerName);
-
         // Cek apakah tombol BACK ditekan
         if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
@@ -95,7 +100,7 @@ void gameOverScreen() {
             // Jika tombol BACK ditekan, kembali ke main menu
             if (x >= backButtonX1 && x <= backButtonX2 && y >= backButtonY1 && y <= backButtonY2) {
                 closegraph();
-                mainMenu();
+                showMainMenu();
                 return;
             }
         }
@@ -103,5 +108,3 @@ void gameOverScreen() {
     
     closegraph();
 }
-
-

@@ -56,26 +56,27 @@ void drawStars() {
 }
 
 // Fungsi Leaderboard
-void drawLeaderboard() {
-    int x = getmaxwidth() - 320; // Geser lebih ke kiri agar seimbang
-    int y = 150;  
-    int width = 280; // Lebarkan tabel
-    int height = 150; 
+void drawLeaderboard(int yOffset) {
+    int x = getmaxwidth() / 2 + 50; // Geser leaderboard agar sisi kanan simetris dengan tombol
+    int y = yOffset; // Posisi leaderboard berdasarkan parameter
+
+    int width = 350; 
+    int height = 200;
 
     setcolor(GREEN);
     rectangle(x, y, x + width, y + height); // Kotak utama leaderboard
 
     // Garis horizontal untuk memisahkan header
-    line(x, y + 30, x + width, y + 30);
+    line(x, y + 30, x + width, y + 30);  // Naikkan pemisah header sedikit
 
-    // Garis vertikal pemisah kolom (disesuaikan agar lebih proporsional)
-    line(x + 50, y, x + 50, y + height);  // Kolom "No"
-    line(x + 180, y, x + 180, y + height); // Kolom "Player" (dilebarkan sedikit)
+    // Garis vertikal pemisah kolom
+    line(x + 60, y, x + 60, y + height);  // Kolom "No"
+    line(x + 220, y, x + 220, y + height); // Kolom "Player"
 
-    // Header leaderboard (digeser sedikit ke bawah agar tengah)
-    drawText(x + 25, y + 8, "NO", 2, WHITE);
-    drawText(x + 115, y + 8, "PLAYER", 2, WHITE);
-    drawText(x + 210, y + 8, "SCORE", 2, WHITE);
+    // Header leaderboard
+    drawText(x + 30, y + 15, "NO", 2.5, WHITE);
+    drawText(x + 140, y + 15, "PLAYER", 2.5, WHITE);
+    drawText(x + 285, y + 15, "SCORE", 2.5, WHITE);
 
     // Data leaderboard
     char names[3][30] = {"Arman", "Nazriel", "Rina"};
@@ -86,10 +87,9 @@ void drawLeaderboard() {
         sprintf(numText, "%d", i + 1);
         sprintf(scoreText, "%d", scores[i]);
 
-        // Posisi teks lebih direnggangkan agar lebih rapi
-        drawText(x + 20, y + 45 + (i * 35), numText, 2, WHITE); // No
-        drawText(x + 100, y + 45 + (i * 35), names[i], 2, WHITE); // Player
-        drawText(x + 225, y + 45 + (i * 35), scoreText, 2, WHITE); // Score
+        drawText(x + 30, y + 45 + (i * 40), numText, 2.5, WHITE); // No
+        drawText(x + 140, y + 45 + (i * 40), names[i], 2.5, WHITE); // Player
+        drawText(x + 285, y + 45 + (i * 40), scoreText, 2.5, WHITE); // Score
     }
 }
 
@@ -107,9 +107,9 @@ void showMainMenu() {
     int titleY = 120; // Sedikit lebih naik agar terlihat lebih seimbang
     drawText(titleX, titleY, "SPACE INVADERS", 8, WHITE);
 
-    // Posisi tombol lebih dinaikkan agar dekat dengan judul
-    int centerX = getmaxwidth() / 2 - 200;
-    int startY = getmaxheight() / 2 - 120; // Sebelumnya -80, sekarang lebih naik
+    // Geser tombol lebih ke kiri
+    int centerX = getmaxwidth() / 2 - 350;  // Geser tombol ke kiri
+    int startY = getmaxheight() / 2 - 120;
     int buttonWidth = 400;
     int buttonHeight = 80;
     int buttonSpacing = 110; // Jarak antar tombol lebih proporsional
@@ -118,8 +118,9 @@ void showMainMenu() {
     drawButton(centerX, startY + buttonSpacing, buttonWidth, buttonHeight, YELLOW, "GUIDE");
     drawButton(centerX, startY + (buttonSpacing * 2), buttonWidth, buttonHeight, WHITE, "EXIT");
 
-    // Leaderboard tetap di pojok kanan atas
-    drawLeaderboard();
+    // Geser leaderboard lebih ke bawah agar seimbang dengan tombol
+    drawLeaderboard(startY + (buttonSpacing * 3) + 50); 
+
     handleMainMenu();
 }
 

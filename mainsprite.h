@@ -34,5 +34,6 @@ void checkPlayerCollisions(Player *player);
 void updateExplosionsPlayer();
 void drawExplosionsPlayer();
 void initExplosionsPlayer();
+void resetPlayer(Player *player);
 
 #endif

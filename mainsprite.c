@@ -127,6 +127,7 @@ void checkPlayerCollisions(Player *player) {
 
             if (bulletRight > playerLeft && bulletLeft < playerRight &&
                 bulletBottom > playerTop && bulletTop < playerBottom) {
+                resetPlayer(player);
                 player->health--;
                 printf("Health Sekarang : %d\n", player->health);
                 alienBullets[i].active = 0;
@@ -161,6 +162,7 @@ void checkPlayerCollisions(Player *player) {
 
         if (bulletRight > playerLeft && bulletLeft < playerRight &&
             bulletBottom > playerTop && bulletTop < playerBottom) {
+            resetPlayer(player);
             player->health--;
             ufoBulletActive = 0;
 
@@ -175,7 +177,6 @@ void checkPlayerCollisions(Player *player) {
             }
 
             if (player->health <= 0) {
-                // Game over logic
             }
         }
     }
@@ -226,3 +227,35 @@ void updateExplosionsPlayer() {
 }
 
 
+void resetPlayer(Player *player) {
+    // **Tambahkan ledakan di posisi terakhir pemain**
+    for (int j = 0; j < MAX_EXPLOSIONS; j++) {
+        if (!playerExplosions[j].active) {
+            playerExplosions[j].x = player->X_Player;
+            playerExplosions[j].y = player->Y_Player;
+            playerExplosions[j].active = 1;
+            playerExplosions[j].lifetime = 0;
+            break;
+        }
+    }
+
+    // **Tampilkan animasi ledakan selama 3 detik**
+    for (int i = 0; i < 90; i++) {  // 90 frame (dengan asumsi 30 FPS)
+        updateExplosionsPlayer();
+        drawExplosionsPlayer();
+        
+    }
+
+    player->X_Player = getmaxx() / 2;
+    player->Y_Player = getmaxy() - 80;
+    
+    
+    // **Kurangi nyawa pemain**
+    player->health--;
+    printf("Respawn! Nyawa tersisa: %d\n", player->health);
+
+    if (player->health <= 0) {
+        printf("Game Over!\n");
+        exit(0);  // **Keluar dari game jika nyawa habis**
+    }
+}

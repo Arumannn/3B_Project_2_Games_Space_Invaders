@@ -20,6 +20,15 @@ typedef struct {
     int active;
 } AlienBullet;
 
+// Struktur dan array untuk ledakan
+typedef struct {
+    int x, y;
+    int active;
+    int lifetime; // Tambahkan penghitung frame
+} Explosion;
+
+extern Explosion alienExplosions[MAX_ALIENS]; // Static agar hanya digunakan di alien.c
+
 extern int BLOCK_SIZE;
 extern AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 

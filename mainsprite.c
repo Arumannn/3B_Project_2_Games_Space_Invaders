@@ -5,6 +5,7 @@
 
 // Definisi variabel global
 Bullet bullets_player[MAX_BULLETS];
+Explosion playerExplosions[MAX_EXPLOSIONS];
 int shootCooldown = 0;
 
 void DrawSpaceShip(Player *player) {
@@ -112,7 +113,6 @@ void drawBullets() {
 
 // Fungsi untuk memeriksa tabrakan dengan peluru alien/UFO
 void checkPlayerCollisions(Player *player) {
-    // Cek tabrakan dengan peluru alien
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {
             int bulletLeft = alienBullets[i].x;
@@ -127,28 +127,27 @@ void checkPlayerCollisions(Player *player) {
 
             if (bulletRight > playerLeft && bulletLeft < playerRight &&
                 bulletBottom > playerTop && bulletTop < playerBottom) {
-                player->health--;  // Kurangi nyawa
-                alienBullets[i].active = 0;  // Nonaktifkan peluru alien
-
-                // Tambahkan ledakan di posisi tabrakan
+                player->health--;
+                printf("Health Sekarang : %d\n", player->health);
+                alienBullets[i].active = 0;
+                
                 for (int j = 0; j < MAX_EXPLOSIONS; j++) {
-                    if (!explosions[j].active) {
-                        explosions[j].x = player->X_Player;
-                        explosions[j].y = player->Y_Player;
-                        explosions[j].active = 1;
-                        explosions[j].frame = 0;
+                    if (!playerExplosions[j].active) {
+                        playerExplosions[j].x = player->X_Player;
+                        playerExplosions[j].y = player->Y_Player;
+                        playerExplosions[j].active = 1;
+                        playerExplosions[j].lifetime = 0;
                         break;
                     }
                 }
 
                 if (player->health <= 0) {
-                    // Game over logic here
+                    // Game over logic
                 }
             }
         }
     }
-
-    // Cek tabrakan dengan peluru UFO
+    
     if (ufoBulletActive) {
         int bulletLeft = ufoBulletX - 3;
         int bulletRight = ufoBulletX + 3;
@@ -162,70 +161,68 @@ void checkPlayerCollisions(Player *player) {
 
         if (bulletRight > playerLeft && bulletLeft < playerRight &&
             bulletBottom > playerTop && bulletTop < playerBottom) {
-            player->health--;  // Kurangi nyawa
-            ufoBulletActive = 0;  // Nonaktifkan peluru UFO
+            player->health--;
+            ufoBulletActive = 0;
 
-            // Tambahkan ledakan di posisi tabrakan
             for (int j = 0; j < MAX_EXPLOSIONS; j++) {
-                if (!explosions[j].active) {
-                    explosions[j].x = player->X_Player;
-                    explosions[j].y = player->Y_Player;
-                    explosions[j].active = 1;
-                    explosions[j].frame = 0;
+                if (!playerExplosions[j].active) {
+                    playerExplosions[j].x = player->X_Player;
+                    playerExplosions[j].y = player->Y_Player;
+                    playerExplosions[j].active = 1;
+                    playerExplosions[j].lifetime = 0;
                     break;
                 }
             }
 
             if (player->health <= 0) {
-                // Game over logic here
+                // Game over logic
             }
         }
     }
 }
 
-
-
-
-
-}
-
-void initExplosions() {
+void initExplosionsPlayer() {
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
-        explosions[i].active = 0;
-        explosions[i].frame = 0;
+        playerExplosions[i].active = 0;
+        playerExplosions[i].lifetime = 0;
     }
 }
 
-void drawExplosions() {
+void drawExplosionsPlayer() {
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
-        if (explosions[i].active) {
-            // Gambar ledakan berdasarkan frame
-            if (explosions[i].frame < 5) {
+        if (playerExplosions[i].active) {
+            if (playerExplosions[i].lifetime < 5) {
                 setcolor(YELLOW);
                 setfillstyle(SOLID_FILL, YELLOW);
-                fillellipse(explosions[i].x, explosions[i].y, 10, 10);
-            } else if (explosions[i].frame < 10) {
-                setcolor(ORANGE);
-                setfillstyle(SOLID_FILL, ORANGE);
-                fillellipse(explosions[i].x, explosions[i].y, 20, 20);
-            } else if (explosions[i].frame < 15) {
+                fillellipse(playerExplosions[i].x, playerExplosions[i].y, 10, 10);
+            } else if (playerExplosions[i].lifetime < 10) {
+                setcolor(YELLOW);
+                setfillstyle(SOLID_FILL, YELLOW);
+                fillellipse(playerExplosions[i].x, playerExplosions[i].y, 20, 20);
+            } else if (playerExplosions[i].lifetime < 15) {
                 setcolor(RED);
                 setfillstyle(SOLID_FILL, RED);
-                fillellipse(explosions[i].x, explosions[i].y, 30, 30);
+                fillellipse(playerExplosions[i].x, playerExplosions[i].y, 30, 30);
             } else {
-                explosions[i].active = 0;  // Nonaktifkan ledakan setelah selesai
+                playerExplosions[i].active = 0;  // **Matikan ledakan setelah animasi selesai**
+                playerExplosions[i].lifetime = 0;
+            }
+            playerExplosions[i].lifetime++;
+        }
+    }
+}
+
+
+void updateExplosionsPlayer() {
+    for (int i = 0; i < MAX_EXPLOSIONS; i++) {
+        if (playerExplosions[i].active) {
+            playerExplosions[i].lifetime++;
+            if (playerExplosions[i].lifetime >= 20) {
+                playerExplosions[i].active = 0;  // **Matikan ledakan setelah 20 frame**
+                playerExplosions[i].lifetime = 0;  // **Reset lifetime agar bisa digunakan lagi**
             }
         }
     }
 }
 
-void updateExplosions() {
-    for (int i = 0; i < MAX_EXPLOSIONS; i++) {
-        if (explosions[i].active) {
-            explosions[i].frame++;  // Tambahkan frame
-            if (explosions[i].frame >= 20) {  // Hentikan animasi setelah 20 frame
-                explosions[i].active = 0;
-            }
-        }
-    }
-}
+

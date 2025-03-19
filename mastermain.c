@@ -22,6 +22,7 @@ void startGame() {
     initAliens(aliens);
     initBullets();
     initScore();
+    initExplosionsPlayer();
 
     int gameOver = 0;
     int page = 0;
@@ -41,36 +42,36 @@ void startGame() {
             if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
                 break;
             }
-
             setactivepage(page);
-            cleardevice();
-            drawScore();
+            cleardevice();         
 
             for (int i = 0; i < MAX_ALIENS; i++) {
+                printf("Alien %d - Active: %d, Y: %d\n", i, aliens[i].active, aliens[i].y);
                 if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
                     gameOver = 1;
+                    printf("Game Over! Alien mencapai batas bawah.\n");
                 }
             }
-
-
-            updateExplosions();
-
-             // Render
-            cleardevice();
-            drawExplosions();
+            
+            
+            // Render
+            drawScore();
             SpaceshipMove(&SpaceShip_P);
             updateBullets();
             checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
             updateAliens(aliens, &alienDir, &alienDirLast);
-            DrawSpaceShip(&SpaceShip_P);
-            drawBullets();
+            updateExplosionsPlayer();
+            
             drawAliens(aliens);
             drawAlienExplosions();
+            drawBullets();
+            DrawSpaceShip(&SpaceShip_P);
             UFO(aliens);
             barBarrier();
             
-
-            // Panggil fungsi untuk memeriksa tabrakan dengan peluru alien/UFO
+            
+            drawExplosionsPlayer();
+           
             checkPlayerCollisions(&SpaceShip_P);
 
             setvisualpage(page);

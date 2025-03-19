@@ -89,6 +89,7 @@ void startGame() {
 
 int main() {
     srand(time(NULL));
+    gameOverScreen();
     showMainMenu();
     handleMainMenu();
 

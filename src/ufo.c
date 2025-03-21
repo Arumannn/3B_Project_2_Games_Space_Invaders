@@ -29,7 +29,7 @@ void shootUFOBullet() {
 
     if (ufoBurstCount >= 3) {  
         ufoBurstCount = 0;
-        ufoShootCooldown = 20; // Jeda antar burst
+        ufoShootCooldown = 80; // Jeda antar burst
         return;
     }
 
@@ -50,7 +50,7 @@ void shootUFOBullet() {
             ufoBullets[i].dx = direction * 2; // Pergerakan horizontal (-2, 0, 2)
 
             ufoBurstCount++;
-            ufoShootCooldown = 5; // Jeda antar peluru dalam satu burst
+            ufoShootCooldown = 10; // Jeda antar peluru dalam satu burst
             break;
         }
     }
@@ -99,7 +99,7 @@ void drawUFOBullets() {
 }
 
 // **Logika UFO (Pastikan Menembak Fireball)**
-void UFO(Alien aliens[]) {
+void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
     if (!ufoActive) return;
 
     ufoX += ufoDirection * ufoSpeed;
@@ -107,7 +107,6 @@ void UFO(Alien aliens[]) {
     
     drawUFO((int)ufoX, (int)ufoY);
     
-    // **Panggil fungsi untuk menembak fireball**
     shootUFOBullet();
     updateUFOBullets();
     drawUFOBullets();

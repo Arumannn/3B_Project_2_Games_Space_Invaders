@@ -3,16 +3,18 @@
 #include "barrier.h"
 #include "alien.h"
 #include "ufo.h"
+#include "mainsprite.h"
 
 #define MAX_BARRIERS 4
 
 extern AlienBullet alienBullets[MAX_ALIEN_BULLETS];
+extern Bullet bullets_player[MAX_BULLETS];
 
 // Fungsi untuk menggambar barrier
 void drawBarrier(Barrier b) {
     if (b.health > 0) {
         // Menentukan warna berdasarkan health
-        int color;
+        int color = WHITE;
         if (b.health > 15 && b.health <= 30 ) color = GREEN;
         else if (b.health > 5 && b.health <=15) color = YELLOW;
         else if (b.health > 1 && b.health <= 5) color = RED;
@@ -36,13 +38,28 @@ void drawBarrier(Barrier b) {
     }
 }
 
-void damageBarrier(Barrier *b) {
-    if (b->health > 0) {
-        b->health--;
-    }
-}
-
 void checkAlienBulletCollision(Barrier barriers[]) {
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        if (bullets_player[i].active) {
+            int bulletLeft = bullets_player[i].x;
+            int bulletTop = bullets_player[i].y;
+            int bulletRight = bullets_player[i].x + 10;
+            int bulletBottom = bullets_player[i].y + 10;
+
+            for (int j = 0; j < MAX_BARRIERS; j++) {
+                int BarrierLeft = barriers[j].x;
+                int BarrierRight = barriers[j].x + 80;
+                int BarrierTop = barriers[j].y - 5;
+                int BarrierBottom = barriers[j].y + 25;
+    
+                    if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
+                        bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
+                        barriers[j].health--;
+                        bullets_player[i].active = 0;
+                        drawBarrier(barriers[j]);
+                    }
+                }
+            }
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {
             int bulletLeft = alienBullets[i].x;
@@ -58,8 +75,9 @@ void checkAlienBulletCollision(Barrier barriers[]) {
     
                     if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
                         bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
-                        damageBarrier(barriers);
+                        barriers[j].health--;
                         alienBullets[i].active = 0;
+                        drawBarrier(barriers[j]);
                     }
                 }
             }
@@ -79,13 +97,15 @@ void checkAlienBulletCollision(Barrier barriers[]) {
         
                     if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
                         bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
-                        damageBarrier(barriers);
+                        barriers[j].health--;
                         ufoBullets[i].active = 0;
+                        drawBarrier(barriers[j]);
                     }
                 }
             }
         }
     }
+}
 }
 
 void barBarrier(){
@@ -95,20 +115,16 @@ void barBarrier(){
     Barrier barriers[MAX_BARRIERS];
     // Posisi barrier berdasarkan ukuran layar
     int startX = (screenWidth / 4) - 110;
-    int startY = screenHeight - 130;
-    int gap = screenWidth / 4; // Jarak antar barrier
-    
+    int startY = screenHeight - 170;
+    int gap = screenWidth / 5; // Jarak antar barrier
 
     for (int i = 0; i < MAX_BARRIERS; i++) {
         barriers[i].x = startX + (i * gap);
         barriers[i].y = startY;
         barriers[i].health = 30;
-    
-    // Menggambar beberapa barrier
-    for (int i = 0; i < MAX_BARRIERS; i++) {
         drawBarrier(barriers[i]);
-         }  
     }
 
     checkAlienBulletCollision(barriers);
+ 
 }       

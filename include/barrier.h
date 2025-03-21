@@ -9,6 +9,5 @@ typedef struct {
 void drawBarrier(Barrier barriers[]);
 void barBarrier();
 void checkAlienBulletCollision(Barrier barriers[]);
-void damageBarrier(Barrier *b);
 
 #endif

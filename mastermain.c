@@ -8,6 +8,7 @@
 #include "score.h"
 #include "ufo.h"
 #include "barrier.h"
+#include "gameover.h"
 
 // Pastikan untuk menyertakan library untuk suara
 #pragma comment(lib, "winmm.lib")
@@ -111,11 +112,16 @@ void startGame() {
             DrawSpaceShip(&SpaceShip_P);
             UFO(aliens); // Panggil UFO dengan array 2D
             
+            if (SpaceShip_P.health <= 0) {
+                gameOverScreen();  
+                return;  
+            }
             drawExplosionsPlayer();
             checkPlayerCollisions(&SpaceShip_P);
             for (int i = 0; i < MAX_BARRIERS; i++) {
                 drawBarrier(barriers[i]);
             }
+
 
             setvisualpage(page);
             page = 1 - page;

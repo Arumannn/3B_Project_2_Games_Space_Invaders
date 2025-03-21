@@ -20,7 +20,7 @@ void startGame() {
     cleardevice();
 
     Player SpaceShip_P = {screenWidth / 2, screenHeight - 80, 3};
-    Alien aliens[MAX_ALIENS];
+    Alien aliens[ALIEN_ROWS][ALIEN_COLS]; // Array 2D untuk aliens
     int alienDir = 1;
     int alienDirLast = 1;
     initAliens(aliens);
@@ -53,15 +53,17 @@ void startGame() {
             setactivepage(page);
             cleardevice();         
 
-            for (int i = 0; i < MAX_ALIENS; i++) {
-               
-                if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
-                    gameOver = 1;
-                    printf("Game Over! Alien mencapai batas bawah.\n");
-                    exit(0);
+            // Periksa apakah ada alien yang mencapai batas bawah (gunakan array 2D)
+            for (int row = 0; row < ALIEN_ROWS; row++) {
+                for (int col = 0; col < ALIEN_COLS; col++) {
+                    if (aliens[row][col].active && aliens[row][col].y >= screenHeight - BLOCK_SIZE) {
+                        gameOver = 1;
+                        printf("Game Over! Alien mencapai batas bawah.\n");
+                        PlaySound(NULL, 0, 0); // Hentikan musik
+                        exit(0);
+                    }
                 }
             }
-            
             
             drawScore();
             SpaceshipMove(&SpaceShip_P);
@@ -75,12 +77,10 @@ void startGame() {
             drawAlienExplosions();
             drawBullets();
             DrawSpaceShip(&SpaceShip_P);
-            UFO(aliens);
+            UFO(aliens); // Panggil UFO dengan array 2D
             barBarrier();
             
-            
             drawExplosionsPlayer();
-           
             checkPlayerCollisions(&SpaceShip_P);
 
             setvisualpage(page);

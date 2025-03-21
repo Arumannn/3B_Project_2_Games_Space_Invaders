@@ -7,6 +7,6 @@ extern int ufoBulletX, ufoBulletY, ufoBulletActive;
 
 void drawUFO(int x, int y);
 void drawBullet(int bx, int by);
-void UFO(Alien aliens[]);
+void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);
 
 #endif

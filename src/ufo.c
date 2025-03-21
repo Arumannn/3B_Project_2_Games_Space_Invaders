@@ -13,6 +13,8 @@ int ufoDirection = 1;
 int ufoActive = 1;  
 int ufoHealth = 20;  // **Pastikan ada nilai awal**
 const int ufoMaxHealth = 20;
+int ufoSpawnTime = 0;  // Waktu acak sebelum spawn
+int ufoRespawnDelay = 0; // Timer untuk delay respawn
 
 // Inisialisasi peluru UFO
 AlienBullet ufoBullets[MAX_UFO_BULLETS];
@@ -100,13 +102,24 @@ void drawUFOBullets() {
 
 // **Logika UFO (Pastikan Menembak Fireball)**
 void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
-    if (!ufoActive) return;
+    if (!ufoActive) {
+        if (ufoRespawnDelay > 0) {
+            ufoRespawnDelay--;
+        } else {
+            // Spawn ulang UFO setelah delay acak
+            ufoX = (rand() % (getmaxx() - 120)) + 60; // Posisi acak di layar
+            ufoY = 100;  
+            ufoHealth = ufoMaxHealth;
+            ufoActive = 1;
+            ufoDirection = (rand() % 2) == 0 ? 1 : -1;  // Random arah
+        }
+        return;
+    }
 
     ufoX += ufoDirection * ufoSpeed;
     if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;
-    
+
     drawUFO((int)ufoX, (int)ufoY);
-    
     shootUFOBullet();
     updateUFOBullets();
     drawUFOBullets();
@@ -117,21 +130,23 @@ void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
             bullets_player[j].x < ufoX + 45 &&
             bullets_player[j].y > ufoY - 40 && 
             bullets_player[j].y < ufoY + 20) {
-            
+
             bullets_player[j].active = 0;
-            if (ufoHealth > 0) {  
-                ufoHealth--;
-            }
+            ufoHealth--;
 
             if (ufoHealth <= 0) {
                 drawExplosion((int)ufoX, (int)ufoY);
                 PlaySound(TEXT("sound/UFO_Died.wav"), NULL, SND_FILENAME | SND_ASYNC);
                 ufoActive = 0;
                 addUFOScore();
+
+                // **Tetapkan waktu respawn acak antara 3-8 detik**
+                ufoRespawnDelay = (rand() % 5 + 3) * 30; // (3-8 detik dalam frame 30FPS)
             }
         }
     }
 }
+
 
 // **Inisialisasi HP UFO secara benar**
 void initUFO() {

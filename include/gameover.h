@@ -5,5 +5,5 @@
 
 void drawStars();
 void gameOverScreen();
-
+void savePlayerScore(const char *name, int score);
 #endif

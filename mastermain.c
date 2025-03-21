@@ -8,7 +8,6 @@
 #include "score.h"
 #include "ufo.h"
 #include "barrier.h"
-#include "gameover.h"
 
 // Pastikan untuk menyertakan library untuk suara
 #pragma comment(lib, "winmm.lib") // Untuk menggunakan PlaySound
@@ -98,12 +97,10 @@ void startGame() {
     // Hentikan musik saat game selesai
     PlaySound(NULL, 0, 0);
     closegraph();
-    
 }
 
 int main() {
     srand(time(NULL));
-    gameOverScreen();
     showMainMenu();
     handleMainMenu(); 
 

@@ -4,15 +4,16 @@
 #include <string.h>
 #include <stdlib.h>
 #include "mainmenu.h"
+#include "score.h"
 
 #define MAX_NAME_LENGTH 20
 
 extern void drawStars(); // Menggunakan fungsi yang sudah ada di mainmenu.c
 
-void savePlayerName(const char *name) {
+void savePlayerScore(const char *name, int score) {
     FILE *file = fopen("leaderboard.txt", "a");
     if (file) {
-        fprintf(file, "%s\n", name);
+        fprintf(file, "%s %d\n", name, score);  // Simpan nama + skor
         fclose(file);
     }
 }
@@ -61,7 +62,8 @@ void gameOverScreen() {
      int index = 0;
      char ch;
      int lastIndex = -1; 
- 
+     int finalScore = getScore();
+     
      while (1) {
          if (index != lastIndex) { // Hanya gambar ulang jika input berubah
              setfillstyle(SOLID_FILL, BLACK);
@@ -74,10 +76,10 @@ void gameOverScreen() {
  
          if (kbhit()) {
              ch = getch();
- 
+             
              // Jika tekan ENTER, simpan nama & kembali ke menu
              if (ch == 13 && index > 0) {
-                 savePlayerName(playerName);
+                 savePlayerScore(playerName, finalScore);
                  closegraph();
                  showMainMenu();
                  return;
@@ -102,7 +104,7 @@ void gameOverScreen() {
              // Jika tombol SUBMIT ditekan, simpan nama & kembali ke menu
              if (x >= submitButtonX1 && x <= submitButtonX2 && y >= submitButtonY1 && y <= submitButtonY2) {
                  if (strlen(playerName) > 0) { // Pastikan nama tidak kosong
-                     savePlayerName(playerName);
+                     savePlayerScore(playerName, finalScore);
                      closegraph();
                      showMainMenu();
                      return;

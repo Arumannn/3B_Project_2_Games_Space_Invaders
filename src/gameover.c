@@ -79,10 +79,16 @@ void gameOverScreen() {
              
              // Jika tekan ENTER, simpan nama & kembali ke menu
              if (ch == 13 && index > 0) {
-                 savePlayerScore(playerName, finalScore);
-                 closegraph();
-                 showMainMenu();
-                 return;
+                savePlayerScore(playerName, finalScore);
+                
+                
+                // Tambahkan delay sebelum kembali ke menu utama
+                Sleep(500);  
+                clearmouseclick(WM_LBUTTONDOWN);  
+                
+                showMainMenu();
+                return;
+                
              } 
              // Jika tekan BACKSPACE, hapus karakter terakhir
              else if (ch == 8 && index > 0) {

@@ -1,7 +1,7 @@
 // mainsprite.h
 #ifndef MAINSPRITE_H
 #define MAINSPRITE_H
-#define MAX_BULLETS 100
+#define MAX_BULLETS 3
 #define MAX_EXPLOSIONS 10  // Batas maksimum ledakan yang bisa ditampilkan
 
 #include <graphics.h>
@@ -35,5 +35,7 @@ void updateExplosionsPlayer();
 void drawExplosionsPlayer();
 void initExplosionsPlayer();
 void resetPlayer(Player *player);
+void drawLives(int lives);
+void drawHeart(int x, int y, int size, int color);
 
 #endif

@@ -8,6 +8,7 @@
 #include "score.h"
 #include "ufo.h"
 #include "barrier.h"
+#include "gameover.h"
 
 // Pastikan untuk menyertakan library untuk suara
 #pragma comment(lib, "winmm.lib")
@@ -104,12 +105,19 @@ void startGame() {
             drawAliens(aliens);
             drawAlienExplosions();
             drawBullets();
+
+            drawLives(SpaceShip_P.health);
             DrawSpaceShip(&SpaceShip_P);
             UFO(aliens);
             barBarrier();
             
             drawExplosionsPlayer();
             checkPlayerCollisions(&SpaceShip_P);
+
+            if (SpaceShip_P.health <= 0) {
+                gameOverScreen();  
+                return;  
+            }
 
             setvisualpage(page);
             page = 1 - page;

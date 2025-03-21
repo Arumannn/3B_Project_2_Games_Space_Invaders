@@ -41,6 +41,7 @@ void DrawSpaceShip(Player *player) {
     setfillstyle(SOLID_FILL, LIGHTBLUE);
     int thruster[] = {x - 5, y + 50, x + 5, y + 50, x, y + 70, x - 5, y + 50};
     fillpoly(4, thruster);
+
 }
 
 void SpaceshipMove(Player *player) {
@@ -105,6 +106,7 @@ void drawBullets() {
     extern int BLOCK_SIZE;
     setcolor(YELLOW);
     setfillstyle(SOLID_FILL, YELLOW);
+    PlaySound(TEXT("sound/Shooting_Audio.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (bullets_player[i].active) {
             bar(bullets_player[i].x - BLOCK_SIZE / 4, bullets_player[i].y, 
@@ -244,11 +246,36 @@ void resetPlayer(Player *player) {
     // **Kurangi nyawa pemain**
     printf("Respawn! Nyawa tersisa: %d\n", player->health);
    
+}
 
-    if (player->health == 0) {
-        printf("Game Over!\n");
-        closegraph();
-        gameOverScreen();
+void drawHeart(int x, int y, int size, int color) {
+    setcolor(color);
+    setfillstyle(SOLID_FILL, color);
 
+    // **Badan utama UFO (Bentuk Hati)**
+    fillellipse(x, y, size, size / 2);
+
+    // **Bagian atas kubah UFO**
+    setcolor(WHITE);
+    setfillstyle(SOLID_FILL, WHITE);
+    fillellipse(x, y - size / 3, size / 2, size / 3);
+
+    // **Lampu di bawah UFO**
+    setcolor(YELLOW);
+    setfillstyle(SOLID_FILL, YELLOW);
+    for (int i = -size / 2; i <= size / 2; i += size / 4) {
+        fillellipse(x + i, y + size / 2, size / 6, size / 6);
+    }
+}
+
+void drawLives(int lives) {
+    int screenWidth = getmaxx();
+    int startX = screenWidth - 50;  // **Pojok kanan atas**
+    int startY = 50;  // **Tinggi tetap**
+    int heartSize = 20;
+    int spacing = 40;  // **Jarak antar heart**
+
+    for (int i = 0; i < lives; i++) {
+        drawHeart(startX - (i * spacing), startY, heartSize, RED);
     }
 }

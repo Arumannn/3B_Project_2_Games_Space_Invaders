@@ -145,6 +145,9 @@ void handleMainMenu() {
     int buttonHeight = 80;
     int buttonSpacing = 110;
 
+    
+    clearmouseclick(WM_LBUTTONDOWN);
+
     while (1) {  // **Loop utama agar menu tetap berjalan**
         showMainMenu();
 
@@ -156,6 +159,8 @@ void handleMainMenu() {
                 // Cek apakah klik di tombol "START"
                 if (x >= centerX && x <= centerX + buttonWidth &&
                     y >= startY && y <= startY + buttonHeight) {
+                    Sleep(500);  
+                    clearmouseclick(WM_LBUTTONDOWN);
                     startGame();
                     break;  // **Keluar dari loop input dan kembali ke Main Menu setelah Game selesai**
                 }

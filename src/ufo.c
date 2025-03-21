@@ -15,7 +15,7 @@ int ufoHealth = 20;  // **Pastikan ada nilai awal**
 const int ufoMaxHealth = 20;
 
 // Inisialisasi peluru UFO
-AlienBullet ufoBullets[MAX_ALIEN_BULLETS];
+AlienBullet ufoBullets[MAX_UFO_BULLETS];
 int ufoBurstCount = 0;
 int ufoShootCooldown = 0;
 
@@ -33,7 +33,7 @@ void shootUFOBullet() {
         return;
     }
 
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
         if (!ufoBullets[i].active) {
             // **Acak posisi tembakan sedikit ke kiri/kanan**
             int offsetX = (rand() % 21) - 10;  // -10 hingga 10
@@ -60,7 +60,7 @@ void shootUFOBullet() {
 #define FIREBALL_SPEED 12  
 
 void updateUFOBullets() {
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
         if (ufoBullets[i].active) {
             ufoBullets[i].y += ufoBullets[i].speed;  // **Gunakan speed acak**
             ufoBullets[i].x += ufoBullets[i].dx;     // **Gunakan arah acak**
@@ -75,7 +75,7 @@ void updateUFOBullets() {
 
 // **Menggambar Fireball UFO**
 void drawUFOBullets() {
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
         if (ufoBullets[i].active) {
             int bx = ufoBullets[i].x;
             int by = ufoBullets[i].y;

@@ -7,6 +7,7 @@
 
 #define MAX_BARRIERS 4
 
+
 extern AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 extern Bullet bullets_player[MAX_BULLETS];
 
@@ -121,10 +122,8 @@ void barBarrier(){
     for (int i = 0; i < MAX_BARRIERS; i++) {
         barriers[i].x = startX + (i * gap);
         barriers[i].y = startY;
-        barriers[i].health = 30;
         drawBarrier(barriers[i]);
     }
 
     checkAlienBulletCollision(barriers);
- 
-}       
+}

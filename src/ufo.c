@@ -126,6 +126,7 @@ void UFO(Alien aliens[]) {
 
             if (ufoHealth <= 0) {
                 drawExplosion((int)ufoX, (int)ufoY);
+                PlaySound(TEXT("sound/UFO_Died.wav"), NULL, SND_FILENAME | SND_ASYNC);
                 ufoActive = 0;
                 addUFOScore();
             }

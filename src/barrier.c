@@ -63,12 +63,13 @@ void checkAlienBulletCollision(Barrier barriers[]) {
                     }
                 }
             }
-            for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
-                if (ufoBullet[i].active) {
-                    int bulletLeft = ufoBulletX - 3;
-                    int bulletRight = ufoBulletX + 3;
-                    int bulletTop = ufoBulletY - 3;
-                    int bulletBottom = ufoBulletY + 3;
+            
+    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
+        if (ufoBullets[i].active) {
+            int bulletLeft = ufoBullets[i].x - 3;
+            int bulletRight = ufoBullets[i].x + 3;
+            int bulletTop = ufoBullets[i].y - 3;
+            int bulletBottom = ufoBullets[i].y + 3;
                 
                 for (int j = 0; j < MAX_BARRIERS; j++) {
                     int BarrierLeft = barriers[j].x;
@@ -79,7 +80,7 @@ void checkAlienBulletCollision(Barrier barriers[]) {
                     if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
                         bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
                         damageBarrier(barriers);
-                        ufoBulletActive = 0;
+                        ufoBullets[i].active = 0;
                     }
                 }
             }

@@ -10,14 +10,52 @@
 #include "barrier.h"
 
 // Pastikan untuk menyertakan library untuk suara
-#pragma comment(lib, "winmm.lib") // Untuk menggunakan PlaySound
+#pragma comment(lib, "winmm.lib")
+
+void *backgroundBuffer;
+int bgSize;
+
+// Fungsi untuk membuat background hanya sekali
+void createCustomBackground() {
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+    
+    setactivepage(1);
+    cleardevice();
+
+    // Gradasi biru ke hitam
+    for (int i = 0; i < screenHeight; i++) {
+        int color = COLOR(0, 0, 255 * i / screenHeight);
+        setcolor(color);
+        line(0, i, screenWidth, i);
+    }
+
+    // Bintang acak
+    for (int i = 0; i < 100; i++) {
+        int x = rand() % screenWidth;
+        int y = rand() % screenHeight;
+        putpixel(x, y, WHITE);
+    }
+
+    // Simpan background ke buffer
+    bgSize = imagesize(0, 0, screenWidth, screenHeight);
+    backgroundBuffer = malloc(bgSize);
+    getimage(0, 0, screenWidth, screenHeight, backgroundBuffer);
+}
+
+// Fungsi untuk menampilkan background dari buffer
+void drawCustomBackground() {
+    putimage(0, 0, backgroundBuffer, COPY_PUT);
+}
 
 void startGame() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     
     initwindow(screenWidth, screenHeight, "Space Invaders");
-    cleardevice();
+
+    // Buat background hanya sekali
+    createCustomBackground();
 
     Player SpaceShip_P = {screenWidth / 2, screenHeight - 80, 3};
     Alien aliens[ALIEN_ROWS][ALIEN_COLS]; // Array 2D untuk aliens
@@ -33,38 +71,31 @@ void startGame() {
     int gameOver = 0;
     int page = 0;
 
-    const double TARGET_FPS = 30.0;
+    const double TARGET_FPS = 30.0;  // FPS target (diturunkan ke 30 FPS agar lebih lambat)
     const double FRAME_TIME = 1000.0 / TARGET_FPS;
-    LARGE_INTEGER frequency, lastTime;
+    
+    LARGE_INTEGER frequency, lastTime, currentTime;
     QueryPerformanceFrequency(&frequency);
     QueryPerformanceCounter(&lastTime);
 
+    PlaySound(TEXT("sound/background_music.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+
     while (!gameOver) {
-        LARGE_INTEGER currentTime;
         QueryPerformanceCounter(&currentTime);
         double elapsedMs = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;
 
         if (elapsedMs >= FRAME_TIME) {
+            lastTime = currentTime; // Update waktu frame terakhir
+
             if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
-                // Hentikan musik saat keluar dari game
                 PlaySound(NULL, 0, 0);
                 break;
             }
+
             setactivepage(page);
             cleardevice();         
+            drawCustomBackground();  
 
-            // Periksa apakah ada alien yang mencapai batas bawah (gunakan array 2D)
-            for (int row = 0; row < ALIEN_ROWS; row++) {
-                for (int col = 0; col < ALIEN_COLS; col++) {
-                    if (aliens[row][col].active && aliens[row][col].y >= screenHeight - BLOCK_SIZE) {
-                        gameOver = 1;
-                        printf("Game Over! Alien mencapai batas bawah.\n");
-                        PlaySound(NULL, 0, 0); // Hentikan musik
-                        exit(0);
-                    }
-                }
-            }
-            
             drawScore();
             SpaceshipMove(&SpaceShip_P);
             updateBullets();
@@ -89,16 +120,20 @@ void startGame() {
             setvisualpage(page);
             page = 1 - page;
 
-            lastTime = currentTime;
-        } else {
-            double sleepTime = FRAME_TIME - elapsedMs;
-            if (sleepTime > 0) {
-                Sleep((DWORD)sleepTime);
+            // **Tambahkan Delay jika game berjalan terlalu cepat**
+            QueryPerformanceCounter(&currentTime);
+            double frameEndTime = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;
+            
+            if (frameEndTime < FRAME_TIME) {
+                Sleep((DWORD)(FRAME_TIME - frameEndTime));  // Tunggu hingga frame selesai
             }
         }
     }
-    // Hentikan musik saat game selesai
-    PlaySound(NULL, 0, 0);
+
+    PlaySound(NULL, 0, 0);  // Hentikan musik saat game selesai
+    
+    free(backgroundBuffer);  // Bebaskan memori background
+
     closegraph();
 }
 

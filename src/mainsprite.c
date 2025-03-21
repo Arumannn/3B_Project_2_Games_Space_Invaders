@@ -2,6 +2,7 @@
 #include "mainsprite.h"
 #include "alien.h"
 #include "ufo.h"
+#include "gameover.h"
 
 // Definisi variabel global
 Bullet bullets_player[MAX_BULLETS];
@@ -245,6 +246,8 @@ void resetPlayer(Player *player) {
 
     if (player->health == 0) {
         printf("Game Over!\n");
-        exit(0);  // **Keluar dari game jika nyawa habis**
+        closegraph();
+        gameOverScreen();
+
     }
 }

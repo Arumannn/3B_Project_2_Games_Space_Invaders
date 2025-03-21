@@ -9,6 +9,18 @@
 #include "ufo.h"
 #include "mainmenu.h"
 
+void mainMenu() {
+    initwindow(getmaxwidth(), getmaxheight(), "Main Menu");
+    cleardevice();
+    
+    setcolor(WHITE);
+    settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 4);
+    outtextxy(getmaxwidth() / 2 - 100, 100, (char *)"MAIN MENU");
+
+    getch();
+    closegraph();
+}
+
 // Fungsi untuk menggambar teks di tengah
 void drawText(int x, int y, const char* text, int size, int color) {
     setcolor(color);
@@ -44,41 +56,56 @@ void drawStars() {
 }
 
 // Fungsi Leaderboard
-void drawLeaderboard() {
-    int x = getmaxwidth() - 320; // Geser lebih ke kiri agar seimbang
-    int y = 150;  
-    int width = 280; // Lebarkan tabel
-    int height = 150; 
+void drawLeaderboard(int yOffset) {
+    int x = getmaxwidth() / 2 + 150;
+    int y = yOffset; // Gunakan parameter untuk posisi vertikal
+    int width = 350;
+    int rowHeight = 40;
 
+    FILE *file = fopen("leaderboard.txt", "r");
+    if (!file) {
+        drawText(x + width / 2, y, "Belum ada data!", 2, WHITE);
+        return;
+    }
+
+    int count = 0;
+    char tempName[50];
+    int tempScore;
+    while (fscanf(file, "%s %d", tempName, &tempScore) != EOF) {
+        count++;
+    }
+    rewind(file);
+
+    int height = 30 + (count * rowHeight);
     setcolor(GREEN);
-    rectangle(x, y, x + width, y + height); // Kotak utama leaderboard
-
-    // Garis horizontal untuk memisahkan header
+    rectangle(x, y, x + width, y + height);
     line(x, y + 30, x + width, y + 30);
+    line(x + 60, y, x + 60, y + height);
+    line(x + 220, y, x + 220, y + height);
 
-    // Garis vertikal pemisah kolom (disesuaikan agar lebih proporsional)
-    line(x + 50, y, x + 50, y + height);  // Kolom "No"
-    line(x + 180, y, x + 180, y + height); // Kolom "Player" (dilebarkan sedikit)
+    drawText(x + 30, y + 15, "NO", 2.5, WHITE);
+    drawText(x + 140, y + 15, "PLAYER", 2.5, WHITE);
+    drawText(x + 285, y + 15, "SCORE", 2.5, WHITE);
 
-    // Header leaderboard (digeser sedikit ke bawah agar tengah)
-    drawText(x + 25, y + 8, "NO", 2, WHITE);
-    drawText(x + 115, y + 8, "PLAYER", 2, WHITE);
-    drawText(x + 210, y + 8, "SCORE", 2, WHITE);
+    char name[50];
+    int score = rand();
+    int i = 0;
+    int yPos = y + 50;
 
-    // Data leaderboard
-    char names[3][30] = {"Arman", "Nazriel", "Rina"};
-    int scores[3] = {2000, 1500, 1000};
-
-    for (int i = 0; i < 3; i++) {
+    while (fscanf(file, "%s %d", name, &score) != EOF) {
         char numText[5], scoreText[10];
         sprintf(numText, "%d", i + 1);
-        sprintf(scoreText, "%d", scores[i]);
+        sprintf(scoreText, "%d", score);
 
-        // Posisi teks lebih direnggangkan agar lebih rapi
-        drawText(x + 20, y + 45 + (i * 35), numText, 2, WHITE); // No
-        drawText(x + 100, y + 45 + (i * 35), names[i], 2, WHITE); // Player
-        drawText(x + 225, y + 45 + (i * 35), scoreText, 2, WHITE); // Score
+        drawText(x + 30, yPos, numText, 2.5, WHITE);
+        drawText(x + 140, yPos, name, 2.5, WHITE);
+        drawText(x + 285, yPos, scoreText, 2.5, WHITE);
+
+        yPos += rowHeight;
+        i++;
     }
+
+    fclose(file);
 }
 
 // Fungsi untuk menampilkan menu utama
@@ -92,67 +119,68 @@ void showMainMenu() {
 
     // Judul tetap di posisinya
     int titleX = getmaxwidth() / 2;
-    int titleY = 120; // Sedikit lebih naik agar terlihat lebih seimbang
+    int titleY = 120; 
     drawText(titleX, titleY, "SPACE INVADERS", 8, WHITE);
 
-    // Posisi tombol lebih dinaikkan agar dekat dengan judul
-    int centerX = getmaxwidth() / 2 - 200;
-    int startY = getmaxheight() / 2 - 120; // Sebelumnya -80, sekarang lebih naik
+    // Posisi tombol
+    int centerX = getmaxwidth() / 2 - 400;  // Geser tombol lebih ke kiri
+    int startY = getmaxheight() / 2 - 100; // Sedikit naik agar lebih proporsional
     int buttonWidth = 400;
     int buttonHeight = 80;
-    int buttonSpacing = 110; // Jarak antar tombol lebih proporsional
+    int buttonSpacing = 130; // Tambah jarak antar tombol agar lebih luas
 
     drawButton(centerX, startY, buttonWidth, buttonHeight, LIGHTGREEN, "START");
     drawButton(centerX, startY + buttonSpacing, buttonWidth, buttonHeight, YELLOW, "GUIDE");
     drawButton(centerX, startY + (buttonSpacing * 2), buttonWidth, buttonHeight, WHITE, "EXIT");
 
-    // Leaderboard tetap di pojok kanan atas
-    drawLeaderboard();
-    handleMainMenu();
+    // Leaderboard diposisikan sejajar dengan tombol
+    drawLeaderboard(startY + 10); // Tambahkan sedikit offset agar lebih rapi
 }
 
-// Fungsi untuk menangani input menu utama
+// Perbaikan handleMainMenu agar menu tetap berjalan
 void handleMainMenu() {
-    int centerX = getmaxwidth() / 2 - 200;
-    int startY = getmaxheight() / 2 - 120;
+    int centerX = getmaxwidth() / 2 - 400;
+    int startY = getmaxheight() / 2 - 100;
     int buttonWidth = 400;
     int buttonHeight = 80;
     int buttonSpacing = 110;
 
-    while (1) {
-        if (ismouseclick(WM_LBUTTONDOWN)) {
-            int x, y;
-            getmouseclick(WM_LBUTTONDOWN, x, y);
+    while (1) {  // **Loop utama agar menu tetap berjalan**
+        showMainMenu();
 
-            // Cek apakah klik di tombol "START"
-            if (x >= centerX && x <= centerX + buttonWidth &&
-                y >= startY && y <= startY + buttonHeight) {
-                startGame();
-                return;
-            }
+        while (1) {
+            if (ismouseclick(WM_LBUTTONDOWN)) {
+                int x, y;
+                getmouseclick(WM_LBUTTONDOWN, x, y);
 
-            // Cek apakah klik di tombol "GUIDE"
-            if (x >= centerX && x <= centerX + buttonWidth &&
-                y >= startY + buttonSpacing && y <= startY + buttonSpacing + buttonHeight) {
-                showGuide();
-                return;
-            }
+                // Cek apakah klik di tombol "START"
+                if (x >= centerX && x <= centerX + buttonWidth &&
+                    y >= startY && y <= startY + buttonHeight) {
+                    startGame();
+                    break;  // **Keluar dari loop input dan kembali ke Main Menu setelah Game selesai**
+                }
 
-            // Cek apakah klik di tombol "EXIT"
-            if (x >= centerX && x <= centerX + buttonWidth &&
-                y >= startY + 2 * buttonSpacing && y <= startY + 2 * buttonSpacing + buttonHeight) {
-                    if (confirmExit() == 1) {
-                        exit(0);
-                    } else {
-                        showMainMenu();
-                    }
-                return;
+                // Cek apakah klik di tombol "GUIDE"
+                if (x >= centerX && x <= centerX + buttonWidth &&
+                    y >= startY + buttonSpacing && y <= startY + buttonSpacing + buttonHeight) {
+                    showGuide();
+                    break;  // **Setelah kembali dari Guide, ulangi loop agar tetap di Main Menu**
+                }
+
+                // Cek apakah klik di tombol "EXIT"
+                if (x >= centerX && x <= centerX + buttonWidth &&
+                    y >= startY + 2 * buttonSpacing && y <= startY + 2 * buttonSpacing + buttonHeight) {
+                        if (confirmExit() == 1) {
+                            exit(0);
+                        } else {
+                            break;  // **Tetap di Main Menu jika memilih "NO"**
+                        }
+                }
             }
         }
     }
 }
 
-// Fungsi untuk menampilkan aturan game
 void showGuide() {
     drawStars();
     drawText(getmaxwidth() / 2, 100, "GUIDE", 5, WHITE);
@@ -160,13 +188,17 @@ void showGuide() {
     drawText(getmaxwidth() / 2, 250, "Tekan spasi untuk menembak", 3, WHITE);
     drawText(getmaxwidth() / 2, 300, "Hindari tembakan musuh", 3, WHITE);
     drawButton(getmaxwidth() / 2 - 100, 400, 200, 50, RED, "BACK");
+
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
             getmouseclick(WM_LBUTTONDOWN, x, y);
-            if (x >= getmaxwidth() / 2 - 100 && x <= getmaxwidth() / 2 + 100 && y >= 400 && y <= 450) {
-                showMainMenu();
-                return;
+            clearmouseclick(WM_LBUTTONDOWN);
+
+            // Cek apakah klik di tombol "BACK"
+            if (x >= getmaxwidth() / 2 - 100 && x <= getmaxwidth() / 2 + 100 &&
+                y >= 400 && y <= 450) {
+                return;  // **Kembali ke handleMainMenu tanpa keluar dari loop utama**
             }
         }
     }

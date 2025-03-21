@@ -145,31 +145,32 @@ void checkPlayerCollisions(Player *player) {
             }
         }
     }
-    
-    if (ufoBulletActive) {
-        int bulletLeft = ufoBulletX - 3;
-        int bulletRight = ufoBulletX + 3;
-        int bulletTop = ufoBulletY - 3;
-        int bulletBottom = ufoBulletY + 3;
+    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+        if (ufoBullet[i].active) {
+            int bulletLeft = ufoBulletX - 3;
+            int bulletRight = ufoBulletX + 3;
+            int bulletTop = ufoBulletY - 3;
+            int bulletBottom = ufoBulletY + 3;
 
-        int playerLeft = player->X_Player - 20;
-        int playerRight = player->X_Player + 20;
-        int playerTop = player->Y_Player;
-        int playerBottom = player->Y_Player + 40;
+            int playerLeft = player->X_Player - 20;
+            int playerRight = player->X_Player + 20;
+            int playerTop = player->Y_Player;
+            int playerBottom = player->Y_Player + 40;
 
-        if (bulletRight > playerLeft && bulletLeft < playerRight &&
-            bulletBottom > playerTop && bulletTop < playerBottom) {
-            resetPlayer(player);
-            player->health--;
-            ufoBulletActive = 0;
+            if (bulletRight > playerLeft && bulletLeft < playerRight &&
+                bulletBottom > playerTop && bulletTop < playerBottom) {
+                resetPlayer(player);
+                player->health--;
+                ufoBulletActive = 0;
 
-            for (int j = 0; j < MAX_EXPLOSIONS; j++) {
-                if (!playerExplosions[j].active) {
-                    playerExplosions[j].x = player->X_Player;
-                    playerExplosions[j].y = player->Y_Player;
-                    playerExplosions[j].active = 1;
-                    playerExplosions[j].lifetime = 0;
-                    break;
+                for (int j = 0; j < MAX_EXPLOSIONS; j++) {
+                    if (!playerExplosions[j].active) {
+                        playerExplosions[j].x = player->X_Player;
+                        playerExplosions[j].y = player->Y_Player;
+                        playerExplosions[j].active = 1;
+                        playerExplosions[j].lifetime = 0;
+                        break;
+                    }
                 }
             }
         }

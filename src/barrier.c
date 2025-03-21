@@ -48,6 +48,7 @@ void checkAlienBulletCollision(Barrier barriers[]) {
             int bulletBottom = bullets_player[i].y + 10;
 
             for (int j = 0; j < MAX_BARRIERS; j++) {
+                if(barriers[j].health > 0){
                 int BarrierLeft = barriers[j].x;
                 int BarrierRight = barriers[j].x + 80;
                 int BarrierTop = barriers[j].y - 5;
@@ -61,6 +62,7 @@ void checkAlienBulletCollision(Barrier barriers[]) {
                     }
                 }
             }
+        }
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {
             int bulletLeft = alienBullets[i].x;
@@ -69,6 +71,7 @@ void checkAlienBulletCollision(Barrier barriers[]) {
             int bulletBottom = alienBullets[i].y + BLOCK_SIZE;
             
             for (int j = 0; j < MAX_BARRIERS; j++) {
+                if(barriers[j].health > 0){
                 int BarrierLeft = barriers[j].x;
                 int BarrierRight = barriers[j].x + 80;
                 int BarrierTop = barriers[j].y - 5;
@@ -82,6 +85,7 @@ void checkAlienBulletCollision(Barrier barriers[]) {
                     }
                 }
             }
+        }
             
     for (int i = 0; i < MAX_UFO_BULLETS; i++) {
         if (ufoBullets[i].active) {
@@ -91,6 +95,7 @@ void checkAlienBulletCollision(Barrier barriers[]) {
             int bulletBottom = ufoBullets[i].y + 3;
                 
                 for (int j = 0; j < MAX_BARRIERS; j++) {
+                    if(barriers[j].health > 0){
                     int BarrierLeft = barriers[j].x;
                     int BarrierRight = barriers[j].x + 80;
                     int BarrierTop = barriers[j].y - 5;
@@ -108,22 +113,19 @@ void checkAlienBulletCollision(Barrier barriers[]) {
     }
 }
 }
+}
 
-void barBarrier(){
-    // Menggunakan getmaxx dan getmaxy untuk layar fullscreen
+void initBarriers(Barrier barriers[]) {
     int screenWidth = getmaxx();
-    int screenHeight =  getmaxy();
-    Barrier barriers[MAX_BARRIERS];
-    // Posisi barrier berdasarkan ukuran layar
+    int screenHeight = getmaxy();
+    
     int startX = (screenWidth / 4) - 110;
     int startY = screenHeight - 170;
-    int gap = screenWidth / 5; // Jarak antar barrier
+    int gap = screenWidth / 5;
 
     for (int i = 0; i < MAX_BARRIERS; i++) {
         barriers[i].x = startX + (i * gap);
         barriers[i].y = startY;
-        drawBarrier(barriers[i]);
+        barriers[i].health = 30;
     }
-
-    checkAlienBulletCollision(barriers);
 }

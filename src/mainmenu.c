@@ -55,10 +55,17 @@ void drawStars() {
     }
 }
 
+
 // Fungsi Leaderboard
+// Struktur untuk menyimpan data leaderboard
+typedef struct {
+    char name[10];
+    int score;
+} LeaderboardEntry;
+
 void drawLeaderboard(int yOffset) {
     int x = getmaxwidth() / 2 + 150;
-    int y = yOffset; // Gunakan parameter untuk posisi vertikal
+    int y = yOffset; 
     int width = 350;
     int rowHeight = 40;
 
@@ -68,14 +75,27 @@ void drawLeaderboard(int yOffset) {
         return;
     }
 
+    LeaderboardEntry entries[100]; // Maksimal 100 pemain
     int count = 0;
-    char tempName[50];
-    int tempScore;
-    while (fscanf(file, "%s %d", tempName, &tempScore) != EOF) {
+
+    // Membaca data leaderboard
+    while (fscanf(file, "%s %d", entries[count].name, &entries[count].score) != EOF) {
         count++;
     }
-    rewind(file);
+    fclose(file);
 
+    // Mengurutkan data berdasarkan skor tertinggi (descending order)
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (entries[j].score > entries[i].score) {
+                LeaderboardEntry temp = entries[i];
+                entries[i] = entries[j];
+                entries[j] = temp;
+            }
+        }
+    }
+
+    // Menampilkan leaderboard
     int height = 30 + (count * rowHeight);
     setcolor(GREEN);
     rectangle(x, y, x + width, y + height);
@@ -87,26 +107,18 @@ void drawLeaderboard(int yOffset) {
     drawText(x + 140, y + 15, "PLAYER", 2.5, WHITE);
     drawText(x + 285, y + 15, "SCORE", 2.5, WHITE);
 
-    char name[50];
-    int score = rand();
-    int i = 0;
-    int yPos = y + 50;
-
-    while (fscanf(file, "%s %d", name, &score) != EOF) {
+    for (int i = 0; i < count; i++) {
         char numText[5], scoreText[10];
         sprintf(numText, "%d", i + 1);
-        sprintf(scoreText, "%d", score);
+        sprintf(scoreText, "%d", entries[i].score);
 
+        int yPos = y + 50 + (i * rowHeight);
         drawText(x + 30, yPos, numText, 2.5, WHITE);
-        drawText(x + 140, yPos, name, 2.5, WHITE);
+        drawText(x + 140, yPos, entries[i].name, 2.5, WHITE);
         drawText(x + 285, yPos, scoreText, 2.5, WHITE);
-
-        yPos += rowHeight;
-        i++;
     }
-
-    fclose(file);
 }
+
 
 // Fungsi untuk menampilkan menu utama
 void showMainMenu() {

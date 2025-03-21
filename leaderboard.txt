@@ -1,5 +1,8 @@
-dd 0
+nene 1720
+alexa 1640
+maesaroh 1340
 Arman 1320
+<<<<<<< HEAD
 aaa 720
 d 0
 dddd 2400
@@ -16,3 +19,6 @@ d 40
 ddddddddddddddd 810
 d 0
 aaa 240
+=======
+nunu 1120
+>>>>>>> origin/Ranking

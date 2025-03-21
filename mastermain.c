@@ -18,13 +18,16 @@ void startGame() {
     
     initwindow(screenWidth, screenHeight, "Space Invaders");
     cleardevice();
-    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80};
+
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80, 3};
     Alien aliens[MAX_ALIENS];
     int alienDir = 1;
     int alienDirLast = 1;
     initAliens(aliens);
     initBullets();
     initScore();
+    initExplosionsPlayer();
+
     int gameOver = 0;
     int page = 0;
 
@@ -33,9 +36,6 @@ void startGame() {
     LARGE_INTEGER frequency, lastTime;
     QueryPerformanceFrequency(&frequency);
     QueryPerformanceCounter(&lastTime);
-
-    // Mulai musik latar saat game dimulai
-    PlaySound(TEXT("sound/background_music.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 
     while (!gameOver) {
         LARGE_INTEGER currentTime;
@@ -49,29 +49,41 @@ void startGame() {
                 break;
             }
             setactivepage(page);
-            cleardevice();
-            drawScore();
+            cleardevice();         
+
             for (int i = 0; i < MAX_ALIENS; i++) {
+               
                 if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
                     gameOver = 1;
+                    printf("Game Over! Alien mencapai batas bawah.\n");
+                    exit(0);
                 }
             }
+            
+            
+            drawScore();
             SpaceshipMove(&SpaceShip_P);
             updateBullets();
+            printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
             checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
             updateAliens(aliens, &alienDir, &alienDirLast);
-            DrawSpaceShip(&SpaceShip_P);
-            drawBullets();
+            updateExplosionsPlayer();
+            
             drawAliens(aliens);
             drawAlienExplosions();
-
-            if (ufoActive) {
-                UFO(aliens);
-            }
-
+            drawBullets();
+            DrawSpaceShip(&SpaceShip_P);
+            UFO(aliens);
             barBarrier();
+            
+            
+            drawExplosionsPlayer();
+           
+            checkPlayerCollisions(&SpaceShip_P);
+
             setvisualpage(page);
             page = 1 - page;
+
             lastTime = currentTime;
         } else {
             double sleepTime = FRAME_TIME - elapsedMs;
@@ -88,7 +100,7 @@ void startGame() {
 int main() {
     srand(time(NULL));
     showMainMenu();
-    handleMainMenu();
+    handleMainMenu(); 
 
     closegraph();
     return 0;

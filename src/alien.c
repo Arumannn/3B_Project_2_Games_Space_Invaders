@@ -9,15 +9,9 @@
 // Definisi variabel global
 int BLOCK_SIZE;
 AlienBullet alienBullets[MAX_ALIEN_BULLETS];
+Explosion alienExplosions[MAX_ALIENS]; 
 
-// Struktur dan array untuk ledakan
-typedef struct {
-    int x, y;
-    int active;
-    int lifetime; // Tambahkan penghitung frame
-} Explosion;
 
-static Explosion alienExplosions[MAX_ALIENS]; // Static agar hanya digunakan di alien.c
 
 void initAliens(Alien aliens[]) {
     BLOCK_SIZE = getmaxy() / 40;

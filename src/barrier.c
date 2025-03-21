@@ -32,7 +32,7 @@ void drawBarrier(Barrier b) {
   
         
         // Potongan di tengah bawah lebih besar
-        setfillstyle(SOLID_FILL, BLACK);
+        setfillstyle(SOLID_FILL, BLUE);
         bar(b.x + 15, b.y + 15, b.x + 65, b.y + 25);
         bar(b.x + 20, b.y + 10, b.x + 60, b.y + 20);
         bar(b.x + 25, b.y + 5, b.x + 55, b.y + 15);

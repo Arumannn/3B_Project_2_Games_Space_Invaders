@@ -37,6 +37,8 @@ void startGame() {
     QueryPerformanceFrequency(&frequency);
     QueryPerformanceCounter(&lastTime);
 
+    PlaySound(TEXT("sound/background_music.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+    
     while (!gameOver) {
         LARGE_INTEGER currentTime;
         QueryPerformanceCounter(&currentTime);

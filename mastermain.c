@@ -15,7 +15,7 @@ void startGame() {
     initwindow(screenWidth, screenHeight, "Space Invaders");
     cleardevice();
 
-    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80, 3};  // Inisialisasi nyawa
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80, 3};
     Alien aliens[MAX_ALIENS];
     int alienDir = 1;
     int alienDirLast = 1;
@@ -46,18 +46,19 @@ void startGame() {
             cleardevice();         
 
             for (int i = 0; i < MAX_ALIENS; i++) {
-                printf("Alien %d - Active: %d, Y: %d\n", i, aliens[i].active, aliens[i].y);
+               
                 if (aliens[i].active && aliens[i].y >= screenHeight - BLOCK_SIZE) {
                     gameOver = 1;
                     printf("Game Over! Alien mencapai batas bawah.\n");
+                    exit(0);
                 }
             }
             
             
-            // Render
             drawScore();
             SpaceshipMove(&SpaceShip_P);
             updateBullets();
+            printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
             checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
             updateAliens(aliens, &alienDir, &alienDirLast);
             updateExplosionsPlayer();
@@ -93,7 +94,7 @@ int main() {
     
 
     showMainMenu();
-    handleMainMenu();  // Memastikan menu utama bisa berpindah ke game
+    handleMainMenu(); 
 
     closegraph();
     return 0;

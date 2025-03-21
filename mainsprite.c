@@ -139,11 +139,8 @@ void checkPlayerCollisions(Player *player) {
                         playerExplosions[j].active = 1;
                         playerExplosions[j].lifetime = 0;
                         break;
+                        
                     }
-                }
-
-                if (player->health <= 0) {
-                    // Game over logic
                 }
             }
         }
@@ -175,9 +172,6 @@ void checkPlayerCollisions(Player *player) {
                     break;
                 }
             }
-
-            if (player->health <= 0) {
-            }
         }
     }
 }
@@ -190,6 +184,7 @@ void initExplosionsPlayer() {
 }
 
 void drawExplosionsPlayer() {
+    
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
         if (playerExplosions[i].active) {
             if (playerExplosions[i].lifetime < 5) {
@@ -229,6 +224,7 @@ void updateExplosionsPlayer() {
 
 void resetPlayer(Player *player) {
     // **Tambahkan ledakan di posisi terakhir pemain**
+    printf("Respawn! Nyawa tersisa: %d\n", player->health);
     for (int j = 0; j < MAX_EXPLOSIONS; j++) {
         if (!playerExplosions[j].active) {
             playerExplosions[j].x = player->X_Player;
@@ -251,10 +247,10 @@ void resetPlayer(Player *player) {
     
     
     // **Kurangi nyawa pemain**
-    player->health--;
     printf("Respawn! Nyawa tersisa: %d\n", player->health);
+   
 
-    if (player->health <= 0) {
+    if (player->health == 0) {
         printf("Game Over!\n");
         exit(0);  // **Keluar dari game jika nyawa habis**
     }

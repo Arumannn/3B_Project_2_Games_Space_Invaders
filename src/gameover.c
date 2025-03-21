@@ -28,7 +28,7 @@ void gameOverScreen() {
     // Tampilkan tulisan "GAME OVER"
     setcolor(RED);
     settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 10);
-    outtextxy(screenWidth / 2 - 250, 100, (char *) "GAME OVER");
+    outtextxy(screenWidth / 2 - 250, 100, (char *) "GAME OVER!!");
 
     // Gambar kotak input nama
     int inputBoxX1 = screenWidth / 2 - 150;
@@ -43,68 +43,73 @@ void gameOverScreen() {
     settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 3);
     outtextxy(inputBoxX1, inputBoxY1 - 30, (char *) "MASUKKAN NAMA:");
 
-    // Gambar tombol BACK
-    int backButtonX1 = screenWidth / 2 - 75;
-    int backButtonY1 = 400;
-    int backButtonX2 = screenWidth / 2 + 75;
-    int backButtonY2 = 450;
-    
-    setfillstyle(SOLID_FILL, RED);
-    bar(backButtonX1, backButtonY1, backButtonX2, backButtonY2);
-    
-    setcolor(WHITE);
-    setbkcolor(RED);
-    outtextxy(screenWidth / 2 - 30, backButtonY1 + 15, (char *) "BACK");
-    setbkcolor(BLACK);
-
-    char playerName[MAX_NAME_LENGTH + 1] = "";
-    int index = 0;
-    char ch;
-    int lastIndex = -1; // Menyimpan panjang teks sebelumnya untuk mencegah redraw terus-menerus
-
-    while (1) {
-        if (index != lastIndex) { // Gambar ulang hanya jika teks berubah
-            setfillstyle(SOLID_FILL, BLACK);
-            bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);
-            
-            setcolor(WHITE);
-            outtextxy(inputBoxX1 + 10, inputBoxY1 + 10, playerName);
-            lastIndex = index;
-        }
-
-        if (kbhit()) {
-            ch = getch();
-
-            // Jika tekan ENTER, simpan nama & keluar
-            if (ch == 13 && index > 0) {
-                savePlayerName(playerName);
-                break;
-            } 
-            // Jika tekan BACKSPACE, hapus karakter terakhir
-            else if (ch == 8 && index > 0) {
-                index--;
-                playerName[index] = '\0';
-            } 
-            // Jika karakter valid, tambahkan ke input
-            else if (index < MAX_NAME_LENGTH && ch >= 32 && ch <= 126) {
-                playerName[index++] = ch;
-                playerName[index] = '\0';
-            }
-        }
-
-        // Cek apakah tombol BACK ditekan
-        if (ismouseclick(WM_LBUTTONDOWN)) {
-            int x, y;
-            getmouseclick(WM_LBUTTONDOWN, x, y);
-            
-            // Jika tombol BACK ditekan, kembali ke main menu
-            if (x >= backButtonX1 && x <= backButtonX2 && y >= backButtonY1 && y <= backButtonY2) {
-                closegraph();
-                showMainMenu();
-                return;
-            }
-        }
-    }
-    
-    closegraph();
-}
+     // Gambar tombol SUBMIT (HIJAU)
+     int submitButtonX1 = screenWidth / 2 - 75;
+     int submitButtonY1 = 400;
+     int submitButtonX2 = screenWidth / 2 + 75;
+     int submitButtonY2 = 450;
+     
+     setfillstyle(SOLID_FILL, GREEN);
+     bar(submitButtonX1, submitButtonY1, submitButtonX2, submitButtonY2);
+     
+     setcolor(WHITE);
+     setbkcolor(GREEN);
+     outtextxy(screenWidth / 2 - 30, submitButtonY1 + 15, (char *) "SUBMIT");
+     setbkcolor(BLACK);
+ 
+     char playerName[MAX_NAME_LENGTH + 1] = "";
+     int index = 0;
+     char ch;
+     int lastIndex = -1; 
+ 
+     while (1) {
+         if (index != lastIndex) { // Hanya gambar ulang jika input berubah
+             setfillstyle(SOLID_FILL, BLACK);
+             bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);
+             
+             setcolor(WHITE);
+             outtextxy(inputBoxX1 + 10, inputBoxY1 + 10, playerName);
+             lastIndex = index;
+         }
+ 
+         if (kbhit()) {
+             ch = getch();
+ 
+             // Jika tekan ENTER, simpan nama & kembali ke menu
+             if (ch == 13 && index > 0) {
+                 savePlayerName(playerName);
+                 closegraph();
+                 showMainMenu();
+                 return;
+             } 
+             // Jika tekan BACKSPACE, hapus karakter terakhir
+             else if (ch == 8 && index > 0) {
+                 index--;
+                 playerName[index] = '\0';
+             } 
+             // Jika karakter valid, tambahkan ke input
+             else if (index < MAX_NAME_LENGTH && ch >= 32 && ch <= 126) {
+                 playerName[index++] = ch;
+                 playerName[index] = '\0';
+             }
+         }
+ 
+         // Cek apakah tombol SUBMIT ditekan
+         if (ismouseclick(WM_LBUTTONDOWN)) {
+             int x, y;
+             getmouseclick(WM_LBUTTONDOWN, x, y);
+             
+             // Jika tombol SUBMIT ditekan, simpan nama & kembali ke menu
+             if (x >= submitButtonX1 && x <= submitButtonX2 && y >= submitButtonY1 && y <= submitButtonY2) {
+                 if (strlen(playerName) > 0) { // Pastikan nama tidak kosong
+                     savePlayerName(playerName);
+                     closegraph();
+                     showMainMenu();
+                     return;
+                 }
+             }
+         }
+     }
+     
+     closegraph();
+ }

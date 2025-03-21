@@ -76,6 +76,7 @@ void initBullets() {
 }
 
 void ShootBullet(Player *player) {
+    PlaySound(TEXT("sound/Shooting_Audio.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_ASYNC);
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (!bullets_player[i].active) {
             bullets_player[i].x = player->X_Player;
@@ -105,7 +106,6 @@ void drawBullets() {
     extern int BLOCK_SIZE;
     setcolor(YELLOW);
     setfillstyle(SOLID_FILL, YELLOW);
-    PlaySound(TEXT("sound/Shooting_Audio.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (bullets_player[i].active) {
             bar(bullets_player[i].x - BLOCK_SIZE / 4, bullets_player[i].y, 

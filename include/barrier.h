@@ -1,7 +1,14 @@
 #ifndef BARRIER_H
 #define BARRIER_H
 
-void drawBarrier(int x, int y);
+typedef struct {
+    int x, y;
+    int health;
+}Barrier;
+
+void drawBarrier(Barrier barriers[]);
 void barBarrier();
+void checkAlienBulletCollision(Barrier barriers[]);
+void damageBarrier(Barrier *b);
 
 #endif

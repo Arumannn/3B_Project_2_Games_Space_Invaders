@@ -49,32 +49,20 @@ void checkAlienBulletCollision(Barrier barriers[]) {
             int bulletTop = alienBullets[i].y;
             int bulletBottom = alienBullets[i].y + BLOCK_SIZE;
     
-            int BarrierLeft = player->X_Player - 20;
-            int playerRight = player->X_Player + 20;
-            int playerTop = player->Y_Player;
-            int playerBottom = player->Y_Player + 40;
+            int BarrierLeft = barriers->x;
+            int BarrierRight = barriers->x + 80;
+            int BarrierTop = barriers->y - 5;
+            int BarrierBottom = barriers->y + 25;
     
-                if (bulletRight > playerLeft && bulletLeft < playerRight &&
-                    bulletBottom > playerTop && bulletTop < playerBottom) {
-                    resetPlayer(player);
-                    player->health--;
-                    printf("Health Sekarang : %d\n", player->health);
+                if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
+                    bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
+                    damageBarrier(barriers);
                     alienBullets[i].active = 0;
-                    
-                    for (int j = 0; j < MAX_EXPLOSIONS; j++) {
-                        if (!playerExplosions[j].active) {
-                            playerExplosions[j].x = player->X_Player;
-                            playerExplosions[j].y = player->Y_Player;
-                            playerExplosions[j].active = 1;
-                            playerExplosions[j].lifetime = 0;
-                            break;
-                            
-                        }
-                    }
                 }
             }
         }
     }
+
 void barBarrier(){
     // Menggunakan getmaxx dan getmaxy untuk layar fullscreen
     int screenWidth = getmaxx();
@@ -98,4 +86,4 @@ void barBarrier(){
     }
 
     checkAlienBulletCollision(barriers);
-}   
+}       

@@ -239,7 +239,7 @@ void resetPlayer(Player *player) {
     }
 
     player->X_Player = getmaxx() / 2;
-    player->Y_Player = getmaxy() - 80;
+    player->Y_Player = getmaxy() - 100;
     
     
     // **Kurangi nyawa pemain**

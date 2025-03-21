@@ -58,7 +58,7 @@ void startGame() {
     // Buat background hanya sekali
     createCustomBackground();
 
-    Player SpaceShip_P = {screenWidth / 2, screenHeight - 80, 3};
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 100, 3};
     Alien aliens[ALIEN_ROWS][ALIEN_COLS]; // Array 2D untuk aliens
     Barrier barriers[MAX_BARRIERS];
     int alienDir = 1;

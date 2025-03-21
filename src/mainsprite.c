@@ -7,6 +7,7 @@
 Bullet bullets_player[MAX_BULLETS];
 Explosion playerExplosions[MAX_EXPLOSIONS];
 int shootCooldown = 0;
+int ufoBulletActive, ufoBulletX, ufoBulletY;
 
 void DrawSpaceShip(Player *player) {
     int x = player->X_Player;

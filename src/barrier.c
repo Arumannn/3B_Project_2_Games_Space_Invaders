@@ -120,7 +120,7 @@ void initBarriers(Barrier barriers[]) {
     int screenHeight = getmaxy();
     
     int startX = (screenWidth / 4) - 110;
-    int startY = screenHeight - 170;
+    int startY = screenHeight - 210;
     int gap = screenWidth / 5;
 
     for (int i = 0; i < MAX_BARRIERS; i++) {

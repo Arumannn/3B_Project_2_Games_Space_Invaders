@@ -81,6 +81,11 @@ void startGame() {
 
     PlaySound(TEXT("sound/background_music.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 
+    // **Spawn UFO pertama dengan posisi dan waktu acak**
+    srand(time(NULL));
+    initUFO();
+    ufoRespawnDelay = (rand() % 5 + 3) * 30; // 3-8 detik dalam frame 30FPS
+    
     while (!gameOver) {
         QueryPerformanceCounter(&currentTime);
         double elapsedMs = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;

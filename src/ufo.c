@@ -99,7 +99,7 @@ void drawUFOBullets() {
 }
 
 // **Logika UFO (Pastikan Menembak Fireball)**
-void UFO(Alien aliens[]) {
+void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
     if (!ufoActive) return;
 
     ufoX += ufoDirection * ufoSpeed;
@@ -107,7 +107,6 @@ void UFO(Alien aliens[]) {
     
     drawUFO((int)ufoX, (int)ufoY);
     
-    // **Panggil fungsi untuk menembak fireball**
     shootUFOBullet();
     updateUFOBullets();
     drawUFOBullets();

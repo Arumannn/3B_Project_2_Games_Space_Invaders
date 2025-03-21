@@ -15,7 +15,7 @@ int ufoHealth = 20;  // **Pastikan ada nilai awal**
 const int ufoMaxHealth = 20;
 
 // Inisialisasi peluru UFO
-AlienBullet ufoBullets[MAX_ALIEN_BULLETS];
+AlienBullet ufoBullets[MAX_UFO_BULLETS];
 int ufoBurstCount = 0;
 int ufoShootCooldown = 0;
 
@@ -29,11 +29,11 @@ void shootUFOBullet() {
 
     if (ufoBurstCount >= 3) {  
         ufoBurstCount = 0;
-        ufoShootCooldown = 20; // Jeda antar burst
+        ufoShootCooldown = 80; // Jeda antar burst
         return;
     }
-        
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+
+    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
         if (!ufoBullets[i].active) {
             // **Acak posisi tembakan sedikit ke kiri/kanan**
             int offsetX = (rand() % 21) - 10;  // -10 hingga 10
@@ -50,7 +50,7 @@ void shootUFOBullet() {
             ufoBullets[i].dx = direction * 2; // Pergerakan horizontal (-2, 0, 2)
 
             ufoBurstCount++;
-            ufoShootCooldown = 5; // Jeda antar peluru dalam satu burst
+            ufoShootCooldown = 10; // Jeda antar peluru dalam satu burst
             break;
         }
     }
@@ -60,7 +60,7 @@ void shootUFOBullet() {
 #define FIREBALL_SPEED 12  
 
 void updateUFOBullets() {
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
         if (ufoBullets[i].active) {
             ufoBullets[i].y += ufoBullets[i].speed;  // **Gunakan speed acak**
             ufoBullets[i].x += ufoBullets[i].dx;     // **Gunakan arah acak**
@@ -75,7 +75,7 @@ void updateUFOBullets() {
 
 // **Menggambar Fireball UFO**
 void drawUFOBullets() {
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
         if (ufoBullets[i].active) {
             int bx = ufoBullets[i].x;
             int by = ufoBullets[i].y;
@@ -99,7 +99,7 @@ void drawUFOBullets() {
 }
 
 // **Logika UFO (Pastikan Menembak Fireball)**
-void UFO(Alien aliens[]) {
+void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
     if (!ufoActive) return;
 
     ufoX += ufoDirection * ufoSpeed;
@@ -107,7 +107,6 @@ void UFO(Alien aliens[]) {
     
     drawUFO((int)ufoX, (int)ufoY);
     
-    // **Panggil fungsi untuk menembak fireball**
     shootUFOBullet();
     updateUFOBullets();
     drawUFOBullets();
@@ -126,6 +125,7 @@ void UFO(Alien aliens[]) {
 
             if (ufoHealth <= 0) {
                 drawExplosion((int)ufoX, (int)ufoY);
+                PlaySound(TEXT("sound/UFO_Died.wav"), NULL, SND_FILENAME | SND_ASYNC);
                 ufoActive = 0;
                 addUFOScore();
             }

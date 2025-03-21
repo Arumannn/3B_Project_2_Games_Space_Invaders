@@ -59,7 +59,7 @@ void SpaceShip(Player *player) {
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
             break;
         }
-        cleardevice();
+        //cleardevice();
         SpaceshipMove(player);
         updateBullets();
         drawBullets();
@@ -145,12 +145,13 @@ void checkPlayerCollisions(Player *player) {
             }
         }
     }
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
-        if (ufoBullet[i].active) {
-            int bulletLeft = ufoBulletX - 3;
-            int bulletRight = ufoBulletX + 3;
-            int bulletTop = ufoBulletY - 3;
-            int bulletBottom = ufoBulletY + 3;
+    
+    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
+        if (ufoBullets[i].active) {
+            int bulletLeft = ufoBullets[i].x - 3;
+            int bulletRight = ufoBullets[i].x + 3;
+            int bulletTop = ufoBullets[i].y - 3;
+            int bulletBottom = ufoBullets[i].y + 3;
 
             int playerLeft = player->X_Player - 20;
             int playerRight = player->X_Player + 20;
@@ -161,17 +162,8 @@ void checkPlayerCollisions(Player *player) {
                 bulletBottom > playerTop && bulletTop < playerBottom) {
                 resetPlayer(player);
                 player->health--;
-                ufoBulletActive = 0;
-
-                for (int j = 0; j < MAX_EXPLOSIONS; j++) {
-                    if (!playerExplosions[j].active) {
-                        playerExplosions[j].x = player->X_Player;
-                        playerExplosions[j].y = player->Y_Player;
-                        playerExplosions[j].active = 1;
-                        playerExplosions[j].lifetime = 0;
-                        break;
-                    }
-                }
+                printf("Health Sekarang : %d\n", player->health);
+                ufoBullets[i].active = 0;
             }
         }
     }

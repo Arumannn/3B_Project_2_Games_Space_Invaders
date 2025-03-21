@@ -6,18 +6,68 @@
 #include "mainmenu.h"
 #include "score.h"
 
-#define MAX_NAME_LENGTH 20
+#define MAX_ENTRIES 10  // Maksimum 10 pemain
+#define MAX_NAME_LENGTH 20 // Maksimum panjang nama
+
+typedef struct {
+    char name[MAX_NAME_LENGTH + 1];
+    int score;
+} LeaderboardEntry;
 
 extern void drawStars(); // Menggunakan fungsi yang sudah ada di mainmenu.c
 
+// Fungsi untuk menyimpan skor dan mengurutkan leaderboard
 void savePlayerScore(const char *name, int score) {
-    FILE *file = fopen("leaderboard.txt", "a");
+    LeaderboardEntry entries[MAX_ENTRIES];
+    int count = 0;
+    int found = 0; // Menandakan apakah pemain sudah ada di leaderboard
+
+    FILE *file = fopen("leaderboard.txt", "r");
     if (file) {
-        fprintf(file, "%s %d\n", name, score);  // Simpan nama + skor
+        while (fscanf(file, "%s %d", entries[count].name, &entries[count].score) != EOF) {
+            if (strcmp(entries[count].name, name) == 0) {
+                // Jika pemain sudah ada, hanya update skor jika lebih tinggi
+                if (score > entries[count].score) {
+                    entries[count].score = score;
+                }
+                found = 1;
+            }
+            count++;
+            if (count >= MAX_ENTRIES) break;
+        }
+        fclose(file);
+    }
+
+    // Jika pemain tidak ditemukan, tambahkan pemain baru
+    if (!found && count < MAX_ENTRIES) {
+        strcpy(entries[count].name, name);
+        entries[count].score = score;
+        count++;
+    }
+
+    // Sorting leaderboard berdasarkan skor tertinggi
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (entries[j].score > entries[i].score) {
+                LeaderboardEntry temp = entries[i];
+                entries[i] = entries[j];
+                entries[j] = temp;
+            }
+        }
+    }
+
+    // Simpan leaderboard ke file
+    file = fopen("leaderboard.txt", "w");
+    if (file) {
+        for (int i = 0; i < count; i++) {
+            fprintf(file, "%s %d\n", entries[i].name, entries[i].score);
+        }
         fclose(file);
     }
 }
 
+
+// Tampilan layar GAME OVER
 void gameOverScreen() {
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
@@ -31,7 +81,7 @@ void gameOverScreen() {
     settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 10);
     outtextxy(screenWidth / 2 - 250, 100, (char *) "GAME OVER!!");
 
-    // Gambar kotak input nama
+    // Kotak input nama
     int inputBoxX1 = screenWidth / 2 - 150;
     int inputBoxY1 = 300;
     int inputBoxX2 = screenWidth / 2 + 150;
@@ -40,78 +90,77 @@ void gameOverScreen() {
     setcolor(WHITE);
     rectangle(inputBoxX1, inputBoxY1, inputBoxX2, inputBoxY2);
     
-    // Tampilkan tulisan "MASUKKAN NAMA:"
+    // Label "MASUKKAN NAMA:"
     settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 3);
     outtextxy(inputBoxX1, inputBoxY1 - 30, (char *) "MASUKKAN NAMA:");
 
-     // Gambar tombol SUBMIT (HIJAU)
-     int submitButtonX1 = screenWidth / 2 - 75;
-     int submitButtonY1 = 400;
-     int submitButtonX2 = screenWidth / 2 + 75;
-     int submitButtonY2 = 450;
+    // Tombol SUBMIT
+    int submitButtonX1 = screenWidth / 2 - 75;
+    int submitButtonY1 = 400;
+    int submitButtonX2 = screenWidth / 2 + 75;
+    int submitButtonY2 = 450;
      
-     setfillstyle(SOLID_FILL, GREEN);
-     bar(submitButtonX1, submitButtonY1, submitButtonX2, submitButtonY2);
-     
-     setcolor(WHITE);
-     setbkcolor(GREEN);
-     outtextxy(screenWidth / 2 - 30, submitButtonY1 + 15, (char *) "SUBMIT");
-     setbkcolor(BLACK);
- 
-     char playerName[MAX_NAME_LENGTH + 1] = "";
-     int index = 0;
-     char ch;
-     int lastIndex = -1; 
-     int finalScore = getScore();
-     
-     while (1) {
-         if (index != lastIndex) { // Hanya gambar ulang jika input berubah
-             setfillstyle(SOLID_FILL, BLACK);
-             bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);
-             
-             setcolor(WHITE);
-             outtextxy(inputBoxX1 + 10, inputBoxY1 + 10, playerName);
-             lastIndex = index;
-         }
- 
-         if (kbhit()) {
-             ch = getch();
-             
-             // Jika tekan ENTER, simpan nama & kembali ke menu
-             if (ch == 13 && index > 0) {
-                 savePlayerScore(playerName, finalScore);
-                 closegraph();
-                 showMainMenu();
-                 return;
-             } 
-             // Jika tekan BACKSPACE, hapus karakter terakhir
-             else if (ch == 8 && index > 0) {
-                 index--;
-                 playerName[index] = '\0';
-             } 
-             // Jika karakter valid, tambahkan ke input
-             else if (index < MAX_NAME_LENGTH && ch >= 32 && ch <= 126) {
-                 playerName[index++] = ch;
-                 playerName[index] = '\0';
-             }
-         }
- 
-         // Cek apakah tombol SUBMIT ditekan
-         if (ismouseclick(WM_LBUTTONDOWN)) {
-             int x, y;
-             getmouseclick(WM_LBUTTONDOWN, x, y);
-             
-             // Jika tombol SUBMIT ditekan, simpan nama & kembali ke menu
-             if (x >= submitButtonX1 && x <= submitButtonX2 && y >= submitButtonY1 && y <= submitButtonY2) {
-                 if (strlen(playerName) > 0) { // Pastikan nama tidak kosong
-                     savePlayerScore(playerName, finalScore);
-                     closegraph();
-                     showMainMenu();
-                     return;
-                 }
-             }
-         }
-     }
-     
-     closegraph();
- }
+    setfillstyle(SOLID_FILL, GREEN);
+    bar(submitButtonX1, submitButtonY1, submitButtonX2, submitButtonY2);
+    
+    setcolor(WHITE);
+    setbkcolor(GREEN);
+    outtextxy(screenWidth / 2 - 30, submitButtonY1 + 15, (char *) "SUBMIT");
+    setbkcolor(BLACK);
+
+    // Input nama pemain
+    char playerName[MAX_NAME_LENGTH + 1] = "";
+    int index = 0;
+    char ch;
+    int lastIndex = -1; 
+    int finalScore = getScore();
+    
+    while (1) {
+        // Tampilkan input nama hanya jika berubah
+        if (index != lastIndex) {
+            setfillstyle(SOLID_FILL, BLACK);
+            bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);
+            
+            setcolor(WHITE);
+            outtextxy(inputBoxX1 + 10, inputBoxY1 + 10, playerName);
+            lastIndex = index;
+        }
+
+        // Cek input keyboard
+        if (kbhit()) {
+            ch = getch();
+            
+            if (ch == 13 && index > 0) { // ENTER ditekan
+                savePlayerScore(playerName, finalScore);
+                closegraph();
+                showMainMenu();
+                return;
+            } 
+            else if (ch == 8 && index > 0) { // BACKSPACE
+                index--;
+                playerName[index] = '\0';
+            } 
+            else if (index < MAX_NAME_LENGTH && ch >= 32 && ch <= 126) { // Tambahkan karakter
+                playerName[index++] = ch;
+                playerName[index] = '\0';
+            }
+        }
+
+        // Cek klik tombol SUBMIT
+        if (ismouseclick(WM_LBUTTONDOWN)) {
+            int x, y;
+            getmouseclick(WM_LBUTTONDOWN, x, y);
+            
+            if (x >= submitButtonX1 && x <= submitButtonX2 && y >= submitButtonY1 && y <= submitButtonY2) {
+                if (strlen(playerName) > 0) {
+                    savePlayerScore(playerName, finalScore);
+                    closegraph();
+                    showMainMenu();
+                    return;
+                }
+            }
+        }
+    }
+    
+    closegraph();
+}

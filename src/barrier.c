@@ -2,6 +2,7 @@
 #include <conio.h>
 #include "barrier.h"
 #include "alien.h"
+#include "ufo.h"
 
 #define MAX_BARRIERS 4
 
@@ -12,9 +13,9 @@ void drawBarrier(Barrier b) {
     if (b.health > 0) {
         // Menentukan warna berdasarkan health
         int color;
-        if (b.health == 3) color = GREEN;
-        else if (b.health == 2) color = YELLOW;
-        else if (b.health == 1) color = RED;
+        if (b.health > 15 && b.health <= 30 ) color = GREEN;
+        else if (b.health > 5 && b.health <=15) color = YELLOW;
+        else if (b.health > 1 && b.health <= 5) color = RED;
         
         setfillstyle(SOLID_FILL, color);
         
@@ -48,20 +49,41 @@ void checkAlienBulletCollision(Barrier barriers[]) {
             int bulletRight = alienBullets[i].x + BLOCK_SIZE / 2;
             int bulletTop = alienBullets[i].y;
             int bulletBottom = alienBullets[i].y + BLOCK_SIZE;
+            
+            for (int j = 0; j < MAX_BARRIERS; j++) {
+                int BarrierLeft = barriers[j].x;
+                int BarrierRight = barriers[j].x + 80;
+                int BarrierTop = barriers[j].y - 5;
+                int BarrierBottom = barriers[j].y + 25;
     
-            int BarrierLeft = barriers->x;
-            int BarrierRight = barriers->x + 80;
-            int BarrierTop = barriers->y - 5;
-            int BarrierBottom = barriers->y + 25;
-    
-                if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
-                    bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
-                    damageBarrier(barriers);
-                    alienBullets[i].active = 0;
+                    if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
+                        bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
+                        damageBarrier(barriers);
+                        alienBullets[i].active = 0;
+                    }
+                }
+            }
+            if (ufoBulletActive) {
+                int bulletLeft = ufoBulletX - 3;
+                int bulletRight = ufoBulletX + 3;
+                int bulletTop = ufoBulletY - 3;
+                int bulletBottom = ufoBulletY + 3;
+                
+                for (int j = 0; j < MAX_BARRIERS; j++) {
+                    int BarrierLeft = barriers[j].x;
+                    int BarrierRight = barriers[j].x + 80;
+                    int BarrierTop = barriers[j].y - 5;
+                    int BarrierBottom = barriers[j].y + 25;
+        
+                    if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
+                        bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
+                        damageBarrier(barriers);
+                        ufoBulletActive = 0;
                 }
             }
         }
     }
+}
 
 void barBarrier(){
     // Menggunakan getmaxx dan getmaxy untuk layar fullscreen
@@ -77,7 +99,7 @@ void barBarrier(){
     for (int i = 0; i < MAX_BARRIERS; i++) {
         barriers[i].x = startX + (i * gap);
         barriers[i].y = startY;
-        barriers[i].health = 3;
+        barriers[i].health = 30;
     
     // Menggambar beberapa barrier
     for (int i = 0; i < MAX_BARRIERS; i++) {

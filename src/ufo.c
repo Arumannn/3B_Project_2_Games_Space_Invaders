@@ -32,7 +32,7 @@ void shootUFOBullet() {
         ufoShootCooldown = 20; // Jeda antar burst
         return;
     }
-
+        
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (!ufoBullets[i].active) {
             // **Acak posisi tembakan sedikit ke kiri/kanan**

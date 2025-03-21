@@ -23,8 +23,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/ThinkPad/OneDrive - Politeknik Negeri Bandung/Documents/Arman Private Project/3B_Project_2_Games",
-      "program": "c:/Users/ThinkPad/OneDrive - Politeknik Negeri Bandung/Documents/Arman Private Project/3B_Project_2_Games/build/Debug/outDebug",
+      "cwd": "d:/Documents/GitHub/3B_Project_2_Games_Space_Invaders/src",
+      "program": "d:/Documents/GitHub/3B_Project_2_Games_Space_Invaders/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

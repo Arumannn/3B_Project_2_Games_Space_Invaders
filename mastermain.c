@@ -17,6 +17,7 @@ void *backgroundBuffer;
 int bgSize;
 
 // Fungsi untuk membuat background hanya sekali
+// SATU
 void createCustomBackground() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -48,7 +49,7 @@ void createCustomBackground() {
 void drawCustomBackground() {
     putimage(0, 0, backgroundBuffer, COPY_PUT);
 }
-
+// DUA
 void startGame() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -58,7 +59,7 @@ void startGame() {
     // Buat background hanya sekali
     createCustomBackground();
 
-    Player SpaceShip_P = {screenWidth / 2, screenHeight - 100, 3};
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 120, 3};
     Alien aliens[ALIEN_ROWS][ALIEN_COLS]; // Array 2D untuk aliens
     Barrier barriers[MAX_BARRIERS];
     int alienDir = 1;

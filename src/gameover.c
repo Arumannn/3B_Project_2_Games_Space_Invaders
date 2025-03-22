@@ -15,7 +15,7 @@ typedef struct {
 } LeaderboardEntry;
 
 extern void drawStars(); // Menggunakan fungsi yang sudah ada di mainmenu.c
-
+//TIGA
 // Fungsi untuk menyimpan skor dan mengurutkan leaderboard
 void savePlayerScore(const char *name, int score) {
     LeaderboardEntry entries[MAX_ENTRIES];
@@ -66,7 +66,7 @@ void savePlayerScore(const char *name, int score) {
     }
 }
 
-
+//Empat
 // Tampilan layar GAME OVER
 void gameOverScreen() {
     int screenWidth = getmaxwidth();

@@ -13,34 +13,55 @@ void DrawSpaceShip(Player *player) {
     int x = player->X_Player;
     int y = player->Y_Player;
 
-    setcolor(CYAN);
-    setfillstyle(SOLID_FILL, CYAN);
-    int body[] = {x, y, x - 20, y + 40, x + 20, y + 40, x, y};
-    fillpoly(4, body);
-
+    // Body of the spaceship with more details
     setcolor(WHITE);
     setfillstyle(SOLID_FILL, WHITE);
-    fillellipse(x, y + 10, 7, 10);
+    int body[] = {x, y, x - 20, y + 50, x + 20, y + 50, x, y};
+    fillpoly(4, body);
 
+    // Detailed Central Blue Window
+    setcolor(CYAN);
+    setfillstyle(SOLID_FILL, CYAN);
+    fillellipse(x, y + 12, 6, 10);
+    fillellipse(x, y + 28, 4, 7);
+    
+    // Orange Stripes for more details
     setcolor(RED);
     setfillstyle(SOLID_FILL, RED);
-    int leftWing[] = {x - 20, y + 40, x - 40, y + 60, x - 20, y + 60, x - 20, y + 40};
+    bar(x - 15, y + 32, x - 8, y + 35);
+    bar(x + 8, y + 32, x + 15, y + 35);
+
+    // Left Wing - More pixel-accurate
+    setcolor(LIGHTGRAY);
+    setfillstyle(SOLID_FILL, LIGHTGRAY);
+    int leftWing[] = {x - 20, y + 50, x - 38, y + 65, x - 20, y + 70, x - 20, y + 50};
     fillpoly(4, leftWing);
-
-    setcolor(RED);
-    setfillstyle(SOLID_FILL, RED);
-    int rightWing[] = {x + 20, y + 40, x + 40, y + 60, x + 20, y + 60, x + 20, y + 40};
+    
+    // Right Wing - More pixel-accurate
+    int rightWing[] = {x + 20, y + 50, x + 38, y + 65, x + 20, y + 70, x + 20, y + 50};
     fillpoly(4, rightWing);
 
-    setcolor(YELLOW);
-    setfillstyle(SOLID_FILL, YELLOW);
-    bar(x - 10, y + 40, x + 10, y + 50);
+    // Thruster Base
+    setcolor(DARKGRAY);
+    setfillstyle(SOLID_FILL, DARKGRAY);
+    int thruster[] = {x - 8, y + 50, x + 8, y + 50, x + 5, y + 72, x - 5, y + 72, x - 8, y + 50};
+    fillpoly(5, thruster);
 
-    setcolor(LIGHTBLUE);
-    setfillstyle(SOLID_FILL, LIGHTBLUE);
-    int thruster[] = {x - 5, y + 50, x + 5, y + 50, x, y + 70, x - 5, y + 50};
-    fillpoly(4, thruster);
+    // Flame Details - Multi-layered for more effect
+    setcolor(RED);
+    setfillstyle(SOLID_FILL, RED);
+    int flame[] = {x - 5, y + 72, x + 5, y + 72, x, y + 85, x - 5, y + 72};
+    fillpoly(4, flame);
+    
+    setcolor(RED);
+    setfillstyle(SOLID_FILL, RED);
+    int smallFlame[] = {x - 3, y + 77, x + 3, y + 77, x, y + 92, x - 3, y + 77};
+    fillpoly(4, smallFlame);
 
+    setcolor(RED);
+    setfillstyle(SOLID_FILL, RED);
+    int tinyFlame[] = {x - 2, y + 82, x + 2, y + 82, x, y + 96, x - 2, y + 82};
+    fillpoly(4, tinyFlame);
 }
 
 void SpaceshipMove(Player *player) {
@@ -76,7 +97,7 @@ void initBullets() {
 }
 
 void ShootBullet(Player *player) {
-    PlaySound(TEXT("sound/Shooting_Audio.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_ASYNC);
+    PlaySound(TEXT("sound/Shooting_Audio.wav"), NULL, SND_FILENAME | SND_ASYNC);
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (!bullets_player[i].active) {
             bullets_player[i].x = player->X_Player;

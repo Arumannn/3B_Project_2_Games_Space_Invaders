@@ -82,7 +82,6 @@ void SpaceShip(Player *player) {
         if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
             break;
         }
-        //cleardevice();
         SpaceshipMove(player);
         updateBullets();
         drawBullets();
@@ -111,7 +110,6 @@ void ShootBullet(Player *player) {
 void updateBullets() {
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (bullets_player[i].active) {
-            extern int BLOCK_SIZE;
             bullets_player[i].y -= BLOCK_SIZE;
             if (bullets_player[i].y < 0) {
                 bullets_player[i].active = 0;
@@ -124,7 +122,6 @@ void updateBullets() {
 }
 
 void drawBullets() {
-    extern int BLOCK_SIZE;
     setcolor(YELLOW);
     setfillstyle(SOLID_FILL, YELLOW);
     for (int i = 0; i < MAX_BULLETS; i++) {
@@ -135,7 +132,6 @@ void drawBullets() {
     }
 }
 
-// Fungsi untuk memeriksa tabrakan dengan peluru alien/UFO
 void checkPlayerCollisions(Player *player) {
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {
@@ -163,7 +159,6 @@ void checkPlayerCollisions(Player *player) {
                         playerExplosions[j].active = 1;
                         playerExplosions[j].lifetime = 0;
                         break;
-                        
                     }
                 }
             }
@@ -216,7 +211,7 @@ void drawExplosionsPlayer() {
                 setfillstyle(SOLID_FILL, RED);
                 fillellipse(playerExplosions[i].x, playerExplosions[i].y, 30, 30);
             } else {
-                playerExplosions[i].active = 0;  // **Matikan ledakan setelah animasi selesai**
+                playerExplosions[i].active = 0;  // Matikan ledakan setelah animasi selesai
                 playerExplosions[i].lifetime = 0;
             }
             playerExplosions[i].lifetime++;
@@ -224,23 +219,20 @@ void drawExplosionsPlayer() {
     }
 }
 
-
 void updateExplosionsPlayer() {
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
         if (playerExplosions[i].active) {
             PlaySound(TEXT("sound/Player_Explosion.wav"), NULL, SND_FILENAME | SND_ASYNC);
             playerExplosions[i].lifetime++;
             if (playerExplosions[i].lifetime >= 20) {
-                playerExplosions[i].active = 0;  // **Matikan ledakan setelah 20 frame**
-                playerExplosions[i].lifetime = 0;  // **Reset lifetime agar bisa digunakan lagi**
+                playerExplosions[i].active = 0;  // Matikan ledakan setelah 20 frame
+                playerExplosions[i].lifetime = 0;  // Reset lifetime agar bisa digunakan lagi
             }
         }
     }
 }
 
-
 void resetPlayer(Player *player) {
-    // **Tambahkan ledakan di posisi terakhir pemain**
     printf("Respawn! Nyawa tersisa: %d\n", player->health);
     for (int j = 0; j < MAX_EXPLOSIONS; j++) {
         if (!playerExplosions[j].active) {
@@ -252,35 +244,27 @@ void resetPlayer(Player *player) {
         }
     }
 
-    // **Tampilkan animasi ledakan selama 3 detik**
     for (int i = 0; i < 90; i++) {  // 90 frame (dengan asumsi 30 FPS)
         updateExplosionsPlayer();
         drawExplosionsPlayer();
-        
     }
 
     player->X_Player = getmaxx() / 2;
     player->Y_Player = getmaxy() - 100;
     
-    
-    // **Kurangi nyawa pemain**
     printf("Respawn! Nyawa tersisa: %d\n", player->health);
-   
 }
 
 void drawHeart(int x, int y, int size, int color) {
     setcolor(color);
     setfillstyle(SOLID_FILL, color);
 
-    // **Badan utama UFO (Bentuk Hati)**
     fillellipse(x, y, size, size / 2);
 
-    // **Bagian atas kubah UFO**
     setcolor(WHITE);
     setfillstyle(SOLID_FILL, WHITE);
     fillellipse(x, y - size / 3, size / 2, size / 3);
 
-    // **Lampu di bawah UFO**
     setcolor(YELLOW);
     setfillstyle(SOLID_FILL, YELLOW);
     for (int i = -size / 2; i <= size / 2; i += size / 4) {
@@ -290,10 +274,10 @@ void drawHeart(int x, int y, int size, int color) {
 
 void drawLives(int lives) {
     int screenWidth = getmaxx();
-    int startX = screenWidth - 50;  // **Pojok kanan atas**
-    int startY = 50;  // **Tinggi tetap**
+    int startX = screenWidth - 50;  // Pojok kanan atas
+    int startY = 50;  // Tinggi tetap
     int heartSize = 20;
-    int spacing = 40;  // **Jarak antar heart**
+    int spacing = 40;  // Jarak antar heart
 
     for (int i = 0; i < lives; i++) {
         drawHeart(startX - (i * spacing), startY, heartSize, RED);

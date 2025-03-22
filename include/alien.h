@@ -33,7 +33,7 @@ extern Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS];
 
 void initAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);
 void drawAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);
-void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDir, int *alienDirLast);
+void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDir, int *alienDirLast, int frameCounter); // Tambahkan parameter frameCounter
 void checkAlienCollisions(Alien aliens[ALIEN_ROWS][ALIEN_COLS], Bullet bullets[], int bulletCount);
 void drawAlienExplosions();
 

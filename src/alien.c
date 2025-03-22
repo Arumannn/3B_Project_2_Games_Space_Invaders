@@ -1,11 +1,11 @@
 #include "alien.h"
 #include "mainsprite.h"
 #include "score.h"
+#include "level.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include "level.h"
 
 // Definisi variabel global
 int BLOCK_SIZE;
@@ -144,11 +144,9 @@ void drawAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
     }
 }
 
-void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDirFirst, int *alienDirRest) {
+void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDirFirst, int *alienDirRest, int frameCounter) {
     int moveDownFirst = 0;
     int moveDownRest = 0;
-    static int frameCounter = 0;
-    frameCounter++;
 
     // Update pergerakan peluru alien
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
@@ -163,6 +161,10 @@ void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDirFirst, int 
     // Dapatkan kecepatan dan interval tembakan berdasarkan level
     float currentAlienSpeed = getAlienSpeed();
     int currentShootInterval = getShootInterval();
+
+    // Hitung posisi Y awal untuk baris 4 (sebagai batas atas pergerakan baris 4 dan 5)
+    int baseYRow4 = 4 * BLOCK_SIZE * 2 + getmaxy() / 5;  // Posisi Y awal baris 4
+    int minY = baseYRow4 - BLOCK_SIZE;  // Batas atas (sedikit di atas posisi awal baris 4)
 
     for (int row = 0; row < ALIEN_ROWS; row++) {
         for (int col = 0; col < ALIEN_COLS; col++) {
@@ -179,7 +181,14 @@ void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDirFirst, int 
                     }
                 } else if (row == 4 || row == 5) {
                     aliens[row][col].x += *alienDirRest * (BLOCK_SIZE * currentAlienSpeed);
-                    aliens[row][col].y += (int)(sin(frameCounter * 0.1) * 5);
+                    // Pergerakan sinusoidal ke atas dan bawah
+                    int originalY = row * BLOCK_SIZE * 2 + getmaxy() / 5;  // Posisi Y awal alien
+                    int newY = aliens[row][col].y + (int)(sin(frameCounter * 0.1) * 3);
+                    // Batasi pergerakan ke atas agar tidak melewati batas minimum
+                    if (newY < minY) {
+                        newY = minY;
+                    }
+                    aliens[row][col].y = newY;
                     if (aliens[row][col].x <= 0 || aliens[row][col].x >= getmaxx() - BLOCK_SIZE) {
                         moveDownRest = 1;
                     }

@@ -65,6 +65,7 @@ void startGame() {
     Barrier barriers[MAX_BARRIERS];
     int alienDir = 1;
     int alienDirLast = 1;
+    int frameCounter = 0;  // Tambahkan frameCounter di sini
     initAliens(aliens);
     initBullets();
     initScore();
@@ -95,6 +96,7 @@ void startGame() {
 
         if (elapsedMs >= FRAME_TIME) {
             lastTime = currentTime; // Update waktu frame terakhir
+            frameCounter++;  // Increment frameCounter
 
             if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
                 PlaySound(NULL, 0, 0);
@@ -111,7 +113,7 @@ void startGame() {
             checkAlienBulletCollision(barriers);
             printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
             checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
-            updateAliens(aliens, &alienDir, &alienDirLast);
+            updateAliens(aliens, &alienDir, &alienDirLast, frameCounter);  // Kirim frameCounter
             checkAndUpdateLevel(aliens);  // Periksa dan update level
             updateExplosionsPlayer();
             

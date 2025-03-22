@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include "level.h"
 
 // Definisi variabel global
 int BLOCK_SIZE;
@@ -149,6 +150,7 @@ void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDirFirst, int 
     static int frameCounter = 0;
     frameCounter++;
 
+    // Update pergerakan peluru alien
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {
             alienBullets[i].y += BLOCK_SIZE / 2;
@@ -158,28 +160,33 @@ void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDirFirst, int 
         }
     }
 
+    // Dapatkan kecepatan dan interval tembakan berdasarkan level
+    float currentAlienSpeed = getAlienSpeed();
+    int currentShootInterval = getShootInterval();
+
     for (int row = 0; row < ALIEN_ROWS; row++) {
         for (int col = 0; col < ALIEN_COLS; col++) {
             if (aliens[row][col].active) {
                 if (row == 0 || row == 1) {
-                    aliens[row][col].x += *alienDirFirst * BLOCK_SIZE / 2;
+                    aliens[row][col].x += *alienDirFirst * (BLOCK_SIZE * currentAlienSpeed);
                     if (aliens[row][col].x <= 0 || aliens[row][col].x >= getmaxx() - BLOCK_SIZE) {
                         moveDownFirst = 1;
                     }
                 } else if (row == 2 || row == 3) {
-                    aliens[row][col].x += *alienDirRest * BLOCK_SIZE / 2;
+                    aliens[row][col].x += *alienDirRest * (BLOCK_SIZE * currentAlienSpeed);
                     if (aliens[row][col].x <= 0 || aliens[row][col].x >= getmaxx() - BLOCK_SIZE) {
                         moveDownRest = 1;
                     }
                 } else if (row == 4 || row == 5) {
-                    aliens[row][col].x += *alienDirRest * BLOCK_SIZE / 2;
+                    aliens[row][col].x += *alienDirRest * (BLOCK_SIZE * currentAlienSpeed);
                     aliens[row][col].y += (int)(sin(frameCounter * 0.1) * 5);
                     if (aliens[row][col].x <= 0 || aliens[row][col].x >= getmaxx() - BLOCK_SIZE) {
                         moveDownRest = 1;
                     }
                 }
 
-                if (rand() % 5000 < 10) {
+                // Logika tembakan alien dengan interval berdasarkan level
+                if (rand() % currentShootInterval < 10) {
                     for (int j = 0; j < MAX_ALIEN_BULLETS; j++) {
                         if (!alienBullets[j].active) {
                             alienBullets[j].x = aliens[row][col].x + BLOCK_SIZE / 4;

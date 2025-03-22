@@ -7,5 +7,6 @@ void handleMainMenu(); // Menangani input pada menu utama
 void showGuide();     // Menampilkan aturan permainan
 int confirmExit();    // Konfirmasi keluar dari permainan (mengembalikan 1 jika YA, 0 jika TIDAK)
 void mainMenu(); 
+void drawGradientBackground();
 
 #endif

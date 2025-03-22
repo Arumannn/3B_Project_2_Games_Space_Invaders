@@ -47,11 +47,19 @@ void drawButton(int x, int y, int width, int height, int color, const char *labe
 
 // Fungsi untuk menggambar background bintang
 void drawStars() {
-    cleardevice();
-    for (int i = 0; i < 200; i++) {
+    int numStars = 200; // Jumlah bintang
+    for (int i = 0; i < numStars; i++) {
         int x = rand() % getmaxwidth();
         int y = rand() % getmaxheight();
-        putpixel(x, y, WHITE);
+        
+        // Buat beberapa bintang lebih besar agar terlihat lebih jelas
+        if (rand() % 5 == 0) { 
+            setcolor(YELLOW);  // Bintang lebih besar berwarna kuning
+            circle(x, y, 2);   // Ukuran lebih besar
+        } else {
+            setcolor(WHITE);   // Bintang kecil tetap putih
+            putpixel(x, y, WHITE);
+        }
     }
 }
 
@@ -97,7 +105,7 @@ void drawLeaderboard(int yOffset) {
 
     // Menampilkan leaderboard
     int height = 30 + (count * rowHeight);
-    setcolor(GREEN);
+    setcolor(WHITE);
     rectangle(x, y, x + width, y + height);
     line(x, y + 30, x + width, y + 30);
     line(x + 60, y, x + 60, y + height);
@@ -119,6 +127,35 @@ void drawLeaderboard(int yOffset) {
     }
 }
 
+// Fungsi Gradasi Background
+void drawGradientBackground() {
+    int width = getmaxwidth();
+    int height = getmaxheight();
+
+    for (int y = 0; y < height; y++) {
+        float t = (float)y / height; // Normalisasi 0 - 1
+
+        int r, g, b;
+
+        // Hitam (atas) ke Biru Tua (tengah)
+        if (t < 0.5) {
+            float t1 = t * 2; // Normalisasi ke 0 - 1 untuk bagian atas
+            r = (int)(0 * (1 - t1) + 25 * t1);   // 0 → 25
+            g = (int)(0 * (1 - t1) + 25 * t1);   // 0 → 25
+            b = (int)(0 * (1 - t1) + 112 * t1);  // 0 → 112
+        } 
+        // Biru Tua (tengah) ke Ungu Tua (bawah)
+        else {
+            float t2 = (t - 0.5) * 2; // Normalisasi ke 0 - 1 untuk bagian bawah
+            r = (int)(25 * (1 - t2) + 75 * t2);  // 25 → 75
+            g = (int)(25 * (1 - t2) + 0 * t2);   // 25 → 0
+            b = (int)(112 * (1 - t2) + 130 * t2); // 112 → 130
+        }
+
+        setcolor(COLOR(r, g, b));
+        line(0, y, width, y);
+    }
+}
 
 // Fungsi untuk menampilkan menu utama
 void showMainMenu() {
@@ -127,6 +164,7 @@ void showMainMenu() {
     
     initwindow(screenWidth, screenHeight, "Space Invaders");
     cleardevice();
+    drawGradientBackground();
     drawStars();
 
     // Judul tetap di posisinya
@@ -141,9 +179,9 @@ void showMainMenu() {
     int buttonHeight = 80;
     int buttonSpacing = 130; // Tambah jarak antar tombol agar lebih luas
 
-    drawButton(centerX, startY, buttonWidth, buttonHeight, LIGHTGREEN, "START");
-    drawButton(centerX, startY + buttonSpacing, buttonWidth, buttonHeight, YELLOW, "GUIDE");
-    drawButton(centerX, startY + (buttonSpacing * 2), buttonWidth, buttonHeight, WHITE, "EXIT");
+    drawButton(centerX, startY, buttonWidth, buttonHeight, RGB(0, 180, 255), "START");
+    drawButton(centerX, startY + buttonSpacing, buttonWidth, buttonHeight, RGB(160, 90, 200), "GUIDE");
+    drawButton(centerX, startY + (buttonSpacing * 2), buttonWidth, buttonHeight, RGB(120, 150, 255), "EXIT");
 
     // Leaderboard diposisikan sejajar dengan tombol
     drawLeaderboard(startY + 10); // Tambahkan sedikit offset agar lebih rapi
@@ -199,12 +237,14 @@ void handleMainMenu() {
 }
 
 void showGuide() {
+    cleardevice();
+    drawGradientBackground();
     drawStars();
     drawText(getmaxwidth() / 2, 100, "GUIDE", 5, WHITE);
     drawText(getmaxwidth() / 2, 200, "Gunakan Tombol A dan D atau panah untuk bergerak", 3, WHITE);
     drawText(getmaxwidth() / 2, 250, "Tekan spasi untuk menembak", 3, WHITE);
     drawText(getmaxwidth() / 2, 300, "Hindari tembakan musuh", 3, WHITE);
-    drawButton(getmaxwidth() / 2 - 100, 400, 200, 50, RED, "BACK");
+    drawButton(getmaxwidth() / 2 - 100, 400, 200, 50, MAGENTA, "BACK");
 
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) {
@@ -224,10 +264,11 @@ void showGuide() {
 // Fungsi untuk EXIT
 int confirmExit() {
     cleardevice();
+    drawGradientBackground();
     drawStars();
     drawText(getmaxwidth() / 2, 200, "Anda yakin ingin keluar?", 3, WHITE);
-    drawButton(getmaxwidth() / 2 - 120, 300, 100, 50, RED, "YES");
-    drawButton(getmaxwidth() / 2 + 20, 300, 100, 50, GREEN, "NO");
+    drawButton(getmaxwidth() / 2 - 120, 300, 100, 50, CYAN, "YES");
+    drawButton(getmaxwidth() / 2 + 20, 300, 100, 50, MAGENTA, "NO");
 
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) {

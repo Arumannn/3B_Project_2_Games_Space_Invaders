@@ -74,12 +74,18 @@ void gameOverScreen() {
     
     initwindow(screenWidth, screenHeight, "Game Over");
     cleardevice();
+    drawGradientBackground();
     drawStars(); // Menggunakan background bintang yang sama dengan menu utama
 
     // Tampilkan tulisan "GAME OVER"
-    setcolor(RED);
+    setcolor(WHITE);
     settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 10);
-    outtextxy(screenWidth / 2 - 250, 100, (char *) "GAME OVER!!");
+
+    int textWidth = textwidth("GAME OVER!!");
+    int textHeight = textheight("GAME OVER!!");
+
+    outtextxy((screenWidth - textWidth) / 2, (screenHeight / 4) - (textHeight / 2), "GAME OVER!!");
+
 
     // Kotak input nama
     int inputBoxX1 = screenWidth / 2 - 150;
@@ -95,17 +101,25 @@ void gameOverScreen() {
     outtextxy(inputBoxX1, inputBoxY1 - 30, (char *) "MASUKKAN NAMA:");
 
     // Tombol SUBMIT
-    int submitButtonX1 = screenWidth / 2 - 75;
-    int submitButtonY1 = 400;
-    int submitButtonX2 = screenWidth / 2 + 75;
-    int submitButtonY2 = 450;
+    int buttonWidth = 200, buttonHeight = 50;
+    int submitButtonX1 = (screenWidth - buttonWidth) / 2;
+    int submitButtonY1 = inputBoxY2 + 30;
+    int submitButtonX2 = submitButtonX1 + buttonWidth;
+    int submitButtonY2 = submitButtonY1 + buttonHeight;
      
-    setfillstyle(SOLID_FILL, GREEN);
+    setfillstyle(SOLID_FILL, CYAN);
     bar(submitButtonX1, submitButtonY1, submitButtonX2, submitButtonY2);
-    
+
     setcolor(WHITE);
-    setbkcolor(GREEN);
-    outtextxy(screenWidth / 2 - 30, submitButtonY1 + 15, (char *) "SUBMIT");
+    setbkcolor(CYAN);
+    
+    int textSubmitWidth = textwidth("SUBMIT");
+    int textSubmitHeight = textheight("SUBMIT");
+
+    outtextxy((submitButtonX1 + submitButtonX2) / 2 - textSubmitWidth / 2,
+              (submitButtonY1 + submitButtonY2) / 2 - textSubmitHeight / 2, 
+              "SUBMIT");
+
     setbkcolor(BLACK);
 
     // Input nama pemain

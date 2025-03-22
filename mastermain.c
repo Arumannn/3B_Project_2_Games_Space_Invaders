@@ -9,6 +9,7 @@
 #include "ufo.h"
 #include "barrier.h"
 #include "gameover.h"
+#include "level.h"
 
 // Pastikan untuk menyertakan library untuk suara
 #pragma comment(lib, "winmm.lib")
@@ -69,6 +70,7 @@ void startGame() {
     initScore();
     initExplosionsPlayer();
     initBarriers(barriers);
+    initLevel();  // Inisialisasi level
 
     int gameOver = 0;
     int page = 0;
@@ -110,6 +112,7 @@ void startGame() {
             printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
             checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
             updateAliens(aliens, &alienDir, &alienDirLast);
+            checkAndUpdateLevel(aliens);  // Periksa dan update level
             updateExplosionsPlayer();
             
             drawLives(SpaceShip_P.health);
@@ -128,7 +131,6 @@ void startGame() {
             for (int i = 0; i < MAX_BARRIERS; i++) {
                 drawBarrier(barriers[i]);
             }
-
 
             setvisualpage(page);
             page = 1 - page;

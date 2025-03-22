@@ -66,8 +66,6 @@ void savePlayerScore(const char *name, int score) {
     }
 }
 
-//Empat
-// Tampilan layar GAME OVER
 void gameOverScreen() {
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
@@ -75,17 +73,14 @@ void gameOverScreen() {
     initwindow(screenWidth, screenHeight, "Game Over");
     cleardevice();
     drawGradientBackground();
-    drawStars(); // Menggunakan background bintang yang sama dengan menu utama
+    drawStars();
 
-    // Tampilkan tulisan "GAME OVER"
     setcolor(WHITE);
     settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 10);
 
-    int textWidth = textwidth("GAME OVER!!");
-    int textHeight = textheight("GAME OVER!!");
-
-    outtextxy((screenWidth - textWidth) / 2, (screenHeight / 4) - (textHeight / 2), "GAME OVER!!");
-
+    int textWidth = textwidth((char *) "GAME OVER!!");
+    int textHeight = textheight((char*)"GAME OVER!!");
+    outtextxy((screenWidth - textWidth) / 2, (screenHeight / 4) - (textHeight / 2), (char*)"GAME OVER!!");
 
     // Kotak input nama
     int inputBoxX1 = screenWidth / 2 - 150;
@@ -96,11 +91,9 @@ void gameOverScreen() {
     setcolor(WHITE);
     rectangle(inputBoxX1, inputBoxY1, inputBoxX2, inputBoxY2);
     
-    // Label "MASUKKAN NAMA:"
     settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 3);
-    outtextxy(inputBoxX1, inputBoxY1 - 30, (char *) "MASUKKAN NAMA:");
+    outtextxy(inputBoxX1, inputBoxY1 - 30, (char*)"MASUKKAN NAMA:");
 
-    // Tombol SUBMIT
     int buttonWidth = 200, buttonHeight = 50;
     int submitButtonX1 = (screenWidth - buttonWidth) / 2;
     int submitButtonY1 = inputBoxY2 + 30;
@@ -113,16 +106,14 @@ void gameOverScreen() {
     setcolor(WHITE);
     setbkcolor(CYAN);
     
-    int textSubmitWidth = textwidth("SUBMIT");
-    int textSubmitHeight = textheight("SUBMIT");
-
+    int textSubmitWidth = textwidth((char*)"SUBMIT");
+    int textSubmitHeight = textheight((char*)"SUBMIT");
     outtextxy((submitButtonX1 + submitButtonX2) / 2 - textSubmitWidth / 2,
               (submitButtonY1 + submitButtonY2) / 2 - textSubmitHeight / 2, 
-              "SUBMIT");
+              (char*)"SUBMIT");
 
     setbkcolor(BLACK);
 
-    // Input nama pemain
     char playerName[MAX_NAME_LENGTH + 1] = "";
     int index = 0;
     char ch;
@@ -130,41 +121,35 @@ void gameOverScreen() {
     int finalScore = getScore();
     
     while (1) {
-        // Tampilkan input nama hanya jika berubah
         if (index != lastIndex) {
             setfillstyle(SOLID_FILL, BLACK);
             bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);
-            
             setcolor(WHITE);
             outtextxy(inputBoxX1 + 10, inputBoxY1 + 10, playerName);
             lastIndex = index;
         }
 
-        // Cek input keyboard
         if (kbhit()) {
             ch = getch();
-            
-            if (ch == 13 && index > 0) { // ENTER ditekan
+            if (ch == 13 && index > 0) {
                 savePlayerScore(playerName, finalScore);
                 closegraph();
                 showMainMenu();
                 return;
             } 
-            else if (ch == 8 && index > 0) { // BACKSPACE
+            else if (ch == 8 && index > 0) {
                 index--;
                 playerName[index] = '\0';
             } 
-            else if (index < MAX_NAME_LENGTH && ch >= 32 && ch <= 126) { // Tambahkan karakter
+            else if (index < MAX_NAME_LENGTH && ch >= 32 && ch <= 126) {
                 playerName[index++] = ch;
                 playerName[index] = '\0';
             }
         }
 
-        // Cek klik tombol SUBMIT
         if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
             getmouseclick(WM_LBUTTONDOWN, x, y);
-            
             if (x >= submitButtonX1 && x <= submitButtonX2 && y >= submitButtonY1 && y <= submitButtonY2) {
                 if (strlen(playerName) > 0) {
                     savePlayerScore(playerName, finalScore);
@@ -175,6 +160,4 @@ void gameOverScreen() {
             }
         }
     }
-    
-    closegraph();
 }

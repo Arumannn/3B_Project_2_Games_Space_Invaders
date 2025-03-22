@@ -80,7 +80,7 @@ void startGame() {
     QueryPerformanceFrequency(&frequency);
     QueryPerformanceCounter(&lastTime);
 
-    PlaySound(TEXT("sound/background_music.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+    PlaySound(TEXT("sound/backsound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 
     // **Spawn UFO pertama dengan posisi dan waktu acak**
     srand(time(NULL));

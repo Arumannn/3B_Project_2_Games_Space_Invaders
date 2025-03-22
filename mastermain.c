@@ -112,6 +112,7 @@ void startGame() {
             updateAliens(aliens, &alienDir, &alienDirLast);
             updateExplosionsPlayer();
             
+            drawLives(SpaceShip_P.health);
             drawAliens(aliens);
             drawAlienExplosions();
             drawBullets();

@@ -97,9 +97,9 @@ void initBullets() {
 }
 
 void ShootBullet(Player *player) {
-    PlaySound(TEXT("sound/Shooting_Audio.wav"), NULL, SND_FILENAME | SND_ASYNC);
     for (int i = 0; i < MAX_BULLETS; i++) {
         if (!bullets_player[i].active) {
+            PlaySound(TEXT("sound/Shooting_Audio.wav"), NULL, SND_FILENAME | SND_ASYNC);
             bullets_player[i].x = player->X_Player;
             bullets_player[i].y = player->Y_Player - 10;
             bullets_player[i].active = 1;
@@ -201,7 +201,6 @@ void initExplosionsPlayer() {
 }
 
 void drawExplosionsPlayer() {
-    
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
         if (playerExplosions[i].active) {
             if (playerExplosions[i].lifetime < 5) {
@@ -229,6 +228,7 @@ void drawExplosionsPlayer() {
 void updateExplosionsPlayer() {
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
         if (playerExplosions[i].active) {
+            PlaySound(TEXT("sound/Player_Explosion.wav"), NULL, SND_FILENAME | SND_ASYNC);
             playerExplosions[i].lifetime++;
             if (playerExplosions[i].lifetime >= 20) {
                 playerExplosions[i].active = 0;  // **Matikan ledakan setelah 20 frame**

@@ -2,6 +2,7 @@
 #include "mainsprite.h"
 #include "score.h"
 #include "level.h"
+#include "gameover.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -283,6 +284,29 @@ void drawAlienExplosions() {
                 setfillstyle(SOLID_FILL, RED);
                 fillellipse(alienExplosions[row][col].x, alienExplosions[row][col].y, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
                 addAlienScore();
+            }
+        }
+    }
+}
+
+void checkAlienPlayerVerticalCollision(Alien aliens[ALIEN_ROWS][ALIEN_COLS], Player *player) {
+    // Posisi vertikal sprite pemain
+    int playerTop = player->Y_Player;
+    int playerBottom = player->Y_Player + 40; // Tinggi sprite pemain (sesuai DrawSpaceShip)
+
+    for (int row = 0; row < ALIEN_ROWS; row++) {
+        for (int col = 0; col < ALIEN_COLS; col++) {
+            if (aliens[row][col].active) {
+                // Posisi vertikal alien
+                int alienTop = aliens[row][col].y;
+                int alienBottom = aliens[row][col].y + BLOCK_SIZE; // Tinggi alien
+
+                // Periksa apakah ada tumpang tindih vertikal
+                if (alienBottom >= playerTop && alienTop <= playerBottom) {
+                    // Alien sejajar dengan sprite pemain, game over
+                    gameOverScreen();
+                    return; // Keluar dari fungsi dan akhiri permainan
+                }
             }
         }
     }

@@ -214,7 +214,9 @@ void drawExplosionsPlayer() {
 void updateExplosionsPlayer() {
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
         if (playerExplosions[i].active) {
-            PlaySound(TEXT("sound/Player_Explosion.wav"), NULL, SND_FILENAME | SND_ASYNC);
+            if (playerExplosions[i].lifetime == 0) { // Putar suara hanya sekali
+                PlaySound(TEXT("sound/Player_Explosion.wav"), NULL, SND_FILENAME | SND_ASYNC);
+            }
             playerExplosions[i].lifetime++;
             if (playerExplosions[i].lifetime >= 20) {
                 playerExplosions[i].active = 0;  // Matikan ledakan setelah 20 frame

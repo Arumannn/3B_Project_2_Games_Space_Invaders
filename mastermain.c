@@ -50,7 +50,7 @@ void createCustomBackground() {
 void drawCustomBackground() {
     putimage(0, 0, backgroundBuffer, COPY_PUT);
 }
-// DUA
+
 void startGame() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -65,18 +65,18 @@ void startGame() {
     Barrier barriers[MAX_BARRIERS];
     int alienDir = 1;
     int alienDirLast = 1;
-    int frameCounter = 0;  // Tambahkan frameCounter di sini
+    int frameCounter = 0;  
     initAliens(aliens);
     initBullets();
     initScore();
     initExplosionsPlayer();
     initBarriers(barriers);
-    initLevel();  // Inisialisasi level
+    initLevel();  
 
     int gameOver = 0;
     int page = 0;
 
-    const double TARGET_FPS = 30.0;  // FPS target (diturunkan ke 30 FPS agar lebih lambat)
+    const double TARGET_FPS = 30.0;  
     const double FRAME_TIME = 1000.0 / TARGET_FPS;
     
     LARGE_INTEGER frequency, lastTime, currentTime;
@@ -123,7 +123,7 @@ void startGame() {
             drawAlienExplosions();
             drawBullets();
             DrawSpaceShip(&SpaceShip_P);
-            UFO(aliens); // Panggil UFO dengan array 2D
+            UFO(aliens); 
             
             if (SpaceShip_P.health <= 0) {
                 gameOverScreen();  

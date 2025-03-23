@@ -7,5 +7,6 @@ void drawScore();
 int getScore();
 void addAlienScore();
 void addUFOScore();
+void drawLevel(); 
 
 #endif

@@ -114,6 +114,7 @@ void startGame() {
             printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
             checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
             updateAliens(aliens, &alienDir, &alienDirLast, frameCounter);  // Kirim frameCounter
+            checkAlienPlayerVerticalCollision(aliens, &SpaceShip_P);  // Periksa tabrakan vertikal
             checkAndUpdateLevel(aliens);  // Periksa dan update level
             updateExplosionsPlayer();
             

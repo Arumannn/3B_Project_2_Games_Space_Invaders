@@ -7,7 +7,7 @@
 #include <time.h>
 
 // Inisialisasi UFO
-float ufoX = 100.0, ufoY = 100.0;
+float ufoX = 100.0, ufoY = 150.0;
 float ufoSpeed = 10.0;
 int ufoDirection = 1;
 int ufoActive = 1;  

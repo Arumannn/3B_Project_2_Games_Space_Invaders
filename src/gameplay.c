@@ -278,14 +278,18 @@ void savePlayerScore(const char *name, int score) {
 
 // Tampilan layar GAME OVER
 void gameOverScreen() {
+    // Inisialisasi Window dan Layar 
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
     
     initwindow(screenWidth, screenHeight, "Game Over");
     cleardevice();
+
+    // Background 
     drawGradientBackground();
     drawStars();
 
+    // Teks "GAME OVER!!" 
     setcolor(WHITE);
     settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 10);
 
@@ -302,9 +306,11 @@ void gameOverScreen() {
     setcolor(WHITE);
     rectangle(inputBoxX1, inputBoxY1, inputBoxX2, inputBoxY2);
     
+    // Label "MASUKKAN NAMA:" 
     settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 3);
     outtextxy(inputBoxX1, inputBoxY1 - 30, (char*)"MASUKKAN NAMA:");
 
+    // Tombol "SUBMIT" 
     int buttonWidth = 200, buttonHeight = 50;
     int submitButtonX1 = (screenWidth - buttonWidth) / 2;
     int submitButtonY1 = inputBoxY2 + 30;
@@ -325,6 +331,7 @@ void gameOverScreen() {
 
     setbkcolor(BLACK);
 
+    // Input Nama Pemain Secara Dinamis
     char playerName[MAX_NAME_LENGTH + 1] = "";
     int index = 0;
     char ch;
@@ -340,6 +347,7 @@ void gameOverScreen() {
             lastIndex = index;
         }
 
+        // Tombol Keyboard (ENTER dan BACKSPACE) 
         if (kbhit()) {
             ch = getch();
             if (ch == 13 && index > 0) {
@@ -358,6 +366,7 @@ void gameOverScreen() {
             }
         }
 
+        // Klik Tombol SUBMIT 
         if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
             getmouseclick(WM_LBUTTONDOWN, x, y);

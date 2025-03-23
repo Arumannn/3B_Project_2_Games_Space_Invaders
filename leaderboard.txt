@@ -1,9 +1,2 @@
-<<<<<<< HEAD
-admin 0
-=======
-nene 1840
-alexa 1640
-maesaroh 1340
-Arman 1320
-arumanman 0
->>>>>>> Ranking
+dada 640
+d  320

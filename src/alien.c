@@ -2,7 +2,7 @@
 #include "mainsprite.h"
 #include "score.h"
 #include "level.h"
-#include "gameover.h"
+#include "gameplay.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -12,6 +12,7 @@
 int BLOCK_SIZE;
 AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS];
+
 
 void initAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
     BLOCK_SIZE = getmaxy() / 40;

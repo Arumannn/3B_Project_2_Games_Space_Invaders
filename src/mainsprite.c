@@ -2,7 +2,7 @@
 #include "mainsprite.h"
 #include "alien.h"
 #include "ufo.h"
-#include "gameover.h"
+#include "gameplay.h"
 
 // Definisi variabel global
 Bullet bullets_player[MAX_BULLETS];

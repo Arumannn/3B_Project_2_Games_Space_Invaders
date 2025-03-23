@@ -6,16 +6,15 @@
 #include "mainmenu.h"
 #include "score.h"
 
-#define MAX_ENTRIES 10  // Maksimum 10 pemain
-#define MAX_NAME_LENGTH 20 // Maksimum panjang nama
+#define MAX_ENTRIES 5  // Maksimum 5 pemain
+#define MAX_NAME_LENGTH 10 // Maksimum panjang nama
 
+// Struktur untuk menyimpan data leaderboard
 typedef struct {
-    char name[MAX_NAME_LENGTH + 1];
+    char name[MAX_NAME_LENGTH];
     int score;
 } LeaderboardEntry;
 
-extern void drawStars(); // Menggunakan fungsi yang sudah ada di mainmenu.c
-//TIGA
 // Fungsi untuk menyimpan skor dan mengurutkan leaderboard
 void savePlayerScore(const char *name, int score) {
     LeaderboardEntry entries[MAX_ENTRIES];
@@ -24,7 +23,7 @@ void savePlayerScore(const char *name, int score) {
 
     FILE *file = fopen("leaderboard.txt", "r");
     if (file) {
-        while (fscanf(file, "%s %d", entries[count].name, &entries[count].score) != EOF) {
+        while (fscanf(file, "%s %d", entries[count].name, &entries[count].score) == 2) {
             if (strcmp(entries[count].name, name) == 0) {
                 // Jika pemain sudah ada, hanya update skor jika lebih tinggi
                 if (score > entries[count].score) {
@@ -38,7 +37,7 @@ void savePlayerScore(const char *name, int score) {
         fclose(file);
     }
 
-    // Jika pemain tidak ditemukan, tambahkan pemain baru
+    // Jika pemain tidak ditemukan dan leaderboard masih bisa menampung
     if (!found && count < MAX_ENTRIES) {
         strcpy(entries[count].name, name);
         entries[count].score = score;
@@ -56,6 +55,11 @@ void savePlayerScore(const char *name, int score) {
         }
     }
 
+    // Jika leaderboard sudah penuh, hapus pemain dengan skor terendah
+    if (count > MAX_ENTRIES) {
+        count = MAX_ENTRIES;
+    }
+
     // Simpan leaderboard ke file
     file = fopen("leaderboard.txt", "w");
     if (file) {
@@ -66,6 +70,7 @@ void savePlayerScore(const char *name, int score) {
     }
 }
 
+// Tampilan layar GAME OVER
 void gameOverScreen() {
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();

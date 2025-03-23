@@ -3,6 +3,7 @@
 #include "alien.h"
 #include "ufo.h"
 #include "gameplay.h"
+#include "mainmenu.h"
 
 // Definisi variabel global
 Bullet bullets_player[MAX_BULLETS];
@@ -75,17 +76,8 @@ void SpaceshipMove(Player *player) {
         ShootBullet(player);
         shootCooldown = 3;
     }
-}
-
-void SpaceShip(Player *player) {
-    while (1) {
-        if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
-            break;
-        }
-        SpaceshipMove(player);
-        updateBullets();
-        drawBullets();
-        delay(30);
+    if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+        showMainMenu();
     }
 }
 

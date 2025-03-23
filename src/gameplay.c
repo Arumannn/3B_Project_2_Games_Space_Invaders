@@ -14,7 +14,6 @@
 #include "ufo.h"
 #include "barrier.h"
 #include "gameplay.h"
-#include "level.h"
 #include "mainmenu.h"
 #include "score.h"
 

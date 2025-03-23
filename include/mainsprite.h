@@ -29,7 +29,6 @@ void drawBullets();
 void ShootBullet(Player *player);
 void SpaceshipMove(Player *player);
 void DrawSpaceShip(Player *player);
-void SpaceShip(Player *player);
 void checkPlayerCollisions(Player *player);  
 void updateExplosionsPlayer();
 void drawExplosionsPlayer();

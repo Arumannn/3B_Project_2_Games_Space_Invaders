@@ -5,6 +5,8 @@
 #define SPEED_INCREMENT 0.1  // Peningkatan kecepatan per level
 #define SHOOT_INTERVAL_DECREMENT 500  // Pengurangan interval tembakan per level
 
+#include "alien.h"
+
 void drawStars();
 void gameOverScreen();
 void savePlayerScore(const char *name, int score);

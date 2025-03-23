@@ -1,7 +1,6 @@
 #include "alien.h"
 #include "mainsprite.h"
 #include "score.h"
-#include "level.h"
 #include "gameplay.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -254,6 +253,7 @@ void checkAlienCollisions(Alien aliens[ALIEN_ROWS][ALIEN_COLS], Bullet bullets[]
                             alienExplosions[row][col].y = aliens[row][col].y + BLOCK_SIZE / 2;
                             alienExplosions[row][col].active = 1;
                             alienExplosions[row][col].lifetime = 5;
+                            addAlienScore();
                             break;
                         }
                     }
@@ -284,7 +284,6 @@ void drawAlienExplosions() {
                 setcolor(RED);
                 setfillstyle(SOLID_FILL, RED);
                 fillellipse(alienExplosions[row][col].x, alienExplosions[row][col].y, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
-                addAlienScore();
             }
         }
     }

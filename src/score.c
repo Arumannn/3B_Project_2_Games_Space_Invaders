@@ -1,5 +1,5 @@
 #include "score.h"
-#include "level.h"
+#include "gameplay.h"
 #include <graphics.h>
 #include <stdio.h>
 
@@ -61,9 +61,9 @@ int getScore() {
 }
 
 void addAlienScore() {
-    updateScore(10);
+    updateScore(100);
 }
 
 void addUFOScore() {
-    updateScore(100);
+    updateScore(1000);
 }

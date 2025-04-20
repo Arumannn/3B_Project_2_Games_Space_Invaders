@@ -10,7 +10,6 @@
 #include "mainmenu.h"
 
 void mainMenu() {
-    initwindow(getmaxwidth(), getmaxheight(), "Main Menu");
     cleardevice();
     
     setcolor(WHITE);
@@ -18,7 +17,7 @@ void mainMenu() {
     outtextxy(getmaxwidth() / 2 - 100, 100, (char *)"MAIN MENU");
 
     getch();
-    closegraph();
+    cleardevice();
 }
 
 // Fungsi untuk menggambar teks di tengah
@@ -162,7 +161,6 @@ void showMainMenu() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     
-    initwindow(screenWidth, screenHeight, "Space Invaders");
     cleardevice();
     drawGradientBackground();
     drawStars();
@@ -278,7 +276,7 @@ int confirmExit() {
 
             // Jika klik tombol YES (Keluar dari game)
             if (x >= getmaxwidth() / 2 - 120 && x <= getmaxwidth() / 2 - 20 && y >= 300 && y <= 350) {
-                closegraph(); // Menutup jendela grafis
+              cleardevice(); // Menutup jendela grafis
                 return 1;      // Kembali ke handleMainMenu untuk exit(0)
             }
 

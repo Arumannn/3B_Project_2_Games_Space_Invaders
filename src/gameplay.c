@@ -73,8 +73,6 @@ void drawCustomBackground() {
 void startGame() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-    
-    initwindow(screenWidth, screenHeight, "Space Invaders");
 
     // Buat background hanya sekali
     createCustomBackground();
@@ -171,7 +169,7 @@ void startGame() {
     
     free(backgroundBuffer);  // Bebaskan memori background
 
-    closegraph();
+    cleardevice();
 }
 
 
@@ -282,7 +280,6 @@ void gameOverScreen() {
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
     
-    initwindow(screenWidth, screenHeight, "Game Over");
     cleardevice();
 
     // Background 
@@ -352,7 +349,7 @@ void gameOverScreen() {
             ch = getch();
             if (ch == 13 && index > 0) {
                 savePlayerScore(playerName, finalScore);
-                closegraph();
+                cleardevice();
                 showMainMenu();
                 return;
             } 
@@ -373,7 +370,7 @@ void gameOverScreen() {
             if (x >= submitButtonX1 && x <= submitButtonX2 && y >= submitButtonY1 && y <= submitButtonY2) {
                 if (strlen(playerName) > 0) {
                     savePlayerScore(playerName, finalScore);
-                    closegraph();
+                    cleardevice();
                     showMainMenu();
                     return;
                 }

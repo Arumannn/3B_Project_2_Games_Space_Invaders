@@ -12,6 +12,7 @@
 
 int main() {
     srand(time(NULL));
+    initwindow(getmaxwidth(), getmaxheight(), "Space Invaders");
     showMainMenu();
     handleMainMenu(); 
 

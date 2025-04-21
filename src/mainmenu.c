@@ -5,7 +5,6 @@
 #include <time.h>
 #include "mainsprite.h"
 #include "alien.h"
-#include "score.h"
 #include "ufo.h"
 #include "mainmenu.h"
 

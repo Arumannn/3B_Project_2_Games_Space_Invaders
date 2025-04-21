@@ -11,7 +11,6 @@
         "src/mainsprite.c",
         "src/alien.c",
         "src/ufo.c",
-        "src/score.c",
         "src/barrier.c",
         "src/gameplay.c",
         "-o",

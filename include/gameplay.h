@@ -7,6 +7,14 @@
 
 #include "alien.h"
 
+void initScore();
+void updateScore(int points);
+void drawScore();
+int getScore();
+void addAlienScore();
+void addUFOScore();
+void drawLevel(); 
+
 void drawStars();
 void gameOverScreen();
 void savePlayerScore(const char *name, int score);

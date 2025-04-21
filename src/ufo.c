@@ -1,10 +1,12 @@
 #include <graphics.h>
 #include "mainsprite.h"
 #include "ufo.h"
-#include "score.h"
 #include "alien.h"
+#include "gameplay.h"
 #include <stdlib.h>
 #include <time.h>
+
+#define FIREBALL_SPEED 12  
 
 // Inisialisasi UFO
 float ufoX = 100.0, ufoY = 150.0;
@@ -22,7 +24,7 @@ int ufoBurstCount = 0;
 int ufoShootCooldown = 0;
 
 // **Fungsi untuk menembakkan fireball**
-void drawExplosion(int x, int y); 
+
 void shootUFOBullet() {
     if (!ufoActive || ufoShootCooldown > 0) {
         ufoShootCooldown--;
@@ -58,8 +60,6 @@ void shootUFOBullet() {
     }
 }
 
-// **Update pergerakan peluru**
-#define FIREBALL_SPEED 12  
 
 void updateUFOBullets() {
     for (int i = 0; i < MAX_UFO_BULLETS; i++) {

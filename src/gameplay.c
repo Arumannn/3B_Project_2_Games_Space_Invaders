@@ -10,12 +10,11 @@
 #include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
-#include "score.h"
 #include "ufo.h"
 #include "barrier.h"
 #include "gameplay.h"
 #include "mainmenu.h"
-#include "score.h"
+
 
 #define MAX_ENTRIES 5  // Maksimum 5 pemain
 #define MAX_NAME_LENGTH 10 // Maksimum panjang nama
@@ -35,6 +34,10 @@ int bgSize;
 static int currentLevel = 1;  // Level awal
 static float alienSpeed = BASE_ALIEN_SPEED;  // Kecepatan awal alien
 static int shootInterval = BASE_SHOOT_INTERVAL;  // Interval tembakan awal
+
+static int score = 0;
+static int lastLevel = -1;  
+static int blinkCounter = 0;  
 
 // Fungsi untuk membuat background hanya sekali
 // SATU
@@ -377,4 +380,65 @@ void gameOverScreen() {
             }
         }
     }
+}
+
+void initScore() {
+    score = 0;
+    lastLevel = -1; 
+    blinkCounter = 0; 
+}
+
+void updateScore(int points) {
+    score += points;
+}
+
+void drawScore() {
+    char scoreText[20];
+    char levelText[20];
+    
+    settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 2); 
+
+    sprintf(scoreText, "Score: %d", score);
+    setcolor(WHITE);
+    outtextxy(10, 10, scoreText);
+    
+    int currentLevel = getCurrentLevel();
+    if (lastLevel != currentLevel) {
+        lastLevel = currentLevel;
+        blinkCounter = 30;  
+    }
+
+    sprintf(levelText, "Level: %d", currentLevel);
+    
+    int textWidth = textwidth(levelText);
+    int screenWidth = getmaxx();
+    int levelX = (screenWidth - textWidth) / 2;  
+    int levelY = 10;  
+
+    if (blinkCounter > 0) {
+        if (blinkCounter % 10 < 5) {
+            setcolor(CYAN);  
+        } else {
+            setcolor(WHITE);
+        }
+        blinkCounter--;
+    } else {
+        setcolor(WHITE);  
+    }
+    
+    outtextxy(levelX, levelY, levelText);
+
+    settextstyle(DEFAULT_FONT, HORIZ_DIR, 1);
+}
+
+int getScore() {
+    return score;
+}
+
+void addAlienScore() {
+    updateScore(100);
+}
+
+void addUFOScore() {
+    updateScore(1000);
 }

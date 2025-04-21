@@ -1,6 +1,5 @@
 #include "alien.h"
 #include "mainsprite.h"
-#include "score.h"
 #include "gameplay.h"
 #include <stdio.h>
 #include <stdlib.h>

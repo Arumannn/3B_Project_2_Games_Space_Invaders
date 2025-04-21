@@ -1,4 +1,5 @@
 a 8400
 d 3200
+anjing 2400
 dada 640
 dddddddddd 400

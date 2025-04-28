@@ -123,14 +123,16 @@ void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
     updateUFOBullets();
     drawUFOBullets();
 
-    for (int j = 0; j < MAX_BULLETS; j++) {
-        if (playerBullets[j].active &&
-            playerBullets[j].x > ufoX - 45 &&
-            playerBullets[j].x < ufoX + 45 &&
-            playerBullets[j].y > ufoY - 40 && 
-            playerBullets[j].y < ufoY + 20) {
+    // Perbaiki playerBullets traversal pakai linked list
+    BulletNode *current = playerBullets;
+    while (current != NULL) {
+        if (current->bullet.active &&
+            current->bullet.x > ufoX - 45 &&
+            current->bullet.x < ufoX + 45 &&
+            current->bullet.y > ufoY - 40 && 
+            current->bullet.y < ufoY + 20) {
 
-            playerBullets[j].active = 0;
+            current->bullet.active = 0;
             ufoHealth--;
 
             if (ufoHealth <= 0) {
@@ -139,12 +141,15 @@ void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
                 ufoActive = 0;
                 addUFOScore();
 
-                // **Tetapkan waktu respawn acak antara 3-8 detik**
+                // Tetapkan waktu respawn acak antara 3-8 detik
                 ufoRespawnDelay = (rand() % 5 + 3) * 30; // (3-8 detik dalam frame 30FPS)
+                break; // Keluar dari loop setelah UFO mati
             }
         }
+        current = current->next;
     }
 }
+
 
 
 // **Inisialisasi HP UFO secara benar**

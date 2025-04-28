@@ -2,16 +2,17 @@
 #include <windows.h>
 
 // Definisi variabel global
-Bullet playerBullets[MAX_BULLETS];
+extern BulletNode *playerBullets;
 Bullet alienBullets[MAX_ALIEN_BULLETS];
 Bullet ufoBullets[MAX_UFO_BULLETS];
 int shootCooldown = 0;
 
 void initAllBullets() {
     // Inisialisasi peluru pemain
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        playerBullets[i].active = 0;
-    }
+    playerBullets = NULL;
+        // for (int i = 0; i < MAX_BULLETS; i++) {
+        //     playerBullets[i].active = 0;
+        // }
     // Inisialisasi peluru alien
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         alienBullets[i].active = 0;
@@ -24,15 +25,31 @@ void initAllBullets() {
 }
 
 void updateAllBullets() {
-    // Perbarui peluru pemain
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        if (playerBullets[i].active) {
-            playerBullets[i].y -= BLOCK_SIZE;
-            if (playerBullets[i].y < 0) {
-                playerBullets[i].active = 0;
+    // Perbarui peluru pemain (pakai linked list traversal)
+    BulletNode *current = playerBullets;
+    BulletNode *prev = NULL;
+
+    while (current != NULL) {
+        current->bullet.y -= BLOCK_SIZE;
+        if (current->bullet.y < 0) {
+            // Hapus bullet
+            if (prev == NULL) {
+                BulletNode *temp = current;
+                playerBullets = current->next;
+                current = playerBullets;
+                free(temp);
+            } else {
+                BulletNode *temp = current;
+                prev->next = current->next;
+                current = current->next;
+                free(temp);
             }
+        } else {
+            prev = current;
+            current = current->next;
         }
     }
+
     // Perbarui peluru alien
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {
@@ -52,22 +69,23 @@ void updateAllBullets() {
             }
         }
     }
-    // Kurangi cooldown pemain
     if (shootCooldown > 0) {
         shootCooldown--;
     }
 }
-
 void drawAllBullets() {
     // Gambar peluru pemain
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        if (playerBullets[i].active) {
+    BulletNode *current = playerBullets;
+    while (current != NULL) {
+        if (current->bullet.active) {
             setcolor(YELLOW);
             setfillstyle(SOLID_FILL, YELLOW);
-            bar(playerBullets[i].x - PLAYER_BULLET_WIDTH, playerBullets[i].y, 
-                playerBullets[i].x + PLAYER_BULLET_WIDTH, playerBullets[i].y + BLOCK_SIZE);
+            bar(current->bullet.x - PLAYER_BULLET_WIDTH, current->bullet.y, 
+                current->bullet.x + PLAYER_BULLET_WIDTH, current->bullet.y + BLOCK_SIZE);
         }
+        current = current->next;
     }
+
     // Gambar peluru alien
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {

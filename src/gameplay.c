@@ -81,14 +81,14 @@ void startGame() {
     // Buat background hanya sekali
     createCustomBackground();
 
-    Player SpaceShip_P = {screenWidth / 2, screenHeight - 120, 3};
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 120, 3, 1, 0, 0};
     Alien aliens[ALIEN_ROWS][ALIEN_COLS]; // Array 2D untuk aliens
     Barrier barriers[MAX_BARRIERS];
     int alienDir = 1;
     int alienDirLast = 1;
     int frameCounter = 0;  
     initAliens(aliens);
-    initBullets();
+    initAllBullets();
     initScore();
     initExplosionsPlayer();
     initBarriers(barriers);
@@ -133,7 +133,7 @@ void startGame() {
             updateBullets();
             checkAlienBulletCollision(barriers);
             printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
-            checkAlienCollisions(aliens, playerBullets, MAX_BULLETS);
+            checkAlienCollisions(aliens, playerBullets);
             updateAliens(aliens, &alienDir, &alienDirLast, frameCounter);  // Kirim frameCounter
             checkAlienPlayerVerticalCollision(aliens, &SpaceShip_P);  // Periksa tabrakan vertikal
             checkAndUpdateLevel(aliens);  // Periksa dan update level

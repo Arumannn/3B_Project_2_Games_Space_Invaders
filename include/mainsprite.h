@@ -11,9 +11,13 @@
 
 typedef struct {
     int X_Player, Y_Player;
-    int health;  // Tambahkan variabel nyawa
+    int health;  
+    int alive;
+    int invincible;      
+    int invincibleTimer;
+    int respawning;       // 1 = respawning, 0 = normal
+    int respawnTimer;      // co    
 } Player;
-
 
 
 

@@ -10,7 +10,7 @@
 
 
 extern Bullet alienBullets[MAX_ALIEN_BULLETS];
-extern Bullet playerBullets[MAX_BULLETS];
+extern BulletNode *playerBullets;
 
 // Fungsi untuk menggambar barrier
 void drawBarrier(Barrier b) {
@@ -41,79 +41,32 @@ void drawBarrier(Barrier b) {
 }
 
 void checkAlienBulletCollision(Barrier barriers[]) {
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        if (playerBullets[i].active) {
-            int bulletLeft = playerBullets[i].x;
-            int bulletTop = playerBullets[i].y;
-            int bulletRight = playerBullets[i].x + 10;
-            int bulletBottom = playerBullets[i].y + 10;
+    BulletNode *current = playerBullets;
+while (current != NULL) {
+    if (current->bullet.active) {
+        int bulletLeft = current->bullet.x;
+        int bulletTop = current->bullet.y;
+        int bulletRight = current->bullet.x + 10;
+        int bulletBottom = current->bullet.y + 10;
 
-            for (int j = 0; j < MAX_BARRIERS; j++) {
-                if(barriers[j].health > 0){
+        for (int j = 0; j < MAX_BARRIERS; j++) {
+            if (barriers[j].health > 0) {
                 int BarrierLeft = barriers[j].x;
                 int BarrierRight = barriers[j].x + 80;
                 int BarrierTop = barriers[j].y - 5;
                 int BarrierBottom = barriers[j].y + 25;
-    
-                    if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
-                        bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
-                        barriers[j].health--;
-                        playerBullets[i].active = 0;
-                        drawBarrier(barriers[j]);
-                    }
-                }
-            }
-        }
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
-        if (alienBullets[i].active) {
-            int bulletLeft = alienBullets[i].x;
-            int bulletRight = alienBullets[i].x + BLOCK_SIZE / 2;
-            int bulletTop = alienBullets[i].y;
-            int bulletBottom = alienBullets[i].y + BLOCK_SIZE;
-            
-            for (int j = 0; j < MAX_BARRIERS; j++) {
-                if(barriers[j].health > 0){
-                int BarrierLeft = barriers[j].x;
-                int BarrierRight = barriers[j].x + 80;
-                int BarrierTop = barriers[j].y - 5;
-                int BarrierBottom = barriers[j].y + 25;
-    
-                    if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
-                        bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
-                        barriers[j].health--;
-                        alienBullets[i].active = 0;
-                        drawBarrier(barriers[j]);
-                    }
-                }
-            }
-        }
-            
-    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
-        if (ufoBullets[i].active) {
-            int bulletLeft = ufoBullets[i].x - 3;
-            int bulletRight = ufoBullets[i].x + 3;
-            int bulletTop = ufoBullets[i].y - 3;
-            int bulletBottom = ufoBullets[i].y + 3;
-                
-                for (int j = 0; j < MAX_BARRIERS; j++) {
-                    if(barriers[j].health > 0){
-                    int BarrierLeft = barriers[j].x;
-                    int BarrierRight = barriers[j].x + 80;
-                    int BarrierTop = barriers[j].y - 5;
-                    int BarrierBottom = barriers[j].y + 25;
-        
-                    if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
-                        bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
-                        barriers[j].health--;
-                        ufoBullets[i].active = 0;
-                        drawBarrier(barriers[j]);
-                    }
+
+                if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
+                    bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
+                    barriers[j].health--;
+                    current->bullet.active = 0;
+                    drawBarrier(barriers[j]);
                 }
             }
         }
     }
-}
-}
+    current = current->next;    
+    }
 }
 
 void initBarriers(Barrier barriers[]) {

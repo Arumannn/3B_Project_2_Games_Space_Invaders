@@ -28,7 +28,7 @@ extern Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS];
 void initAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);
 void drawAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);
 void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDir, int *alienDirLast, int frameCounter);
-void checkAlienCollisions(Alien aliens[ALIEN_ROWS][ALIEN_COLS], Bullet bullets[], int bulletCount);
+void checkAlienCollisions(Alien aliens[ALIEN_ROWS][ALIEN_COLS], BulletNode *bullets);
 void drawAlienExplosions();
 void checkAlienPlayerVerticalCollision(Alien aliens[ALIEN_ROWS][ALIEN_COLS], Player *player); // Fungsi baru
 

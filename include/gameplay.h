@@ -6,6 +6,7 @@
 #define SHOOT_INTERVAL_DECREMENT 500  // Pengurangan interval tembakan per level
 
 #include "alien.h"
+#include "bullet.h"
 
 void initScore();
 void updateScore(int points);

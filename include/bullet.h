@@ -27,8 +27,13 @@ typedef struct {
     int type;        // Tipe peluru (PLAYER_BULLET, ALIEN_BULLET, UFO_BULLET)
 } Bullet;
 
+typedef struct BulletNode {
+    Bullet bullet;
+    struct BulletNode *next;
+} BulletNode;
+
 // Variabel global
-extern Bullet playerBullets[MAX_BULLETS];
+extern BulletNode *playerBullets;
 extern Bullet alienBullets[MAX_ALIEN_BULLETS];
 extern Bullet ufoBullets[MAX_UFO_BULLETS];
 extern int shootCooldown;

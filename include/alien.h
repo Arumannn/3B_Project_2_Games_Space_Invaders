@@ -2,6 +2,7 @@
 #define ALIEN_H
 #include <graphics.h>
 #include "mainsprite.h"
+#include "bullet.h"
 
 // Konstanta
 #define ALIEN_ROWS 6
@@ -13,12 +14,6 @@ typedef struct {
     int active;
 } Alien;
 
-typedef struct {
-    int x, y;
-    int active;
-    int speed;     
-    int dx;        
-} AlienBullet;
 
 // Struktur dan array untuk ledakan
 typedef struct {
@@ -28,7 +23,6 @@ typedef struct {
 } Explosion;
 
 extern int BLOCK_SIZE;
-extern AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 extern Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS]; 
 
 void initAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);

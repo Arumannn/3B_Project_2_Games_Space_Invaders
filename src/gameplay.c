@@ -7,6 +7,7 @@
 #include <conio.h>
 #include <windows.h>
 #include <time.h>
+#include "bullet.h"
 #include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"
@@ -132,7 +133,7 @@ void startGame() {
             updateBullets();
             checkAlienBulletCollision(barriers);
             printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
-            checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
+            checkAlienCollisions(aliens, playerBullets, MAX_BULLETS);
             updateAliens(aliens, &alienDir, &alienDirLast, frameCounter);  // Kirim frameCounter
             checkAlienPlayerVerticalCollision(aliens, &SpaceShip_P);  // Periksa tabrakan vertikal
             checkAndUpdateLevel(aliens);  // Periksa dan update level

@@ -19,7 +19,6 @@ int ufoSpawnTime = 0;  // Waktu acak sebelum spawn
 int ufoRespawnDelay = 0; // Timer untuk delay respawn
 
 // Inisialisasi peluru UFO
-AlienBullet ufoBullets[MAX_UFO_BULLETS];
 int ufoBurstCount = 0;
 int ufoShootCooldown = 0;
 
@@ -125,13 +124,13 @@ void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
     drawUFOBullets();
 
     for (int j = 0; j < MAX_BULLETS; j++) {
-        if (bullets_player[j].active &&
-            bullets_player[j].x > ufoX - 45 &&
-            bullets_player[j].x < ufoX + 45 &&
-            bullets_player[j].y > ufoY - 40 && 
-            bullets_player[j].y < ufoY + 20) {
+        if (playerBullets[j].active &&
+            playerBullets[j].x > ufoX - 45 &&
+            playerBullets[j].x < ufoX + 45 &&
+            playerBullets[j].y > ufoY - 40 && 
+            playerBullets[j].y < ufoY + 20) {
 
-            bullets_player[j].active = 0;
+            playerBullets[j].active = 0;
             ufoHealth--;
 
             if (ufoHealth <= 0) {

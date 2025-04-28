@@ -10,6 +10,7 @@
         "src/mainmenu.c",
         "src/mainsprite.c",
         "src/alien.c",
+        "src/bullet.c",
         "src/ufo.c",
         "src/barrier.c",
         "src/gameplay.c",

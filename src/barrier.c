@@ -1,5 +1,6 @@
 #include <graphics.h>
 #include <conio.h>
+#include "bullet.h"
 #include "barrier.h"
 #include "alien.h"
 #include "ufo.h"
@@ -8,8 +9,8 @@
 #define MAX_BARRIERS 4
 
 
-extern AlienBullet alienBullets[MAX_ALIEN_BULLETS];
-extern Bullet bullets_player[MAX_BULLETS];
+extern Bullet alienBullets[MAX_ALIEN_BULLETS];
+extern Bullet playerBullets[MAX_BULLETS];
 
 // Fungsi untuk menggambar barrier
 void drawBarrier(Barrier b) {
@@ -41,11 +42,11 @@ void drawBarrier(Barrier b) {
 
 void checkAlienBulletCollision(Barrier barriers[]) {
     for (int i = 0; i < MAX_BULLETS; i++) {
-        if (bullets_player[i].active) {
-            int bulletLeft = bullets_player[i].x;
-            int bulletTop = bullets_player[i].y;
-            int bulletRight = bullets_player[i].x + 10;
-            int bulletBottom = bullets_player[i].y + 10;
+        if (playerBullets[i].active) {
+            int bulletLeft = playerBullets[i].x;
+            int bulletTop = playerBullets[i].y;
+            int bulletRight = playerBullets[i].x + 10;
+            int bulletBottom = playerBullets[i].y + 10;
 
             for (int j = 0; j < MAX_BARRIERS; j++) {
                 if(barriers[j].health > 0){
@@ -57,7 +58,7 @@ void checkAlienBulletCollision(Barrier barriers[]) {
                     if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
                         bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
                         barriers[j].health--;
-                        bullets_player[i].active = 0;
+                        playerBullets[i].active = 0;
                         drawBarrier(barriers[j]);
                     }
                 }

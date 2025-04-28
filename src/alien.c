@@ -8,7 +8,6 @@
 
 // Definisi variabel global
 int BLOCK_SIZE;
-AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS];
 
 

@@ -6,9 +6,7 @@
 #include "mainmenu.h"
 
 // Definisi variabel global
-Bullet bullets_player[MAX_BULLETS];
 Explosion playerExplosions[MAX_EXPLOSIONS];
-int shootCooldown = 0;
 
 void DrawSpaceShip(Player *player) {
     int x = player->X_Player;
@@ -83,17 +81,17 @@ void SpaceshipMove(Player *player) {
 
 void initBullets() {
     for (int i = 0; i < MAX_BULLETS; i++) {
-        bullets_player[i].active = 0;
+        playerBullets[i].active = 0;
     }
 }
 
 void ShootBullet(Player *player) {
     for (int i = 0; i < MAX_BULLETS; i++) {
-        if (!bullets_player[i].active) {
+        if (!playerBullets[i].active) {
             PlaySound(TEXT("sound/Shooting_Audio.wav"), NULL, SND_FILENAME | SND_ASYNC);
-            bullets_player[i].x = player->X_Player;
-            bullets_player[i].y = player->Y_Player - 10;
-            bullets_player[i].active = 1;
+            playerBullets[i].x = player->X_Player;
+            playerBullets[i].y = player->Y_Player - 10;
+            playerBullets[i].active = 1;
             break;
         }
     }
@@ -101,10 +99,10 @@ void ShootBullet(Player *player) {
 
 void updateBullets() {
     for (int i = 0; i < MAX_BULLETS; i++) {
-        if (bullets_player[i].active) {
-            bullets_player[i].y -= BLOCK_SIZE;
-            if (bullets_player[i].y < 0) {
-                bullets_player[i].active = 0;
+        if (playerBullets[i].active) {
+            playerBullets[i].y -= BLOCK_SIZE;
+            if (playerBullets[i].y < 0) {
+                playerBullets[i].active = 0;
             }
         }
     }
@@ -117,9 +115,9 @@ void drawBullets() {
     setcolor(YELLOW);
     setfillstyle(SOLID_FILL, YELLOW);
     for (int i = 0; i < MAX_BULLETS; i++) {
-        if (bullets_player[i].active) {
-            bar(bullets_player[i].x - BLOCK_SIZE / 4, bullets_player[i].y, 
-                bullets_player[i].x + BLOCK_SIZE / 4, bullets_player[i].y + BLOCK_SIZE);
+        if (playerBullets[i].active) {
+            bar(playerBullets[i].x - BLOCK_SIZE / 4, playerBullets[i].y, 
+                playerBullets[i].x + BLOCK_SIZE / 4, playerBullets[i].y + BLOCK_SIZE);
         }
     }
 }

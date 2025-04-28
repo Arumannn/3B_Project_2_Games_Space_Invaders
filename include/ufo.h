@@ -1,8 +1,8 @@
 #ifndef UFO_H
 #define UFO_H
+#include "bullet.h"
 #include "alien.h"
 #define MAX_UFO_BULLETS 10
-extern AlienBullet ufoBullets[MAX_UFO_BULLETS];
 extern int ufoRespawnDelay;
 
 void drawUFO(int x, int y);

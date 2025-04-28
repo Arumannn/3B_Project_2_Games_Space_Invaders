@@ -3,17 +3,20 @@
 
 #include <graphics.h>
 
-// Konstanta
+
 #define MAX_BULLETS 3
 #define MAX_ALIEN_BULLETS 20
 #define MAX_UFO_BULLETS 10
+
 #define PLAYER_BULLET 1
 #define ALIEN_BULLET 2
 #define UFO_BULLET 3
+
+extern int BLOCK_SIZE;
 #define PLAYER_BULLET_WIDTH (BLOCK_SIZE / 4)
 #define ALIEN_BULLET_WIDTH (BLOCK_SIZE / 2)
 #define UFO_BULLET_RADIUS 6
-#define BLOCK_SIZE (getmaxy() / 40)
+
 
 // Struktur data peluru
 typedef struct {

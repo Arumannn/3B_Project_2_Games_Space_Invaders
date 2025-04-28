@@ -200,6 +200,21 @@ void resetPlayer(Player *player) {
     PlaySound(TEXT("sound/Player_Explosion.wav"), NULL, SND_FILENAME | SND_ASYNC);
 }
 
+void updateExplosionsPlayer() {
+    for (int i = 0; i < MAX_EXPLOSIONS; i++) {
+        if (playerExplosions[i].active) {
+            if (playerExplosions[i].lifetime == 0) {
+                PlaySound(TEXT("sound/Player_Explosion.wav"), NULL, SND_FILENAME | SND_ASYNC);
+            }
+            playerExplosions[i].lifetime++;
+            if (playerExplosions[i].lifetime >= 20) {
+                playerExplosions[i].active = 0;
+                playerExplosions[i].lifetime = 0;
+            }
+        }
+    }
+}
+
 void updatePlayerRespawn(Player *player) {
     if (player->respawning) {
         updateExplosionsPlayer();

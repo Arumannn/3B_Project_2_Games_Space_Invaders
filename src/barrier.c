@@ -144,3 +144,12 @@ void initBarriers(Barrier** head) {
         lastBarrier = newBarrier;
     }
 }
+
+void freeBarriers(Barrier* head) {
+    Barrier* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}

@@ -1,5 +1,6 @@
-a 8400
-d 3200
-anjing 2400
-dada 640
-dddddddddd 400
+rina 100
+arman 1000
+nazriel 10000
+fiandra 200
+fadil 2000
+memei 300

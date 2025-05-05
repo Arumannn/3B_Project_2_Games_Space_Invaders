@@ -5,25 +5,34 @@
 #include "gameplay.h"
 #include <stdlib.h>
 #include <time.h>
+#include <windows.h>
 
-#define FIREBALL_SPEED 12  
+#define FIREBALL_SPEED 12
+
+// Variabel peluru player (harus didefinisikan di tempat lain)
+extern BulletNode *playerBullets;
 
 // Inisialisasi UFO
 float ufoX = 100.0, ufoY = 150.0;
 float ufoSpeed = 10.0;
 int ufoDirection = 1;
-int ufoActive = 1;  
-int ufoHealth = 20;  // **Pastikan ada nilai awal**
+int ufoActive = 1;
+int ufoHealth = 20;
 const int ufoMaxHealth = 20;
-int ufoSpawnTime = 0;  // Waktu acak sebelum spawn
-int ufoRespawnDelay = 0; // Timer untuk delay respawn
+int ufoRespawnDelay = 0;
 
-// Inisialisasi peluru UFO
-AlienBullet ufoBullets[MAX_UFO_BULLETS];
+// Peluru UFO (linked list)
+BulletNode *ufoBulletList = NULL;
+int ufoBulletCount = 0;
+
 int ufoBurstCount = 0;
 int ufoShootCooldown = 0;
 
-// **Fungsi untuk menembakkan fireball**
+void someFunction() {
+    BulletNode* newNode = (BulletNode*)malloc(sizeof(BulletNode)); // Deklarasi pointer
+    
+    // kode lainnya yang menggunakan newNode 
+}    
 
 void shootUFOBullet() {
     if (!ufoActive || ufoShootCooldown > 0) {
@@ -31,87 +40,93 @@ void shootUFOBullet() {
         return;
     }
 
-    if (ufoBurstCount >= 3) {  
+    if (ufoBurstCount >= 3) {
         ufoBurstCount = 0;
-        ufoShootCooldown = 80; // Jeda antar burst
+        ufoShootCooldown = 80;
         return;
     }
 
-    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
-        if (!ufoBullets[i].active) {
-            // **Acak posisi tembakan sedikit ke kiri/kanan**
-            int offsetX = (rand() % 21) - 10;  // -10 hingga 10
-            
-            ufoBullets[i].x = ufoX + offsetX;
-            ufoBullets[i].y = ufoY + 20;
-            ufoBullets[i].active = 1;
+    if (ufoBulletCount >= MAX_UFO_BULLETS) return;
 
-            // **Acak kecepatan peluru**
-            ufoBullets[i].speed = (rand() % 4) + 8; // Kecepatan antara 8 hingga 12
-            
-            // **Acak arah peluru (miring ke kiri, lurus, atau miring ke kanan)**
-            int direction = rand() % 3 - 1;  // -1 (kiri), 0 (lurus), 1 (kanan)
-            ufoBullets[i].dx = direction * 2; // Pergerakan horizontal (-2, 0, 2)
+    int offsetX = (rand() % 21) - 10;
+    BulletNode* newBullet = (BulletNode*)malloc(sizeof(BulletNode));
 
-            ufoBurstCount++;
-            ufoShootCooldown = 10; // Jeda antar peluru dalam satu burst
-            break;
-        }
-    }
+    if (newBullet == NULL) return;
+
+    newBullet->bullet.x = ufoX + offsetX; 
+    newBullet->bullet.y = ufoY + 20;
+    newBullet->bullet.active = 1;
+    newBullet->bullet.speed = (rand() % 4) + 8;
+    int direction = rand() % 3 - 1;
+    newBullet->bullet.dx = direction * 2;
+    newBullet->bullet.type = UFO_BULLET;
+    newBullet->next = ufoBulletList;
+    ufoBulletList = newBullet;
+    ufoBulletCount++;
+
+    ufoBurstCount++;
+    ufoShootCooldown = 10;
 }
-
 
 void updateUFOBullets() {
-    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
-        if (ufoBullets[i].active) {
-            ufoBullets[i].y += ufoBullets[i].speed;  // **Gunakan speed acak**
-            ufoBullets[i].x += ufoBullets[i].dx;     // **Gunakan arah acak**
+    BulletNode *current = ufoBulletList;
+    BulletNode *prev = NULL;
+    while (current != NULL) {
+        current->bullet.y += current->bullet.speed;
+        current->bullet.x += current->bullet.dx;
 
-            // **Pastikan peluru tidak keluar dari layar**
-            if (ufoBullets[i].y > getmaxy() || ufoBullets[i].x < 0 || ufoBullets[i].x > getmaxx()) {
-                ufoBullets[i].active = 0;
+        if (current->bullet.y > getmaxy() ||
+            current->bullet.x < 0 ||
+            current->bullet.x > getmaxx()) {
+            BulletNode *toDelete = current;
+            if (prev == NULL) {
+                ufoBulletList = current->next;
+                current = ufoBulletList;
+            } else {
+                prev->next = current->next;
+                current = prev->next;
             }
+            free(toDelete);
+            ufoBulletCount--;
+        } else {
+            prev = current;
+            current = current->next;
         }
     }
 }
 
-// **Menggambar Fireball UFO**
 void drawUFOBullets() {
-    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
-        if (ufoBullets[i].active) {
-            int bx = ufoBullets[i].x;
-            int by = ufoBullets[i].y;
+    BulletNode *current = ufoBulletList;
+    while (current != NULL) {
+        int bx = current->bullet.x;
+        int by = current->bullet.y;
 
-            // Efek luar (Merah)
-            setcolor(RED);
-            setfillstyle(SOLID_FILL, RED);
-            fillellipse(bx, by, 6, 6);
+        setcolor(RED);
+        setfillstyle(SOLID_FILL, RED);
+        fillellipse(bx, by, 6, 6);
 
-            // Efek tengah (Oranye)
-            setcolor(14);
-            setfillstyle(SOLID_FILL, 14);
-            fillellipse(bx, by, 4, 4);
+        setcolor(14);
+        setfillstyle(SOLID_FILL, 14);
+        fillellipse(bx, by, 4, 4);
 
-            // Efek dalam (Kuning)
-            setcolor(YELLOW);
-            setfillstyle(SOLID_FILL, YELLOW);
-            fillellipse(bx, by, 2, 2);
-        }
+        setcolor(YELLOW);
+        setfillstyle(SOLID_FILL, YELLOW);
+        fillellipse(bx, by, 2, 2);
+
+        current = current->next;
     }
 }
 
-// **Logika UFO (Pastikan Menembak Fireball)**
 void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
     if (!ufoActive) {
         if (ufoRespawnDelay > 0) {
             ufoRespawnDelay--;
         } else {
-            // Spawn ulang UFO setelah delay acak
-            ufoX = (rand() % (getmaxx() - 120)) + 60; // Posisi acak di layar
-            ufoY = 100;  
+            ufoX = (rand() % (getmaxx() - 120)) + 60;
+            ufoY = 100;
             ufoHealth = ufoMaxHealth;
             ufoActive = 1;
-            ufoDirection = (rand() % 2) == 0 ? 1 : -1;  // Random arah
+            ufoDirection = (rand() % 2) == 0 ? 1 : -1;
         }
         return;
     }
@@ -124,14 +139,15 @@ void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
     updateUFOBullets();
     drawUFOBullets();
 
-    for (int j = 0; j < MAX_BULLETS; j++) {
-        if (bullets_player[j].active &&
-            bullets_player[j].x > ufoX - 45 &&
-            bullets_player[j].x < ufoX + 45 &&
-            bullets_player[j].y > ufoY - 40 && 
-            bullets_player[j].y < ufoY + 20) {
+    BulletNode *current = playerBullets;
+    while (current != NULL) {
+        if (current->bullet.active &&
+            current->bullet.x > ufoX - 45 &&
+            current->bullet.x < ufoX + 45 &&
+            current->bullet.y > ufoY - 40 &&
+            current->bullet.y < ufoY + 20) {
 
-            bullets_player[j].active = 0;
+            current->bullet.active = 0;
             ufoHealth--;
 
             if (ufoHealth <= 0) {
@@ -139,55 +155,45 @@ void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
                 PlaySound(TEXT("sound/UFO_Died.wav"), NULL, SND_FILENAME | SND_ASYNC);
                 ufoActive = 0;
                 addUFOScore();
-
-                // **Tetapkan waktu respawn acak antara 3-8 detik**
-                ufoRespawnDelay = (rand() % 5 + 3) * 30; // (3-8 detik dalam frame 30FPS)
+                ufoRespawnDelay = (rand() % 5 + 3) * 30;
+                break;
             }
         }
+        current = current->next;
     }
 }
 
-
-// **Inisialisasi HP UFO secara benar**
 void initUFO() {
-    srand(time(NULL));  
-    ufoHealth = 15 + rand() % 6;  // **HP sekarang pasti ada nilainya**
+    srand(time(NULL));
+    ufoHealth = 15 + rand() % 6;
 }
 
-// **Efek Ledakan**
 void drawExplosion(int x, int y) {
-    for (int radius = 10; radius <= 70; radius += 7) {  // **Ukuran ledakan lebih besar**
-        // **Efek lingkaran luar (Api merah besar)**
+    for (int radius = 10; radius <= 70; radius += 7) {
         setcolor(RED);
         setfillstyle(SOLID_FILL, RED);
         fillellipse(x, y, radius, radius);
 
-        // **Efek lingkaran tengah (Oranye)**
         setcolor(14);
         setfillstyle(SOLID_FILL, 14);
         fillellipse(x, y, radius - 7, radius - 7);
 
-        // **Efek lingkaran dalam (Kuning)**
         setcolor(YELLOW);
         setfillstyle(SOLID_FILL, YELLOW);
         fillellipse(x, y, radius - 14, radius - 14);
 
-        // **Efek cahaya pusat (Putih)**
         setcolor(WHITE);
         setfillstyle(SOLID_FILL, WHITE);
         fillellipse(x, y, radius - 21, radius - 21);
 
-        delay (5);
+        delay(5);
     }
 }
 
-
-// **Menggambar UFO (HP Bar Sekarang Berfungsi)**
 void drawUFO(int x, int y) {
     if (!ufoActive) return;
     y -= 40;
 
-    // **Body utama UFO**
     setcolor(RED);
     setfillstyle(SOLID_FILL, RED);
     fillellipse(x, y, 60, 25);
@@ -196,25 +202,22 @@ void drawUFO(int x, int y) {
     setfillstyle(SOLID_FILL, LIGHTRED);
     fillellipse(x, y - 10, 50, 15);
 
-    // **Jendela UFO**
     setcolor(WHITE);
     setfillstyle(SOLID_FILL, CYAN);
     fillellipse(x, y - 20, 40, 15);
     setcolor(LIGHTCYAN);
     fillellipse(x - 15, y - 25, 8, 8);
 
-    // **Lampu kecil di bawah UFO**
     for (int i = -40; i <= 40; i += 20) {
         setcolor(DARKGRAY);
         setfillstyle(SOLID_FILL, DARKGRAY);
         fillellipse(x + i, y + 15, 6, 6);
-        
+
         setcolor(YELLOW);
         setfillstyle(SOLID_FILL, YELLOW);
         fillellipse(x + i, y + 15, 4, 4);
     }
 
-    // **Kaki UFO**
     setcolor(DARKGRAY);
     setlinestyle(SOLID_LINE, 0, 3);
     line(x - 45, y + 20, x - 55, y + 45);
@@ -224,17 +227,16 @@ void drawUFO(int x, int y) {
     floodfill(x - 52, y + 47, DARKGRAY);
     floodfill(x + 52, y + 47, DARKGRAY);
 
-    // **Tambahkan HP Bar UFO**
     int barWidth = 50;
     int barHeight = 5;
     int barX = x - barWidth / 2;
     int barY = y - 50;
-    
+
     setcolor(WHITE);
     rectangle(barX, barY, barX + barWidth, barY + barHeight);
-    
+
     int hpWidth = (ufoHealth * barWidth) / ufoMaxHealth;
-    if (hpWidth > 0) {  // **Pastikan HP Bar tidak menggambar negatif**
+    if (hpWidth > 0) {
         setfillstyle(SOLID_FILL, GREEN);
         bar(barX, barY, barX + hpWidth, barY + barHeight);
     }

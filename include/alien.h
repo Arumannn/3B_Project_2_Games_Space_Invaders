@@ -2,25 +2,27 @@
 #define ALIEN_H
 #include <graphics.h>
 #include "mainsprite.h"
+#include "bullet.h"
 
-// Konstanta
+// Constants
 #define ALIEN_ROWS 6
 #define ALIEN_COLS 10
 #define MAX_ALIEN_BULLETS 20
 
-typedef struct {
+// Structure for an alien
+typedef struct Alien {
     int x, y;
     int active;
+    struct AlienNode* node; // Pointer to the node for easier management
 } Alien;
 
-typedef struct {
-    int x, y;
-    int active;
-    int speed;     
-    int dx;        
-} AlienBullet;
+// Structure for a node in the linked list
+typedef struct AlienNode {
+    Alien alien;
+    struct AlienNode* next;
+} AlienNode;
 
-// Struktur dan array untuk ledakan
+// Structure for explosions
 typedef struct {
     int x, y;
     int active;
@@ -28,14 +30,15 @@ typedef struct {
 } Explosion;
 
 extern int BLOCK_SIZE;
-extern AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 extern Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS]; 
+extern AlienNode* alienRows[ALIEN_ROWS]; // Array of linked lists for aliens
+extern BulletNode* alienBullets; // Linked list for alien bullets
 
-void initAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);
-void drawAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);
-void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDir, int *alienDirLast, int frameCounter);
-void checkAlienCollisions(Alien aliens[ALIEN_ROWS][ALIEN_COLS], Bullet bullets[], int bulletCount);
+void initAliens();
+void drawAliens();
+void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter);
+void checkAlienCollisions(BulletNode *bullets);
 void drawAlienExplosions();
-void checkAlienPlayerVerticalCollision(Alien aliens[ALIEN_ROWS][ALIEN_COLS], Player *player); // Fungsi baru
+void checkAlienPlayerVerticalCollision(Player *player);
 
 #endif // ALIEN_H

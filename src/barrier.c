@@ -6,7 +6,7 @@
 #include "ufo.h"
 #include "mainsprite.h"
 
-extern AlienBullet alienBullets[MAX_ALIEN_BULLETS];
+extern Bullet alienBullets[MAX_ALIEN_BULLETS];
 extern Bullet bullets_player[MAX_BULLETS];
 
 void drawBarrier(Barrier* b) {
@@ -114,7 +114,8 @@ void checkAlienBulletCollision(Barrier* head) {
             }
         }
     }
-}
+    current = current->next;    
+    }
 
 void initBarriers(Barrier** head) {
     int screenWidth = getmaxx();

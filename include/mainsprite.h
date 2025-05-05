@@ -3,7 +3,7 @@
 #define MAINSPRITE_H
 #define MAX_BULLETS 3
 #define MAX_EXPLOSIONS 10  // Batas maksimum ledakan yang bisa ditampilkan
-
+#include "gameplay.h"
 #include <graphics.h>
 #include <conio.h>
 #include <windows.h>
@@ -11,16 +11,16 @@
 
 typedef struct {
     int X_Player, Y_Player;
-    int health;  // Tambahkan variabel nyawa
+    int health;  
+    int alive;
+    int invincible;      
+    int invincibleTimer;
+    int respawning;       // 1 = respawning, 0 = normal
+    int respawnTimer;      // co    
 } Player;
 
-typedef struct {
-    int x, y;
-    int active;
-} Bullet;
 
 
-extern Bullet bullets_player[MAX_BULLETS];
 extern int shootCooldown;
 
 void initBullets();

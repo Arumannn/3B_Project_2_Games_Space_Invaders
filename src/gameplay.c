@@ -15,14 +15,14 @@
 #include "gameplay.h"
 #include "mainmenu.h"
 
-
 #define MAX_ENTRIES 5  // Maksimum 5 pemain
 #define MAX_NAME_LENGTH 10 // Maksimum panjang nama
 
 // Struktur untuk menyimpan data leaderboard
-typedef struct {
+typedef struct LeaderboardEntry {
     char name[MAX_NAME_LENGTH];
     int score;
+    struct LeaderboardEntry *next;
 } LeaderboardEntry;
 
 
@@ -80,14 +80,14 @@ void startGame() {
     // Buat background hanya sekali
     createCustomBackground();
 
-    Player SpaceShip_P = {screenWidth / 2, screenHeight - 120, 3};
+    Player SpaceShip_P = {screenWidth / 2, screenHeight - 120, 3, 1, 0, 0};
     Alien aliens[ALIEN_ROWS][ALIEN_COLS]; // Array 2D untuk aliens
     Barrier* barrierHead = NULL;
     int alienDir = 1;
     int alienDirLast = 1;
     int frameCounter = 0;  
     initAliens(aliens);
-    initBullets();
+    initAllBullets();
     initScore();
     initExplosionsPlayer();
     initBarriers(&barrierHead);
@@ -108,7 +108,7 @@ void startGame() {
     // **Spawn UFO pertama dengan posisi dan waktu acak**
     srand(time(NULL));
     initUFO();
-    ufoRespawnDelay = (rand() % 5 + 3) * 30; // 3-8 detik dalam frame 30FPS
+    int ufoRespawnDelay = (rand() % 5 + 3) * 30; // 3-8 detik dalam frame 30FPS
     
     while (!gameOver) {
         QueryPerformanceCounter(&currentTime);
@@ -132,7 +132,7 @@ void startGame() {
             updateBullets();
             checkAlienBulletCollision(barrierHead);
             printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
-            checkAlienCollisions(aliens, bullets_player, MAX_BULLETS);
+            checkAlienCollisions(aliens, playerBullets);
             updateAliens(aliens, &alienDir, &alienDirLast, frameCounter);  // Kirim frameCounter
             checkAlienPlayerVerticalCollision(aliens, &SpaceShip_P);  // Periksa tabrakan vertikal
             checkAndUpdateLevel(aliens);  // Periksa dan update level
@@ -223,59 +223,106 @@ int getCurrentLevel() {
     return currentLevel;
 }
 
-
-
+// PROGRAM GAME OVER
 void savePlayerScore(const char *name, int score) {
-    LeaderboardEntry entries[MAX_ENTRIES];
-    int count = 0;
-    int found = 0; // Menandakan apakah pemain sudah ada di leaderboard
+    LeaderboardEntry *head = NULL;
+    LeaderboardEntry *current = NULL;
+    LeaderboardEntry *prev = NULL;
+    int found = 0;
 
+    // Baca file dan isi ke linked list
     FILE *file = fopen("leaderboard.txt", "r");
     if (file) {
-        while (fscanf(file, "%s %d", entries[count].name, &entries[count].score) == 2) {
-            if (strcmp(entries[count].name, name) == 0) {
-                // Jika pemain sudah ada, hanya update skor jika lebih tinggi
-                if (score > entries[count].score) {
-                    entries[count].score = score;
-                }
-                found = 1;
+        char tempName[MAX_NAME_LENGTH];
+        int tempScore;
+
+        while (fscanf(file, "%s %d", tempName, &tempScore) == 2) {
+            LeaderboardEntry *newNode = (LeaderboardEntry*)malloc(sizeof(LeaderboardEntry));
+            strcpy(newNode->name, tempName);
+            newNode->score = tempScore;
+            newNode->next = NULL;
+
+            // Tambahkan ke linked list
+            if (!head) {
+                head = newNode;
+            } else {
+                current->next = newNode;
             }
-            count++;
-            if (count >= MAX_ENTRIES) break;
+            current = newNode;
         }
         fclose(file);
     }
 
-    // Jika pemain tidak ditemukan dan leaderboard masih bisa menampung
-    if (!found && count < MAX_ENTRIES) {
-        strcpy(entries[count].name, name);
-        entries[count].score = score;
-        count++;
+    // Cek apakah nama sudah ada
+    current = head;
+    while (current) {
+        if (strcmp(current->name, name) == 0) {
+            found = 1;
+            if (score > current->score) {
+                current->score = score; // update skor lebih tinggi
+            }
+            break;
+        }
+        current = current->next;
     }
 
-    // Sorting leaderboard berdasarkan skor tertinggi
-    for (int i = 0; i < count - 1; i++) {
-        for (int j = i + 1; j < count; j++) {
-            if (entries[j].score > entries[i].score) {
-                LeaderboardEntry temp = entries[i];
-                entries[i] = entries[j];
-                entries[j] = temp;
+    // Jika nama belum ada, tambahkan node baru
+    if (!found) {
+        LeaderboardEntry *newNode = (LeaderboardEntry*)malloc(sizeof(LeaderboardEntry));
+        strcpy(newNode->name, name);
+        newNode->score = score;
+        newNode->next = NULL;
+
+        // Tambahkan di akhir
+        if (!head) {
+            head = newNode;
+        } else {
+            current = head;
+            while (current->next) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
+    }
+
+    // Urutkan linked list berdasarkan skor (descending)
+    for (LeaderboardEntry *i = head; i != NULL; i = i->next) {
+        for (LeaderboardEntry *j = i->next; j != NULL; j = j->next) {
+            if (j->score > i->score) {
+                // tukar data
+                char tempName[MAX_NAME_LENGTH];
+                int tempScore;
+
+                strcpy(tempName, i->name);
+                tempScore = i->score;
+
+                strcpy(i->name, j->name);
+                i->score = j->score;
+
+                strcpy(j->name, tempName);
+                j->score = tempScore;
             }
         }
     }
 
-    // Jika leaderboard sudah penuh, hapus pemain dengan skor terendah
-    if (count > MAX_ENTRIES) {
-        count = MAX_ENTRIES;
-    }
-
-    // Simpan leaderboard ke file
+    // Simpan ke file
     file = fopen("leaderboard.txt", "w");
     if (file) {
-        for (int i = 0; i < count; i++) {
-            fprintf(file, "%s %d\n", entries[i].name, entries[i].score);
+        int count = 0;
+        current = head;
+        while (current && count < MAX_ENTRIES) {
+            fprintf(file, "%s %d\n", current->name, current->score);
+            current = current->next;
+            count++;
         }
         fclose(file);
+    }
+
+    // Bebaskan memori linked list
+    while (head) {
+        LeaderboardEntry *temp = head;
+        head = head->next;
+        free(temp);
     }
 }
 

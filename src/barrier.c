@@ -9,7 +9,7 @@
 
 extern BulletNode* playerBullets;
 extern BulletNode* alienBullets;
-extern BulletNode* ufoBullets;
+extern BulletNode* ufoBulletList;
 
 void drawBarrier(Barrier* b) {
     if (b && b->health > 0) {

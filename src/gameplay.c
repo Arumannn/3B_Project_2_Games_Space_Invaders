@@ -130,7 +130,8 @@ void startGame() {
             checkAlienPlayerVerticalCollision(&SpaceShip_P);  // Periksa tabrakan vertikal
             checkAndUpdateLevel(aliens);  // Periksa dan update level
             updateExplosionsPlayer();
-            
+            updatePlayerRespawn(&SpaceShip_P);
+
             drawLives(SpaceShip_P.health);
             drawAliens();
             drawAlienExplosions();

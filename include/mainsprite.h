@@ -33,6 +33,8 @@ void checkPlayerCollisions(Player *player);
 void updateExplosionsPlayer();
 void drawExplosionsPlayer();
 void initExplosionsPlayer();
+void updatePlayerRespawn(Player *player);
+
 void resetPlayer(Player *player);
 void drawLives(int lives);
 void drawHeart(int x, int y, int size, int color);

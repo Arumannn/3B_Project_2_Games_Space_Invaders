@@ -195,7 +195,7 @@ void checkPlayerCollisions(Player *player) {
 void resetPlayer(Player *player) {
     player->alive = 0;
     player->respawning = 1;
-    player->respawnTimer = 90; // Frames
+    player->respawnTimer = 10; // Frames
 
     for (int j = 0; j < MAX_EXPLOSIONS; j++) {
         if (!playerExplosions[j].active) {
@@ -223,7 +223,6 @@ void updateExplosionsPlayer() {
         }
     }
 }
-
 void updatePlayerRespawn(Player *player) {
     if (player->respawning) {
         updateExplosionsPlayer();
@@ -238,6 +237,10 @@ void updatePlayerRespawn(Player *player) {
                 player->invincible = 1;
                 player->invincibleTimer = 90;
                 player->respawning = 0;
+            } else {
+                player->respawning = 0;
+                player->alive = 0;
+                gameOverScreen(); 
             }
         }
     }
@@ -287,3 +290,4 @@ void drawLives(int lives) {
         fillellipse(startX - (i * spacing), startY, heartSize, heartSize / 2);
     }
 }
+

@@ -10,6 +10,7 @@
 int BLOCK_SIZE;
 Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS];
 AlienNode* alienRows[ALIEN_ROWS]; // Array of linked lists for each row
+BulletNode* alienBullets = NULL; // Linked list for alien bullets
 
 void initAliens() {
     BLOCK_SIZE = getmaxy() / 40;
@@ -57,9 +58,7 @@ void initAliens() {
     }
 
     // Initialize alien bullets
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
-        alienBullets[i].active = 0;
-    }
+    alienBullets = NULL;
 
     // Initialize explosions
     for (int row = 0; row < ALIEN_ROWS; row++) {
@@ -162,12 +161,15 @@ void drawAliens() {
     }
 
     // Draw alien bullets
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
-        if (alienBullets[i].active) {
-            setcolor(RED);
-            setfillstyle(SOLID_FILL, RED);
-            bar(alienBullets[i].x, alienBullets[i].y, alienBullets[i].x + BLOCK_SIZE / 2, alienBullets[i].y + BLOCK_SIZE);
+    setcolor(RED);
+    setfillstyle(SOLID_FILL, RED);
+    BulletNode* currentBullet = alienBullets;
+    while (currentBullet != NULL) {
+        if (currentBullet->bullet.active) {
+            bar(currentBullet->bullet.x, currentBullet->bullet.y, 
+                currentBullet->bullet.x + BLOCK_SIZE / 2, currentBullet->bullet.y + BLOCK_SIZE);
         }
+        currentBullet = currentBullet->next;
     }
 }
 
@@ -176,13 +178,25 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
     int moveDownRest = 0;
 
     // Update alien bullets
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
-        if (alienBullets[i].active) {
-            alienBullets[i].y += BLOCK_SIZE / 2;
-            if (alienBullets[i].y > getmaxy()) {
-                alienBullets[i].active = 0;
+    BulletNode* currentBullet = alienBullets;
+    BulletNode* prevBullet = NULL;
+    while (currentBullet != NULL) {
+        if (currentBullet->bullet.active) {
+            currentBullet->bullet.y += BLOCK_SIZE / 2;
+            if (currentBullet->bullet.y > getmaxy()) {
+                BulletNode* temp = currentBullet;
+                if (prevBullet == NULL) {
+                    alienBullets = currentBullet->next;
+                } else {
+                    prevBullet->next = currentBullet->next;
+                }
+                currentBullet = currentBullet->next;
+                free(temp);
+                continue;
             }
         }
+        prevBullet = currentBullet;
+        currentBullet = currentBullet->next;
     }
 
     // Get speed and shoot interval based on level
@@ -223,12 +237,21 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
 
                 // Alien shooting logic
                 if (rand() % currentShootInterval < 10) {
-                    for (int j = 0; j < MAX_ALIEN_BULLETS; j++) {
-                        if (!alienBullets[j].active) {
-                            alienBullets[j].x = current->alien.x + BLOCK_SIZE / 4;
-                            alienBullets[j].y = current->alien.y + BLOCK_SIZE;
-                            alienBullets[j].active = 1;
-                            break;
+                    // Count active bullets
+                    int bulletCount = 0;
+                    BulletNode* countBullet = alienBullets;
+                    while (countBullet != NULL) {
+                        bulletCount++;
+                        countBullet = countBullet->next;
+                    }
+                    if (bulletCount < MAX_ALIEN_BULLETS) {
+                        BulletNode* newBullet = (BulletNode*)malloc(sizeof(BulletNode));
+                        if (newBullet) {
+                            newBullet->bullet.x = current->alien.x + BLOCK_SIZE / 4;
+                            newBullet->bullet.y = current->alien.y + BLOCK_SIZE;
+                            newBullet->bullet.active = 1;
+                            newBullet->next = alienBullets;
+                            alienBullets = newBullet;
                         }
                     }
                 }
@@ -287,7 +310,7 @@ void checkAlienCollisions(BulletNode *bullets) {
                             alienExplosions[row][col].x = currentAlien->alien.x + BLOCK_SIZE / 2;
                             alienExplosions[row][col].y = currentAlien->alien.y + BLOCK_SIZE / 2;
                             alienExplosions[row][col].active = 1;
-                            alienExplosions[row][col].lifetime = 10; // Example lifetime
+                            alienExplosions[row][col].lifetime = 10;
                         }
                     }
                     currentAlien = currentAlien->next;

@@ -2,7 +2,7 @@
 #define ALIEN_H
 #include <graphics.h>
 #include "mainsprite.h"
-#include "gameplay.h"
+#include "bullet.h"
 
 // Constants
 #define ALIEN_ROWS 6
@@ -32,6 +32,7 @@ typedef struct {
 extern int BLOCK_SIZE;
 extern Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS]; 
 extern AlienNode* alienRows[ALIEN_ROWS]; // Array of linked lists for aliens
+extern BulletNode* alienBullets; // Linked list for alien bullets
 
 void initAliens();
 void drawAliens();

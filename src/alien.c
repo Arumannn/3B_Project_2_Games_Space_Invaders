@@ -1,7 +1,8 @@
 #include "alien.h"
 #include "mainsprite.h"
 #include "gameplay.h"
-#include <stdio.h>
+#include "malloc.h"
+#include <stdio.h> 
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>

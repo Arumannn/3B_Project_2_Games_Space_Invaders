@@ -39,6 +39,8 @@ static int score = 0;
 static int lastLevel = -1;  
 static int blinkCounter = 0;  
 
+extern BulletNode *playerBullets;
+
 // Fungsi untuk membuat background hanya sekali
 // SATU
 void createCustomBackground() {
@@ -86,8 +88,7 @@ void startGame() {
     int alienDir = 1;
     int alienDirLast = 1;
     int frameCounter = 0;  
-    initAliens(aliens);
-    initAllBullets();
+    initAliens();
     initScore();
     initExplosionsPlayer();
     initBarriers(&barrierHead);
@@ -132,14 +133,14 @@ void startGame() {
             updateBullets();
             checkAlienBulletCollision(barrierHead);
             printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
-            checkAlienCollisions(aliens, playerBullets);
-            updateAliens(aliens, &alienDir, &alienDirLast, frameCounter);  // Kirim frameCounter
-            checkAlienPlayerVerticalCollision(aliens, &SpaceShip_P);  // Periksa tabrakan vertikal
+            checkAlienCollisions(playerBullets);
+            updateAliens(&alienDir, &alienDirLast, frameCounter);
+            checkAlienPlayerVerticalCollision(&SpaceShip_P);  // Periksa tabrakan vertikal
             checkAndUpdateLevel(aliens);  // Periksa dan update level
             updateExplosionsPlayer();
             
             drawLives(SpaceShip_P.health);
-            drawAliens(aliens);
+            drawAliens();
             drawAlienExplosions();
             drawBullets();
             DrawSpaceShip(&SpaceShip_P);
@@ -205,7 +206,7 @@ void checkAndUpdateLevel(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
         if (shootInterval < 1000) shootInterval = 1000;  // Batasi agar tidak terlalu cepat
 
         // Respawn alien dengan memanggil initAliens
-        initAliens(aliens);
+        initAliens();
 
         printf("Level %d - Alien Speed: %.2f, Shoot Interval: %d\n", currentLevel, alienSpeed, shootInterval);
     }

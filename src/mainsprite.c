@@ -8,6 +8,8 @@
 // Global Variables
 Explosion playerExplosions[MAX_EXPLOSIONS];
 BulletNode *playerBullets = NULL;
+extern BulletNode* alienBullets;
+extern BulletNode* ufoBulletList;
 
 void DrawSpaceShip(Player *player) {
     if (!player->alive) return;
@@ -136,16 +138,17 @@ void drawBullets() {
         current = current->next;
     }
 }
-
 void checkPlayerCollisions(Player *player) {
     if (!player->alive || player->respawning) return;
 
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
-        if (alienBullets[i].active) {
-            int bulletLeft = alienBullets[i].x;
-            int bulletRight = alienBullets[i].x + BLOCK_SIZE / 2;
-            int bulletTop = alienBullets[i].y;
-            int bulletBottom = alienBullets[i].y + BLOCK_SIZE;
+    // Cek peluru alien dari linked list
+    BulletNode *currentAlienBullet = alienBullets;
+    while (currentAlienBullet != NULL) {
+        if (currentAlienBullet->bullet.active) {
+            int bulletLeft = currentAlienBullet->bullet.x;
+            int bulletRight = currentAlienBullet->bullet.x + BLOCK_SIZE / 2;
+            int bulletTop = currentAlienBullet->bullet.y;
+            int bulletBottom = currentAlienBullet->bullet.y + BLOCK_SIZE;
             int playerLeft = player->X_Player - 20;
             int playerRight = player->X_Player + 20;
             int playerTop = player->Y_Player;
@@ -153,20 +156,23 @@ void checkPlayerCollisions(Player *player) {
 
             if (bulletRight > playerLeft && bulletLeft < playerRight &&
                 bulletBottom > playerTop && bulletTop < playerBottom) {
-                alienBullets[i].active = 0;
+                currentAlienBullet->bullet.active = 0;
                 player->health--;
                 resetPlayer(player);
                 return;
             }
         }
+        currentAlienBullet = currentAlienBullet->next;
     }
 
-    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
-        if (ufoBullets[i].active) {
-            int bulletLeft = ufoBullets[i].x - 3;
-            int bulletRight = ufoBullets[i].x + 3;
-            int bulletTop = ufoBullets[i].y - 3;
-            int bulletBottom = ufoBullets[i].y + 3;
+    // Cek peluru UFO dari linked list
+    BulletNode *currentUfoBullet = ufoBulletList;
+    while (currentUfoBullet != NULL) {
+        if (currentUfoBullet->bullet.active) {
+            int bulletLeft = currentUfoBullet->bullet.x - 3;
+            int bulletRight = currentUfoBullet->bullet.x + 3;
+            int bulletTop = currentUfoBullet->bullet.y - 3;
+            int bulletBottom = currentUfoBullet->bullet.y + 3;
             int playerLeft = player->X_Player - 20;
             int playerRight = player->X_Player + 20;
             int playerTop = player->Y_Player;
@@ -174,12 +180,13 @@ void checkPlayerCollisions(Player *player) {
 
             if (bulletRight > playerLeft && bulletLeft < playerRight &&
                 bulletBottom > playerTop && bulletTop < playerBottom) {
-                ufoBullets[i].active = 0;
+                currentUfoBullet->bullet.active = 0;
                 player->health--;
                 resetPlayer(player);
                 return;
             }
         }
+        currentUfoBullet = currentUfoBullet->next;
     }
 }
 

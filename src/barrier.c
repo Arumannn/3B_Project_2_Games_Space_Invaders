@@ -6,7 +6,7 @@
 #include "ufo.h"
 #include "mainsprite.h"
 
-extern Bullet alienBullets[MAX_ALIEN_BULLETS];
+//extern Bullet alienBullets[MAX_ALIEN_BULLETS];
 extern Bullet bullets_player[MAX_BULLETS];
 
 void drawBarrier(Barrier* b) {

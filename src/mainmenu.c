@@ -99,13 +99,14 @@ void freeLeaderboard(LeaderboardNode* head) {
     }
 }
 
-// Fungsi menggambar leaderboard dengan linked list
-void drawLeaderboard(int yOffset) {
-    int x = getmaxwidth() / 2 + 150;
-    int y = yOffset; 
+// Versi utama yang mendukung posisi tengah/kanan
+void drawLeaderboard(int yOffset, int limit, int isCentered) {
     int width = 350;
+    int x = isCentered ? (getmaxwidth() - width) / 2 : getmaxwidth() / 2 + 150;
+    int y = yOffset;
     int rowHeight = 40;
 
+    // Baca data leaderboard
     FILE* file = fopen("leaderboard.txt", "r");
     if (!file) {
         drawText(x + width / 2, y, "Belum ada data!", 2, WHITE);
@@ -121,15 +122,17 @@ void drawLeaderboard(int yOffset) {
     }
     fclose(file);
 
-    // Gambar leaderboard box
+    // Hitung jumlah entri
     int count = 0;
     LeaderboardNode* temp = head;
-    while (temp != NULL) {
+    while (temp && (limit > 0 ? count < limit : 1)) {
         count++;
         temp = temp->next;
     }
 
     int height = 30 + (count * rowHeight);
+
+    // Gambar kotak leaderboard
     setcolor(WHITE);
     rectangle(x, y, x + width, y + height);
     line(x, y + 30, x + width, y + 30);
@@ -140,10 +143,10 @@ void drawLeaderboard(int yOffset) {
     drawText(x + 140, y + 15, "PLAYER", 2.5, WHITE);
     drawText(x + 285, y + 15, "SCORE", 2.5, WHITE);
 
-    // Tampilkan data dari linked list
+    // Tampilkan isi data
     int i = 0;
     temp = head;
-    while (temp != NULL) {
+    while (temp && (limit > 0 ? i < limit : 1)) {
         char numText[5], scoreText[10];
         sprintf(numText, "%d", i + 1);
         sprintf(scoreText, "%d", temp->score);
@@ -157,7 +160,6 @@ void drawLeaderboard(int yOffset) {
         temp = temp->next;
     }
 
-    // Hapus memori
     freeLeaderboard(head);
 }
 
@@ -190,6 +192,11 @@ void drawGradientBackground() {
         line(0, y, width, y);
     }
 }
+
+void drawLeaderboardRight(int yOffset, int limit) {
+    drawLeaderboard(yOffset, limit, 0);  // isCentered = 0 (artinya: di kanan layar)
+}
+
 
 // Fungsi untuk menampilkan menu utama
 void showMainMenu() {
@@ -231,14 +238,15 @@ void showMainMenu() {
     }
     if (file) fclose(file);
 
-    drawLeaderboard(leaderboardY);
+    // Gambar leaderboard hanya 5 entri di main menu
+    drawLeaderboardRight(leaderboardY, 5);  // Hanya menampilkan 5 entri di halaman utama
 
     // Hitung posisi Y untuk tombol LEADERBOARD
-    int leaderboardHeight = 30 + (count * rowHeight);
+    int leaderboardHeight = 30 + (5 * rowHeight);  // Sesuaikan dengan jumlah yang ditampilkan
     int leaderboardButtonY = leaderboardY + leaderboardHeight + 20;
 
     // Tombol "LEADERBOARD" berada tepat di bawah tabel
-    drawButton(leaderboardX, leaderboardButtonY, 350, 60, RGB(120, 180, 255), "LEADERBOARD");
+    drawButton(leaderboardX, leaderboardButtonY, 350, 60, RGB(120, 180, 255), "Selengkapnya");
 }
 
 // Perbaikan handleMainMenu agar menu tetap berjalan
@@ -275,13 +283,6 @@ void handleMainMenu() {
                     break;  // **Setelah kembali dari Guide, ulangi loop agar tetap di Main Menu**
                 }
 
-                // Cek apakah klik di tombol "LEADERBOARD"
-                if (x >= centerX && x <= centerX + buttonWidth &&
-                    y >= startY + (3 * buttonSpacing) && y <= startY + (3 * buttonSpacing) + buttonHeight) {
-                    showLeaderboard();  // Fungsi untuk menampilkan leaderboard
-                    break;
-                }
-
                 // Cek apakah klik di tombol "EXIT"
                 if (x >= centerX && x <= centerX + buttonWidth &&
                     y >= startY + 2 * buttonSpacing && y <= startY + 2 * buttonSpacing + buttonHeight) {
@@ -291,6 +292,26 @@ void handleMainMenu() {
                             break;  // **Tetap di Main Menu jika memilih "NO"**
                         }
                 }
+
+                // Cek apakah klik di tombol "LEADERBOARD" di sisi kanan layar
+                int leaderboardX = getmaxwidth() / 2 + 150;
+                int rowHeight = 40;
+                int count = 0;
+                FILE* file = fopen("leaderboard.txt", "r");
+                char name[10];
+                int score;
+                while (file && fscanf(file, "%s %d", name, &score) != EOF) count++;
+                if (file) fclose(file);
+
+                int leaderboardHeight = 30 + (5 * rowHeight);
+                int leaderboardButtonY = (getmaxheight() / 2 - 100) + 10 + leaderboardHeight + 20;
+
+                if (x >= leaderboardX && x <= leaderboardX + 350 &&
+                    y >= leaderboardButtonY && y <= leaderboardButtonY + 60) {
+                    showLeaderboard();
+                    break;
+                }
+
             }
         }
     }
@@ -327,7 +348,9 @@ void showLeaderboard() {
     drawGradientBackground();
     drawStars();
     drawText(getmaxwidth() / 2, 100, "LEADERBOARD", 5, WHITE);
-    drawLeaderboard(150);  // Menampilkan leaderboard dimulai dari posisi y=150
+
+    // Menampilkan leaderboard dimulai dari posisi y=150, hanya menampilkan 5 entri
+    drawLeaderboard(150, 0, 1);  // Menggunakan limit 5 untuk menampilkan 5 entri leaderboard
 
     drawButton(getmaxwidth() / 2 - 100, getmaxheight() - 100, 200, 50, MAGENTA, "BACK");
 

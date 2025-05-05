@@ -4,3 +4,7 @@ nazriel 10000
 fiandra 200
 fadil 2000
 memei 300
+rani 2000
+rian 0
+reni 400
+rano 10

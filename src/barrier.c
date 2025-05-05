@@ -6,17 +6,9 @@
 #include "ufo.h"
 #include "mainsprite.h"
 
-extern int playerBulletX;
-extern int playerBulletY;
-extern int playerBulletActive;
-
-extern int alienBulletX;
-extern int alienBulletY;
-extern int alienBulletActive;
-
-extern int ufoBulletX;
-extern int ufoBulletY;
-extern int ufoBulletActive;
+extern BulletNode* playerBullets;
+extern BulletNode* alienBullets;
+extern BulletNode* ufoBulletList;
 
 void drawBarrier(Barrier* b) {
     if (b && b->health > 0) {
@@ -41,47 +33,40 @@ void drawBarrier(Barrier* b) {
 }
 
 void checkBarrierBulletCollision(Barrier* head) {
-    Barrier* current = head;
+    Barrier* currentBarrier;
+    BulletNode* bulletLists[] = { playerBullets, alienBullets, ufoBulletList };
 
-    while (current != NULL) {
-        if (current->health > 0) {
-            // Periksa apakah ada peluru alien mengenai barrier ini
-            if (alienBulletActive &&
-                alienBulletX >= current->x &&
-                alienBulletX < current->x + 8 &&
-                alienBulletY >= current->y &&
-                alienBulletY < current->y + 4) {
+    for (int i = 0; i < 3; i++) {
+        BulletNode* bullet = bulletLists[i];
+        while (bullet != NULL) {
+            if (bullet->bullet.active) {
+                int bulletLeft = bullet->bullet.x;
+                int bulletRight = bullet->bullet.x + 3;
+                int bulletTop = bullet->bullet.y;
+                int bulletBottom = bullet->bullet.y + 5;
 
-                alienBulletActive = 0;
-                current->health--;
-                break; // hanya satu tabrakan per frame
+                currentBarrier = head;
+                while (currentBarrier != NULL) {
+                    if (currentBarrier->health > 0) {
+                        int barrierLeft = currentBarrier->x;
+                        int barrierRight = currentBarrier->x + 8;
+                        int barrierTop = currentBarrier->y;
+                        int barrierBottom = currentBarrier->y + 4;
+
+                        if (bulletRight > barrierLeft && bulletLeft < barrierRight &&
+                            bulletBottom > barrierTop && bulletTop < barrierBottom) {
+
+                            bullet->bullet.active = 0;
+                            currentBarrier->health--;
+                            goto next_bullet; // satu peluru hanya bisa kena satu barrier
+                        }
+                    }
+                    currentBarrier = currentBarrier->next;
+                }
             }
-
-            // Periksa apakah ada peluru pemain mengenai barrier ini
-            if (playerBulletActive &&
-                playerBulletX >= current->x &&
-                playerBulletX < current->x + 8 &&
-                playerBulletY >= current->y &&
-                playerBulletY < current->y + 4) {
-
-                playerBulletActive = 0;
-                current->health--;
-                break;
-            }
-
-            if (ufoBulletActive &&
-                ufoBulletX >= current->x &&
-                ufoBulletX < current->x + 8 &&
-                ufoBulletY >= current->y &&
-                ufoBulletY < current->y + 4) {
-
-                ufoBulletActive = 0;
-                current->health--;
-                break;
-            }
+        next_bullet:
+            bullet = bullet->next;
         }
-
-        current = current->next;
     }
 }
 

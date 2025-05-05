@@ -11,6 +11,7 @@ typedef struct Barrier {
 
 void drawBarrier(Barrier* b);
 void checkBarrierBulletCollision(Barrier* head);
+
 void initBarriers(Barrier** head);
 void freeBarriers(Barrier* head);
 

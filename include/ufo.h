@@ -1,10 +1,10 @@
 #ifndef UFO_H
 #define UFO_H
+#define UFO_BULLET 2
+#define MAX_UFO_BULLETS 10
 
 #include "alien.h"
 #include "gameplay.h"
-
-#define MAX_UFO_BULLETS 10
 
 
 extern BulletNode *ufoBulletList;

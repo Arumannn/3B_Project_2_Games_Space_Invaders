@@ -6,52 +6,80 @@
 #include <time.h>
 #include <math.h>
 
-// Definisi variabel global
+// Global variables
 int BLOCK_SIZE;
 Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS];
+AlienNode* alienRows[ALIEN_ROWS]; // Array of linked lists for each row
 
-
-void initAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
+void initAliens() {
     BLOCK_SIZE = getmaxy() / 40;
 
+    // Initialize random seed
+    srand(time(0));
+
+    // Initialize alien rows
     for (int row = 0; row < ALIEN_ROWS; row++) {
+        alienRows[row] = NULL; // Start with empty list
+        AlienNode* tail = NULL;
+
         for (int col = 0; col < ALIEN_COLS; col++) {
+            // Allocate new node
+            AlienNode* newNode = (AlienNode*)malloc(sizeof(AlienNode));
+            if (!newNode) {
+                printf("Memory allocation failed!\n");
+                exit(1);
+            }
+
+            // Initialize alien data
+            newNode->alien.active = 1;
+            newNode->alien.node = newNode; // Store pointer to node for easy access
+            newNode->next = NULL;
+
             if (row == 0 || row == 1) {
-                // Baris 0 dan 1: Spawn dari kiri
-                aliens[row][col].x = col * BLOCK_SIZE * 2 + getmaxx() / 10;
-                aliens[row][col].y = row * BLOCK_SIZE * 2 + getmaxy() / 5;
-                aliens[row][col].active = 1;
+                // Rows 0 and 1: Spawn from left
+                newNode->alien.x = col * BLOCK_SIZE * 2 + getmaxx() / 10;
+                newNode->alien.y = row * BLOCK_SIZE * 2 + getmaxy() / 5;
             } else {
-                // Baris 2-5: Spawn dari kanan
-                aliens[row][col].x = getmaxx() - (col + 1) * BLOCK_SIZE * 2 - getmaxx() / 10;
-                aliens[row][col].y = row * BLOCK_SIZE * 2 + getmaxy() / 5;
-                aliens[row][col].active = 1;
+                // Rows 2-5: Spawn from right
+                newNode->alien.x = getmaxx() - (col + 1) * BLOCK_SIZE * 2 - getmaxx() / 10;
+                newNode->alien.y = row * BLOCK_SIZE * 2 + getmaxy() / 5;
+            }
+
+            // Add to linked list
+            if (alienRows[row] == NULL) {
+                alienRows[row] = newNode;
+                tail = newNode;
+            } else {
+                tail->next = newNode;
+                tail = newNode;
             }
         }
     }
 
+    // Initialize alien bullets
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         alienBullets[i].active = 0;
     }
 
+    // Initialize explosions
     for (int row = 0; row < ALIEN_ROWS; row++) {
         for (int col = 0; col < ALIEN_COLS; col++) {
             alienExplosions[row][col].active = 0;
             alienExplosions[row][col].lifetime = 0;
         }
     }
-
-    srand(time(0));
 }
 
-void drawAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
+void drawAliens() {
     for (int row = 0; row < ALIEN_ROWS; row++) {
-        for (int col = 0; col < ALIEN_COLS; col++) {
-            if (aliens[row][col].active) {
-                int x = aliens[row][col].x, y = aliens[row][col].y;
+        AlienNode* current = alienRows[row];
+        int col = 0; // Track column for explosion array
+        while (current != NULL) {
+            if (current->alien.active) {
+                int x = current->alien.x, y = current->alien.y;
 
                 if (row == 0 || row == 1) {
-                    // Desain alien baris 0 dan 1 (seperti asli)
+                    // Design for rows 0 and 1
                     setcolor(LIGHTGREEN);
                     setfillstyle(SOLID_FILL, LIGHTGREEN);
                     fillellipse(x + BLOCK_SIZE / 2, y + BLOCK_SIZE / 2, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
@@ -78,9 +106,8 @@ void drawAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
                         int spikeY = y + BLOCK_SIZE / 2 + sin(angle) * radius - spikeSize / 2;
                         bar(spikeX, spikeY, spikeX + spikeSize, spikeY + spikeSize);
                     }
-                }
-                else if (row == 2 || row == 3) {
-                    // Desain alien baris 2 dan 3 (seperti asli)
+                } else if (row == 2 || row == 3) {
+                    // Design for rows 2 and 3
                     setcolor(LIGHTBLUE);
                     setfillstyle(SOLID_FILL, LIGHTBLUE);
                     ellipse(x + BLOCK_SIZE / 2, y + BLOCK_SIZE / 2, 0, 360, BLOCK_SIZE / 3, BLOCK_SIZE / 2);
@@ -99,9 +126,8 @@ void drawAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
                     setcolor(LIGHTBLUE);
                     line(x + BLOCK_SIZE / 4, y + BLOCK_SIZE, x + BLOCK_SIZE / 4, y + 6 * BLOCK_SIZE / 5);
                     line(x + 3 * BLOCK_SIZE / 4, y + BLOCK_SIZE, x + 3 * BLOCK_SIZE / 4, y + 6 * BLOCK_SIZE / 5);
-                }
-                else if (row == 4 || row == 5) {
-                    // Desain alien baris 4 dan 5 (seperti asli)
+                } else if (row == 4 || row == 5) {
+                    // Design for rows 4 and 5
                     setcolor(LIGHTRED);
                     setfillstyle(SOLID_FILL, LIGHTRED);
                     fillellipse(x + BLOCK_SIZE / 2, y + BLOCK_SIZE / 2, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
@@ -130,10 +156,12 @@ void drawAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
                     fillellipse(x + BLOCK_SIZE / 2 + BLOCK_SIZE / 6, y + BLOCK_SIZE, 2, 2);
                 }
             }
+            current = current->next;
+            col++;
         }
     }
 
-    // Gambar peluru alien (tidak berubah)
+    // Draw alien bullets
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {
             setcolor(RED);
@@ -143,11 +171,11 @@ void drawAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
     }
 }
 
-void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDirFirst, int *alienDirRest, int frameCounter) {
+void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
     int moveDownFirst = 0;
     int moveDownRest = 0;
 
-    // Update pergerakan peluru alien
+    // Update alien bullets
     for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
         if (alienBullets[i].active) {
             alienBullets[i].y += BLOCK_SIZE / 2;
@@ -157,62 +185,65 @@ void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDirFirst, int 
         }
     }
 
-    // Dapatkan kecepatan dan interval tembakan berdasarkan level
+    // Get speed and shoot interval based on level
     float currentAlienSpeed = getAlienSpeed();
     int currentShootInterval = getShootInterval();
 
-    // Hitung posisi Y awal untuk baris 4 (sebagai batas atas pergerakan baris 4 dan 5)
-    int baseYRow4 = 4 * BLOCK_SIZE * 2 + getmaxy() / 5;  // Posisi Y awal baris 4
-    int minY = baseYRow4 - BLOCK_SIZE;  // Batas atas (sedikit di atas posisi awal baris 4)
+    // Calculate initial Y position for row 4 (upper bound for rows 4 and 5)
+    int baseYRow4 = 4 * BLOCK_SIZE * 2 + getmaxy() / 5;
+    int minY = baseYRow4 - BLOCK_SIZE;
 
     for (int row = 0; row < ALIEN_ROWS; row++) {
-        for (int col = 0; col < ALIEN_COLS; col++) {
-            if (aliens[row][col].active) {
+        AlienNode* current = alienRows[row];
+        while (current != NULL) {
+            if (current->alien.active) {
                 if (row == 0 || row == 1) {
-                    aliens[row][col].x += *alienDirFirst * (BLOCK_SIZE * currentAlienSpeed);
-                    if (aliens[row][col].x <= 0 || aliens[row][col].x >= getmaxx() - BLOCK_SIZE) {
+                    current->alien.x += *alienDirFirst * (BLOCK_SIZE * currentAlienSpeed);
+                    if (current->alien.x <= 0 || current->alien.x >= getmaxx() - BLOCK_SIZE) {
                         moveDownFirst = 1;
                     }
                 } else if (row == 2 || row == 3) {
-                    aliens[row][col].x += *alienDirRest * (BLOCK_SIZE * currentAlienSpeed);
-                    if (aliens[row][col].x <= 0 || aliens[row][col].x >= getmaxx() - BLOCK_SIZE) {
+                    current->alien.x += *alienDirRest * (BLOCK_SIZE * currentAlienSpeed);
+                    if (current->alien.x <= 0 || current->alien.x >= getmaxx() - BLOCK_SIZE) {
                         moveDownRest = 1;
                     }
                 } else if (row == 4 || row == 5) {
-                    aliens[row][col].x += *alienDirRest * (BLOCK_SIZE * currentAlienSpeed);
-                    // Pergerakan sinusoidal ke atas dan bawah
-                    int originalY = row * BLOCK_SIZE * 2 + getmaxy() / 5;  // Posisi Y awal alien
-                    int newY = aliens[row][col].y + (int)(sin(frameCounter * 0.1) * 3);
-                    // Batasi pergerakan ke atas agar tidak melewati batas minimum
+                    current->alien.x += *alienDirRest * (BLOCK_SIZE * currentAlienSpeed);
+                    // Sinusoidal movement
+                    int originalY = row * BLOCK_SIZE * 2 + getmaxy() / 5;
+                    int newY = current->alien.y + (int)(sin(frameCounter * 0.1) * 3);
                     if (newY < minY) {
                         newY = minY;
                     }
-                    aliens[row][col].y = newY;
-                    if (aliens[row][col].x <= 0 || aliens[row][col].x >= getmaxx() - BLOCK_SIZE) {
+                    current->alien.y = newY;
+                    if (current->alien.x <= 0 || current->alien.x >= getmaxx() - BLOCK_SIZE) {
                         moveDownRest = 1;
                     }
                 }
 
-                // Logika tembakan alien dengan interval berdasarkan level
+                // Alien shooting logic
                 if (rand() % currentShootInterval < 10) {
                     for (int j = 0; j < MAX_ALIEN_BULLETS; j++) {
                         if (!alienBullets[j].active) {
-                            alienBullets[j].x = aliens[row][col].x + BLOCK_SIZE / 4;
-                            alienBullets[j].y = aliens[row][col].y + BLOCK_SIZE;
+                            alienBullets[j].x = current->alien.x + BLOCK_SIZE / 4;
+                            alienBullets[j].y = current->alien.y + BLOCK_SIZE;
                             alienBullets[j].active = 1;
                             break;
                         }
                     }
                 }
             }
+            current = current->next;
         }
     }
 
     if (moveDownFirst) {
         *alienDirFirst *= -1;
         for (int row = 0; row < 2; row++) {
-            for (int col = 0; col < ALIEN_COLS; col++) {
-                aliens[row][col].y += BLOCK_SIZE * 2;
+            AlienNode* current = alienRows[row];
+            while (current != NULL) {
+                current->alien.y += BLOCK_SIZE * 2;
+                current = current->next;
             }
         }
     }
@@ -220,44 +251,53 @@ void updateAliens(Alien aliens[ALIEN_ROWS][ALIEN_COLS], int *alienDirFirst, int 
     if (moveDownRest) {
         *alienDirRest *= -1;
         for (int row = 2; row < ALIEN_ROWS; row++) {
-            for (int col = 0; col < ALIEN_COLS; col++) {
-                aliens[row][col].y += BLOCK_SIZE * 2;
+            AlienNode* current = alienRows[row];
+            while (current != NULL) {
+                current->alien.y += BLOCK_SIZE * 2;
+                current = current->next;
             }
         }
     }
 }
 
-void checkAlienCollisions(Alien aliens[ALIEN_ROWS][ALIEN_COLS], BulletNode *bullets) {
-    BulletNode *current = bullets;
-    while (current != NULL) {
-        if (current->bullet.active) {
-            for (int i = 0; i < ALIEN_ROWS; i++) {
-                for (int j = 0; j < ALIEN_COLS; j++) {
-                    if (aliens[i][j].active) {
-                        int bulletLeft = current->bullet.x;
-                        int bulletRight = current->bullet.x + BLOCK_SIZE / 2;
-                        int bulletTop = current->bullet.y;
-                        int bulletBottom = current->bullet.y + BLOCK_SIZE;
+void checkAlienCollisions(BulletNode *bullets) {
+    BulletNode *currentBullet = bullets;
+    while (currentBullet != NULL) {
+        if (currentBullet->bullet.active) {
+            for (int row = 0; row < ALIEN_ROWS; row++) {
+                AlienNode* currentAlien = alienRows[row];
+                int col = 0;
+                while (currentAlien != NULL) {
+                    if (currentAlien->alien.active) {
+                        int bulletLeft = currentBullet->bullet.x;
+                        int bulletRight = currentBullet->bullet.x + BLOCK_SIZE / 2;
+                        int bulletTop = currentBullet->bullet.y;
+                        int bulletBottom = currentBullet->bullet.y + BLOCK_SIZE;
 
-                        int alienLeft = aliens[i][j].x;
-                        int alienRight = aliens[i][j].x + BLOCK_SIZE;
-                        int alienTop = aliens[i][j].y;
-                        int alienBottom = aliens[i][j].y + BLOCK_SIZE;
+                        int alienLeft = currentAlien->alien.x;
+                        int alienRight = currentAlien->alien.x + BLOCK_SIZE;
+                        int alienTop = currentAlien->alien.y;
+                        int alienBottom = currentAlien->alien.y + BLOCK_SIZE;
 
                         if (bulletRight > alienLeft && bulletLeft < alienRight &&
                             bulletBottom > alienTop && bulletTop < alienBottom) {
-                            aliens[i][j].active = 0;
-                            current->bullet.active = 0;
-                            // (Kalau mau, tambahkan score update disini)
+                            currentAlien->alien.active = 0;
+                            currentBullet->bullet.active = 0;
+                            // Set explosion
+                            alienExplosions[row][col].x = currentAlien->alien.x + BLOCK_SIZE / 2;
+                            alienExplosions[row][col].y = currentAlien->alien.y + BLOCK_SIZE / 2;
+                            alienExplosions[row][col].active = 1;
+                            alienExplosions[row][col].lifetime = 10; // Example lifetime
                         }
                     }
+                    currentAlien = currentAlien->next;
+                    col++;
                 }
             }
         }
-        current = current->next;
+        currentBullet = currentBullet->next;
     }
 }
-
 
 void drawAlienExplosions() {
     for (int row = 0; row < ALIEN_ROWS; row++) {
@@ -269,30 +309,32 @@ void drawAlienExplosions() {
                 setcolor(RED);
                 setfillstyle(SOLID_FILL, RED);
                 fillellipse(alienExplosions[row][col].x, alienExplosions[row][col].y, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
+                alienExplosions[row][col].lifetime--;
+                if (alienExplosions[row][col].lifetime <= 0) {
+                    alienExplosions[row][col].active = 0;
+                }
             }
         }
     }
 }
 
-void checkAlienPlayerVerticalCollision(Alien aliens[ALIEN_ROWS][ALIEN_COLS], Player *player) {
-    // Posisi vertikal sprite pemain
+void checkAlienPlayerVerticalCollision(Player *player) {
     int playerTop = player->Y_Player;
-    int playerBottom = player->Y_Player + 40; // Tinggi sprite pemain (sesuai DrawSpaceShip)
+    int playerBottom = player->Y_Player + 40;
 
     for (int row = 0; row < ALIEN_ROWS; row++) {
-        for (int col = 0; col < ALIEN_COLS; col++) {
-            if (aliens[row][col].active) {
-                // Posisi vertikal alien
-                int alienTop = aliens[row][col].y;
-                int alienBottom = aliens[row][col].y + BLOCK_SIZE; // Tinggi alien
+        AlienNode* current = alienRows[row];
+        while (current != NULL) {
+            if (current->alien.active) {
+                int alienTop = current->alien.y;
+                int alienBottom = current->alien.y + BLOCK_SIZE;
 
-                // Periksa apakah ada tumpang tindih vertikal
                 if (alienBottom >= playerTop && alienTop <= playerBottom) {
-                    // Alien sejajar dengan sprite pemain, game over
                     gameOverScreen();
-                    return; // Keluar dari fungsi dan akhiri permainan
+                    return;
                 }
             }
+            current = current->next;
         }
     }
 }

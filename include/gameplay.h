@@ -6,7 +6,19 @@
 #define SHOOT_INTERVAL_DECREMENT 500  // Pengurangan interval tembakan per level
 
 #include "alien.h"
-#include "bullet.h"
+
+typedef struct {
+    int x, y;        // Posisi
+    int active;      // Status aktif (0 = tidak aktif, 1 = aktif)
+    int speed;       // Kecepatan (default untuk pemain/alien, acak untuk UFO)
+    int dx;          // Arah horizontal (khususnya untuk UFO)
+    int type;        // Tipe peluru (PLAYER_BULLET, ALIEN_BULLET, UFO_BULLET)
+} Bullet;
+
+typedef struct BulletNode {
+    Bullet bullet;
+    struct BulletNode *next;
+} BulletNode;
 
 void initScore();
 void updateScore(int points);

@@ -3,7 +3,7 @@
 #define MAINSPRITE_H
 #define MAX_BULLETS 3
 #define MAX_EXPLOSIONS 10  // Batas maksimum ledakan yang bisa ditampilkan
-#include "bullet.h"
+#include "gameplay.h"
 #include <graphics.h>
 #include <conio.h>
 #include <windows.h>

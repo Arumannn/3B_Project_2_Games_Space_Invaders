@@ -19,18 +19,18 @@ extern int BLOCK_SIZE;
 
 
 // Struktur data peluru
-typedef struct {
-    int x, y;        // Posisi
-    int active;      // Status aktif (0 = tidak aktif, 1 = aktif)
-    int speed;       // Kecepatan (default untuk pemain/alien, acak untuk UFO)
-    int dx;          // Arah horizontal (khususnya untuk UFO)
-    int type;        // Tipe peluru (PLAYER_BULLET, ALIEN_BULLET, UFO_BULLET)
-} Bullet;
+// typedef struct {
+//     int x, y;        // Posisi
+//     int active;      // Status aktif (0 = tidak aktif, 1 = aktif)
+//     int speed;       // Kecepatan (default untuk pemain/alien, acak untuk UFO)
+//     int dx;          // Arah horizontal (khususnya untuk UFO)
+//     int type;        // Tipe peluru (PLAYER_BULLET, ALIEN_BULLET, UFO_BULLET)
+// } Bullet;
 
-typedef struct BulletNode {
-    Bullet bullet;
-    struct BulletNode *next;
-} BulletNode;
+// typedef struct BulletNode {
+//     Bullet bullet;
+//     struct BulletNode *next;
+// } BulletNode;
 
 // Variabel global
 extern BulletNode *playerBullets;

@@ -84,14 +84,14 @@ void startGame() {
 
     Player SpaceShip_P = {screenWidth / 2, screenHeight - 120, 3, 1, 0, 0};
     Alien aliens[ALIEN_ROWS][ALIEN_COLS]; // Array 2D untuk aliens
-    Barrier* barrierHead = NULL;
+    Barrier* barrierList = NULL;
     int alienDir = 1;
     int alienDirLast = 1;
     int frameCounter = 0;  
     initAliens();
     initScore();
     initExplosionsPlayer();
-    initBarriers(&barrierHead);
+    initBarriers(&barrierList);
     initLevel();  
 
     int gameOver = 0;
@@ -132,7 +132,7 @@ void startGame() {
             SpaceshipMove(&SpaceShip_P);
             updateBullets();
             printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
-            checkBarrierBulletCollision(barrierHead);
+            checkBarrierBulletCollision(barrierList);
             checkAlienCollisions(playerBullets);
             updateAliens(&alienDir, &alienDirLast, frameCounter);
             checkAlienPlayerVerticalCollision(&SpaceShip_P);  // Periksa tabrakan vertikal
@@ -152,7 +152,7 @@ void startGame() {
             }
             drawExplosionsPlayer();
             checkPlayerCollisions(&SpaceShip_P);
-            Barrier* current = barrierHead;
+            Barrier* current = barrierList;
             while (current != NULL) {
                 drawBarrier(current);
                 current = current->next;

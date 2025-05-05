@@ -6,7 +6,6 @@
 #define SHOOT_INTERVAL_DECREMENT 500  // Pengurangan interval tembakan per level
 
 #include "alien.h"
-#include "ufo.h"
 
 typedef struct {
     int x, y;        // Posisi
@@ -36,12 +35,6 @@ void savePlayerScore(const char *name, int score);
 void createCustomBackground();
 void drawCustomBackground();
 void startGame();
-
-// Fungsi untuk menginisialisasi level
-void initLevel();
-
-// Fungsi untuk memeriksa apakah semua alien habis dan menaikkan level
-void checkAndUpdateLevel(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);
 
 // Fungsi untuk mendapatkan kecepatan alien berdasarkan level
 float getAlienSpeed();

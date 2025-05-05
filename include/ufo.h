@@ -3,6 +3,7 @@
 
 #include "alien.h"
 #include "gameplay.h"
+#define UFO_BULLET 2
 
 #define MAX_UFO_BULLETS 10
 

@@ -6,8 +6,17 @@
 #include "ufo.h"
 #include "mainsprite.h"
 
-//extern Bullet alienBullets[MAX_ALIEN_BULLETS];
-extern Bullet bullets_player[MAX_BULLETS];
+extern int playerBulletX;
+extern int playerBulletY;
+extern int playerBulletActive;
+
+extern int alienBulletX;
+extern int alienBulletY;
+extern int alienBulletActive;
+
+extern int ufoBulletX;
+extern int ufoBulletY;
+extern int ufoBulletActive;
 
 void drawBarrier(Barrier* b) {
     if (b && b->health > 0) {
@@ -31,91 +40,50 @@ void drawBarrier(Barrier* b) {
     }
 }
 
-void checkAlienBulletCollision(Barrier* head) {
-    Barrier* current;
-    
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        if (bullets_player[i].active) {
-            int bulletLeft = bullets_player[i].x;
-            int bulletTop = bullets_player[i].y;
-            int bulletRight = bullets_player[i].x + 10;
-            int bulletBottom = bullets_player[i].y + 10;
+void checkBarrierBulletCollision(Barrier* head) {
+    Barrier* current = head;
 
-            current = head;
-            while (current != NULL) {
-                if (current->health > 0) {
-                    int BarrierLeft = current->x;
-                    int BarrierRight = current->x + 80;
-                    int BarrierTop = current->y - 5;
-                    int BarrierBottom = current->y + 25;
+    while (current != NULL) {
+        if (current->health > 0) {
+            // Periksa apakah ada peluru alien mengenai barrier ini
+            if (alienBulletActive &&
+                alienBulletX >= current->x &&
+                alienBulletX < current->x + 8 &&
+                alienBulletY >= current->y &&
+                alienBulletY < current->y + 4) {
 
-                    if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
-                        bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
-                        current->health--;
-                        bullets_player[i].active = 0;
-                        drawBarrier(current);
-                    }
-                }
-                current = current->next;
+                alienBulletActive = 0;
+                current->health--;
+                break; // hanya satu tabrakan per frame
+            }
+
+            // Periksa apakah ada peluru pemain mengenai barrier ini
+            if (playerBulletActive &&
+                playerBulletX >= current->x &&
+                playerBulletX < current->x + 8 &&
+                playerBulletY >= current->y &&
+                playerBulletY < current->y + 4) {
+
+                playerBulletActive = 0;
+                current->health--;
+                break;
+            }
+
+            if (ufoBulletActive &&
+                ufoBulletX >= current->x &&
+                ufoBulletX < current->x + 8 &&
+                ufoBulletY >= current->y &&
+                ufoBulletY < current->y + 4) {
+
+                ufoBulletActive = 0;
+                current->health--;
+                break;
             }
         }
+
+        current = current->next;
     }
-
-    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
-        if (alienBullets[i].active) {
-            int bulletLeft = alienBullets[i].x;
-            int bulletRight = alienBullets[i].x + BLOCK_SIZE / 2;
-            int bulletTop = alienBullets[i].y;
-            int bulletBottom = alienBullets[i].y + BLOCK_SIZE;
-
-            current = head;
-            while (current != NULL) {
-                if (current->health > 0) {
-                    int BarrierLeft = current->x;
-                    int BarrierRight = current->x + 80;
-                    int BarrierTop = current->y - 5;
-                    int BarrierBottom = current->y + 25;
-
-                    if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
-                        bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
-                        current->health--;
-                        alienBullets[i].active = 0;
-                        drawBarrier(current);
-                    }
-                }
-                current = current->next;
-            }
-        }
-    }
-
-    for (int i = 0; i < MAX_UFO_BULLETS; i++) {
-        if (ufoBullets[i].active) {
-            int bulletLeft = ufoBullets[i].x - 3;
-            int bulletRight = ufoBullets[i].x + 3;
-            int bulletTop = ufoBullets[i].y - 3;
-            int bulletBottom = ufoBullets[i].y + 3;
-
-            current = head;
-            while (current != NULL) {
-                if (current->health > 0) {
-                    int BarrierLeft = current->x;
-                    int BarrierRight = current->x + 80;
-                    int BarrierTop = current->y - 5;
-                    int BarrierBottom = current->y + 25;
-
-                    if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
-                        bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
-                        current->health--;
-                        ufoBullets[i].active = 0;
-                        drawBarrier(current);
-                    }
-                }
-                current = current->next;
-            }
-        }
-    }
-    current = current->next;    
-    }
+}
 
 void initBarriers(Barrier** head) {
     int screenWidth = getmaxx();

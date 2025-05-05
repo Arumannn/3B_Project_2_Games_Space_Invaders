@@ -109,7 +109,7 @@ void startGame() {
     // **Spawn UFO pertama dengan posisi dan waktu acak**
     srand(time(NULL));
     initUFO();
-    ufoRespawnDelay = (rand() % 5 + 3) * 30; // 3-8 detik dalam frame 30FPS
+    int ufoRespawnDelay = (rand() % 5 + 3) * 30; // 3-8 detik dalam frame 30FPS
     
     while (!gameOver) {
         QueryPerformanceCounter(&currentTime);

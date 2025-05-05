@@ -1,7 +1,7 @@
 #ifndef BARRIER_H
 #define BARRIER_H
 
-#define MAX_BARRIERS 3
+#define MAX_BARRIERS 4
 
 typedef struct Barrier {
     int x, y;

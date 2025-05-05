@@ -10,6 +10,8 @@ Explosion playerExplosions[MAX_EXPLOSIONS];
 BulletNode *playerBullets = NULL;
 extern BulletNode* alienBullets;
 extern BulletNode* ufoBulletList;
+int shootCooldown = 0;
+
 
 void DrawSpaceShip(Player *player) {
     if (!player->alive) return;

@@ -8,7 +8,7 @@
 #include "alien.h"
 #include "ufo.h"
 
-pedef struct {
+typedef struct {
     int x, y;        // Posisi
     int active;      // Status aktif (0 = tidak aktif, 1 = aktif)
     int speed;       // Kecepatan (default untuk pemain/alien, acak untuk UFO)

@@ -7,7 +7,6 @@
 #include <conio.h>
 #include <windows.h>
 #include <time.h>
-#include "bullet.h"
 #include "mainsprite.h"
 #include "mainmenu.h"
 #include "alien.h"

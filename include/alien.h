@@ -41,4 +41,10 @@ void checkAlienCollisions(BulletNode *bullets);
 void drawAlienExplosions();
 void checkAlienPlayerVerticalCollision(Player *player);
 
+// Fungsi untuk menginisialisasi level
+void initLevel();
+
+// Fungsi untuk memeriksa apakah semua alien habis dan menaikkan level
+void checkAndUpdateLevel(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);
+
 #endif // ALIEN_H

@@ -36,12 +36,6 @@ void createCustomBackground();
 void drawCustomBackground();
 void startGame();
 
-// Fungsi untuk menginisialisasi level
-void initLevel();
-
-// Fungsi untuk memeriksa apakah semua alien habis dan menaikkan level
-void checkAndUpdateLevel(Alien aliens[ALIEN_ROWS][ALIEN_COLS]);
-
 // Fungsi untuk mendapatkan kecepatan alien berdasarkan level
 float getAlienSpeed();
 

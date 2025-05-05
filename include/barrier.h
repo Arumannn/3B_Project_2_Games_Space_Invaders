@@ -10,8 +10,9 @@ typedef struct Barrier {
 } Barrier;
 
 void drawBarrier(Barrier* b);
-void checkAlienBulletCollision(Barrier* head);
+void checkAlienBulletCollision(Barrier* barrierHead);
 void initBarriers(Barrier** head);
 void freeBarriers(Barrier* head);
+void checkBulletBarrierCollision(Bullet** bulletList, Barrier** barrierList);
 
 #endif

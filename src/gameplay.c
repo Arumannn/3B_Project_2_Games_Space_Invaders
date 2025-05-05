@@ -91,7 +91,7 @@ void startGame() {
     initAllBullets();
     initScore();
     initExplosionsPlayer();
-    initBarriers(barriers);
+    initBarriers(barriers** head);
     initLevel();  
 
     int gameOver = 0;
@@ -131,7 +131,7 @@ void startGame() {
             drawScore();
             SpaceshipMove(&SpaceShip_P);
             updateBullets();
-            checkAlienBulletCollision(barriers);
+            checkAlienBulletCollision(barriers* head);
             printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
             checkAlienCollisions(aliens, playerBullets);
             updateAliens(aliens, &alienDir, &alienDirLast, frameCounter);  // Kirim frameCounter
@@ -153,7 +153,7 @@ void startGame() {
             drawExplosionsPlayer();
             checkPlayerCollisions(&SpaceShip_P);
             for (int i = 0; i < MAX_BARRIERS; i++) {
-                drawBarrier(barriers[i]);
+                drawBarrier(barriers* b);
             }
 
             setvisualpage(page);

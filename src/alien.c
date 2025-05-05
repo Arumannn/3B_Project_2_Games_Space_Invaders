@@ -1,6 +1,7 @@
 #include "alien.h"
 #include "mainsprite.h"
 #include "gameplay.h"
+#include "mainmenu.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

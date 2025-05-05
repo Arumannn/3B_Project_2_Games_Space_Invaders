@@ -16,12 +16,6 @@ void addAlienScore();
 void addUFOScore();
 void drawLevel(); 
 
-void drawStars();
-void gameOverScreen();
-void savePlayerScore(const char *name, int score);
-void createCustomBackground();
-void drawCustomBackground();
-void startGame();
 
 // Fungsi untuk menginisialisasi level
 void initLevel();

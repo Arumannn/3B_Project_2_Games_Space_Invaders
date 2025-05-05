@@ -7,6 +7,7 @@
 
 #include "alien.h"
 #include "bullet.h"
+#include "ufo.h"
 
 void initScore();
 void updateScore(int points);

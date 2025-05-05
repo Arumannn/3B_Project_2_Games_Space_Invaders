@@ -131,7 +131,7 @@ void startGame() {
             drawScore();
             SpaceshipMove(&SpaceShip_P);
             updateBullets();
-            checkAlienBulletCollision(barrierHead);
+            checkBarrierBulletCollision(barrierHead);
             printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
             checkAlienCollisions(playerBullets);
             updateAliens(&alienDir, &alienDirLast, frameCounter);

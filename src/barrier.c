@@ -1,16 +1,13 @@
 #include <graphics.h>
 #include <conio.h>
-<<<<<<< HEAD
 #include "bullet.h"
-=======
 #include <stdlib.h> // untuk malloc
->>>>>>> ubah-barrier-to-linked-list
 #include "barrier.h"
 #include "alien.h"
 #include "ufo.h"
 #include "mainsprite.h"
 
-extern AlienBullet alienBullets[MAX_ALIEN_BULLETS];
+extern Bullet alienBullets[MAX_ALIEN_BULLETS];
 extern Bullet bullets_player[MAX_BULLETS];
 
 // Menggambar barrier
@@ -36,29 +33,6 @@ void drawBarrier(Barrier* b) {
     }
 }
 
-<<<<<<< HEAD
-void checkAlienBulletCollision(Barrier barriers[]) {
-    BulletNode *current = playerBullets;
-while (current != NULL) {
-    if (current->bullet.active) {
-        int bulletLeft = current->bullet.x;
-        int bulletTop = current->bullet.y;
-        int bulletRight = current->bullet.x + 10;
-        int bulletBottom = current->bullet.y + 10;
-
-        for (int j = 0; j < MAX_BARRIERS; j++) {
-            if (barriers[j].health > 0) {
-                int BarrierLeft = barriers[j].x;
-                int BarrierRight = barriers[j].x + 80;
-                int BarrierTop = barriers[j].y - 5;
-                int BarrierBottom = barriers[j].y + 25;
-
-                if (bulletRight > BarrierLeft && bulletLeft < BarrierRight &&
-                    bulletBottom > BarrierTop && bulletTop < BarrierBottom) {
-                    barriers[j].health--;
-                    current->bullet.active = 0;
-                    drawBarrier(barriers[j]);
-=======
 void checkAlienBulletCollision(Barrier* head) {
     Barrier* current;
     
@@ -137,18 +111,14 @@ void checkAlienBulletCollision(Barrier* head) {
                         ufoBullets[i].active = 0;
                         drawBarrier(current);
                     }
->>>>>>> ubah-barrier-to-linked-list
                 }
                 current = current->next;
             }
         }
     }
-<<<<<<< HEAD
     current = current->next;    
     }
-=======
->>>>>>> ubah-barrier-to-linked-list
-}
+
 
 // Inisialisasi linked list barrier
 void initBarriers(Barrier** head) {

@@ -1,6 +1,6 @@
 #include <graphics.h>
 #include <conio.h>
-#include <stdlib.h> // untuk malloc
+#include <stdlib.h>
 #include "barrier.h"
 #include "alien.h"
 #include "ufo.h"
@@ -9,7 +9,6 @@
 extern AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 extern Bullet bullets_player[MAX_BULLETS];
 
-// Menggambar barrier
 void drawBarrier(Barrier* b) {
     if (b && b->health > 0) {
         int color = WHITE;
@@ -117,7 +116,6 @@ void checkAlienBulletCollision(Barrier* head) {
     }
 }
 
-// Inisialisasi linked list barrier
 void initBarriers(Barrier** head) {
     int screenWidth = getmaxx();
     int screenHeight = getmaxy();

@@ -190,11 +190,11 @@ void showMainMenu() {
     readimagefile("judul.bmp", imgX, imgY, imgX + imgWidth, imgY + imgHeight);
 
     // Posisi tombol
-    int centerX = getmaxwidth() / 2 - 400;  // Geser tombol lebih ke kiri
+    int centerX = getmaxwidth() / 2 - 350;  // Geser tombol lebih ke kiri
     int startY = getmaxheight() / 2 - 160; // Sedikit naik agar lebih proporsional
     int buttonWidth = 300;
     int buttonHeight = 200;
-    int buttonSpacing = 130; // Tambah jarak antar tombol agar lebih luas
+    int buttonSpacing = 140; // Tambah jarak antar tombol agar lebih luas
 
     drawImageButton("start.bmp", centerX, startY, buttonWidth, buttonHeight);
     drawImageButton("guide.bmp", centerX, startY + buttonSpacing, buttonWidth, buttonHeight);
@@ -203,7 +203,7 @@ void showMainMenu() {
 
      // Gambar leaderboard terlebih dahulu dan hitung tinggi tabel
      int leaderboardX = getmaxwidth() / 2 + 150;
-     int leaderboardY = startY + 10;
+     int leaderboardY = startY + 30;
      int rowHeight = 40;
 
      // Hitung jumlah data
@@ -224,13 +224,13 @@ void showMainMenu() {
     int leaderboardButtonY = leaderboardY + leaderboardHeight + 20;
 
     // Tombol "LEADERBOARD" berada tepat di bawah tabel
-    drawButton(leaderboardX, leaderboardButtonY, 350, 60, RGB(120, 180, 255), "Selengkapnya");
+    drawImageButton("more.bmp", leaderboardX, leaderboardButtonY, 350, 200);
 }
 
 // Perbaikan handleMainMenu agar menu tetap berjalan
 void handleMainMenu() {
     int centerX = getmaxwidth() / 2 - 400;
-    int startY = getmaxheight() / 2 - 100;
+    int startY = getmaxheight() / 2 - 80;
     int buttonWidth = 400;
     int buttonHeight = 80;
     int buttonSpacing = 110;

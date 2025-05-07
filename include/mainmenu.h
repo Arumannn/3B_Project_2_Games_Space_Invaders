@@ -20,7 +20,7 @@ void showGuide();     // Menampilkan aturan permainan
 void showLeaderboard(); 
 int confirmExit();    // Konfirmasi keluar dari permainan (mengembalikan 1 jika YA, 0 jika TIDAK)
 void mainMenu(); 
-void drawGradientBackground();
+void drawImageButton();
 void drawStars();
 void drawLeaderboard(int yOffset);
 

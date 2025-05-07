@@ -164,40 +164,14 @@ void drawLeaderboard(int yOffset, int limit, int isCentered) {
     freeLeaderboard(head);
 }
 
-// Fungsi Gradasi Background
-void drawGradientBackground() {
-    int width = getmaxwidth();
-    int height = getmaxheight();
-
-    for (int y = 0; y < height; y++) {
-        float t = (float)y / height; // Normalisasi 0 - 1
-
-        int r, g, b;
-
-        // Hitam (atas) ke Biru Tua (tengah)
-        if (t < 0.5) {
-            float t1 = t * 2; // Normalisasi ke 0 - 1 untuk bagian atas
-            r = (int)(0 * (1 - t1) + 25 * t1);   // 0 → 25
-            g = (int)(0 * (1 - t1) + 25 * t1);   // 0 → 25
-            b = (int)(0 * (1 - t1) + 112 * t1);  // 0 → 112
-        } 
-        // Biru Tua (tengah) ke Ungu Tua (bawah)
-        else {
-            float t2 = (t - 0.5) * 2; // Normalisasi ke 0 - 1 untuk bagian bawah
-            r = (int)(25 * (1 - t2) + 75 * t2);  // 25 → 75
-            g = (int)(25 * (1 - t2) + 0 * t2);   // 25 → 0
-            b = (int)(112 * (1 - t2) + 130 * t2); // 112 → 130
-        }
-
-        setcolor(COLOR(r, g, b));
-        line(0, y, width, y);
-    }
-}
-
 void drawLeaderboardRight(int yOffset, int limit) {
     drawLeaderboard(yOffset, limit, 0);  // isCentered = 0 (artinya: di kanan layar)
 }
 
+// Fungsi untuk menggambar tombol
+void drawImageButton(const char* imageFile, int x, int y, int width, int height) {
+    readimagefile(imageFile, x, y, x + width, y + height);
+}
 
 // Fungsi untuk menampilkan menu utama
 void showMainMenu() {
@@ -205,24 +179,27 @@ void showMainMenu() {
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     
     cleardevice();
-    drawGradientBackground();
     drawStars();
 
-    // Judul tetap di posisinya
-    int titleX = getmaxwidth() / 2;
-    int titleY = 120; 
-    drawText(titleX, titleY, "SPACE INVADERS", 8, WHITE);
+    // Hitung area gambar (disesuaikan dengan ukuran sebelumnya)
+    int imgWidth = 400;   // lebar gambar ditampilkan
+    int imgHeight = 200;  // tinggi gambar ditampilkan
+    int imgX = getmaxwidth() / 2 - imgWidth / 2;
+    int imgY = 20;  // bisa kamu sesuaikan
+
+    readimagefile("judul.bmp", imgX, imgY, imgX + imgWidth, imgY + imgHeight);
 
     // Posisi tombol
     int centerX = getmaxwidth() / 2 - 400;  // Geser tombol lebih ke kiri
-    int startY = getmaxheight() / 2 - 100; // Sedikit naik agar lebih proporsional
-    int buttonWidth = 400;
-    int buttonHeight = 80;
+    int startY = getmaxheight() / 2 - 160; // Sedikit naik agar lebih proporsional
+    int buttonWidth = 300;
+    int buttonHeight = 200;
     int buttonSpacing = 130; // Tambah jarak antar tombol agar lebih luas
 
-    drawButton(centerX, startY, buttonWidth, buttonHeight, RGB(0, 180, 255), "START");
-    drawButton(centerX, startY + buttonSpacing, buttonWidth, buttonHeight, RGB(160, 90, 200), "GUIDE");
-    drawButton(centerX, startY + (buttonSpacing * 2), buttonWidth, buttonHeight, RGB(120, 150, 255), "EXIT");
+    drawImageButton("start.bmp", centerX, startY, buttonWidth, buttonHeight);
+    drawImageButton("guide.bmp", centerX, startY + buttonSpacing, buttonWidth, buttonHeight);
+    drawImageButton("exit.bmp", centerX, startY + (buttonSpacing * 2), buttonWidth, buttonHeight);
+
 
      // Gambar leaderboard terlebih dahulu dan hitung tinggi tabel
      int leaderboardX = getmaxwidth() / 2 + 150;
@@ -320,7 +297,6 @@ void handleMainMenu() {
 
 void showGuide() {
     cleardevice();
-    drawGradientBackground();
     drawStars();
     drawText(getmaxwidth() / 2, 100, "GUIDE", 5, WHITE);
     drawText(getmaxwidth() / 2, 200, "Gunakan Tombol A dan D atau panah untuk bergerak", 3, WHITE);
@@ -346,7 +322,6 @@ void showGuide() {
 // Fungsi untuk LEADERBOARD
 void showLeaderboard() {
     cleardevice();
-    drawGradientBackground();
     drawStars();
     drawText(getmaxwidth() / 2, 100, "LEADERBOARD", 5, WHITE);
 
@@ -373,7 +348,6 @@ void showLeaderboard() {
 // Fungsi untuk EXIT
 int confirmExit() {
     cleardevice();
-    drawGradientBackground();
     drawStars();
     drawText(getmaxwidth() / 2, 200, "Anda yakin ingin keluar?", 3, WHITE);
     drawButton(getmaxwidth() / 2 - 120, 300, 100, 50, CYAN, "YES");
@@ -400,7 +374,7 @@ int confirmExit() {
     }
 }
 
-// PROGRAM GAMEOVER
+//------------------------------------------PROGRAM GAMEOVER-----------------------------------------------------
 
 void savePlayerScore(const char *name, int score) {
     LeaderboardEntry *head = NULL;
@@ -513,7 +487,6 @@ void gameOverScreen() {
     cleardevice();
 
     // Background 
-    drawGradientBackground();
     drawStars();
 
     // Teks "GAME OVER!!" 

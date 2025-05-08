@@ -18,11 +18,9 @@
 
 
 
-// Pastikan untuk menyertakan library untuk suara
 #pragma comment(lib, "winmm.lib")
 
-void *backgroundBuffer;
-int bgSize;
+
 static int currentLevel = 1;  // Level awal
 static float alienSpeed = BASE_ALIEN_SPEED;  // Kecepatan awal alien
 static int shootInterval = BASE_SHOOT_INTERVAL;  // Interval tembakan awal
@@ -33,46 +31,12 @@ static int blinkCounter = 0;
 
 extern BulletNode *playerBullets;
 
-// Fungsi untuk membuat background hanya sekali
-// SATU
-void createCustomBackground() {
-    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-    
-    setactivepage(1);
-    cleardevice();
 
-    // Gradasi biru ke hitam
-    for (int i = 0; i < screenHeight; i++) {
-        int color = COLOR(0, 0, 255 * i / screenHeight);
-        setcolor(color);
-        line(0, i, screenWidth, i);
-    }
-
-    // Bintang acak
-    for (int i = 0; i < 100; i++) {
-        int x = rand() % screenWidth;
-        int y = rand() % screenHeight;
-        putpixel(x, y, WHITE);
-    }
-
-    // Simpan background ke buffer
-    bgSize = imagesize(0, 0, screenWidth, screenHeight);
-    backgroundBuffer = malloc(bgSize);
-    getimage(0, 0, screenWidth, screenHeight, backgroundBuffer);
-}
-
-// Fungsi untuk menampilkan background dari buffer
-void drawCustomBackground() {
-    putimage(0, 0, backgroundBuffer, COPY_PUT);
-}
 
 void startGame() {
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
-    // Buat background hanya sekali
-    createCustomBackground();
 
     Player SpaceShip_P = {screenWidth / 2, screenHeight - 120, 3, 1, 0, 0};
     Alien aliens[ALIEN_ROWS][ALIEN_COLS]; // Array 2D untuk aliens
@@ -118,7 +82,7 @@ void startGame() {
 
             setactivepage(page);
             cleardevice();         
-            //drawCustomBackground();  
+            drawStars();
 
             drawScore();
             SpaceshipMove(&SpaceShip_P);
@@ -167,8 +131,6 @@ void startGame() {
 
     PlaySound(NULL, 0, 0);  // Hentikan musik saat game selesai
     
-    free(backgroundBuffer);  // Bebaskan memori background
-
     cleardevice();
 }
 
@@ -229,6 +191,8 @@ void updateScore(int points) {
     score += points;
 }
 
+
+
 void drawScore() {
     char scoreText[20];
     char levelText[20];
@@ -279,3 +243,4 @@ void addAlienScore() {
 void addUFOScore() {
     updateScore(1000);
 }
+

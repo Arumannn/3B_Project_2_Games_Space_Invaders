@@ -27,7 +27,6 @@ void drawLeaderboard(int yOffset);
 void gameOverScreen();
 void savePlayerScore(const char *name, int score);
 void createCustomBackground();
-void drawCustomBackground();
-void startGame();
+
 
 #endif

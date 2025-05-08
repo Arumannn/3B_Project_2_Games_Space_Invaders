@@ -27,7 +27,7 @@ int getScore();
 void addAlienScore();
 void addUFOScore();
 void drawLevel(); 
-
+void startGame();
 
 // Fungsi untuk mendapatkan kecepatan alien berdasarkan level
 float getAlienSpeed();

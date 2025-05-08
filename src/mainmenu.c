@@ -301,17 +301,17 @@ void showGuide() {
     drawStars();
     
     // Menampilkan gambar panduan
-    int guideWidth = 500;  // Sesuaikan ukuran gambar
-    int guideHeight = 300;
+    int guideWidth = 600;  // Sesuaikan ukuran gambar
+    int guideHeight = 400;
     int guideX = getmaxwidth() / 2 - (guideWidth / 2);
-    int guideY = 150; // Posisi gambar lebih ke bawah
+    int guideY = 50; // Posisi gambar lebih ke bawah
     readimagefile("img/gameguide.bmp", guideX, guideY, guideX + guideWidth, guideY + guideHeight);
 
-    // Ukuran dan posisi tombol disamakan
+    // Ukuran dan posisi tombol "BACK" disamakan dengan tombol lain
     int buttonWidth = 300;
-    int buttonHeight = 100;
+    int buttonHeight = 200;
     int centerX = getmaxwidth() / 2 - (buttonWidth / 2);
-    int backY = guideY + guideHeight + 50; // Tepat di bawah gambar
+    int backY = guideY + guideHeight + 20;
 
     // Tombol Back di tengah
     drawImageButton("img/back.bmp", centerX, backY, buttonWidth, buttonHeight);

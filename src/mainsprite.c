@@ -23,18 +23,7 @@ void DrawSpaceShip(Player *player) {
     int imgWidth = 80;
     int imgHeight = 80;
 
-    FILE *f = fopen("img/spaceship.bmp", "rb");
-    if (!f) {
-        setcolor(WHITE);
-        setfillstyle(SOLID_FILL, WHITE);
-        fillellipse(x, y + 48, 20, 20);
-        line(x - 20, y + 48, x, y);
-        line(x + 20, y + 48, x, y);
-        return;
-    }
-    fclose(f);
-
-    readimagefile("img/spaceship.bmp", x - imgWidth/2, y, x + imgWidth/2, y + imgHeight);
+    readimagefile("img/spaceship_1.bmp", x - imgWidth/2, y, x + imgWidth/2, y + imgHeight);
 }
 
 
@@ -257,14 +246,18 @@ void drawExplosionsPlayer() {
 void drawLives(int lives) {
     int screenWidth = getmaxx();
     int startX = screenWidth - 50;
-    int startY = 50;
-    int heartSize = 20;
+    int startY = 40;
+    int heartSize = 40; // Sesuaikan dengan ukuran gambar
     int spacing = 40;
 
     for (int i = 0; i < lives; i++) {
-        setcolor(RED);
-        setfillstyle(SOLID_FILL, RED);
-        fillellipse(startX - (i * spacing), startY, heartSize, heartSize / 2);
+        int x = startX - (i * spacing);
+        int y = startY;
+        int imgWidth = heartSize;
+        int imgHeight = heartSize;
+
+        readimagefile("img/lives.bmp", x - imgWidth/2, y - imgHeight/2, x + imgWidth/2, y + imgHeight/2);
     }
 }
+
 

@@ -233,11 +233,11 @@ void drawScore() {
     char scoreText[20];
     char levelText[20];
     
-    settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 2); 
+    settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 5); 
 
     sprintf(scoreText, "Score: %d", score);
     setcolor(WHITE);
-    outtextxy(10, 10, scoreText);
+    outtextxy(100, 40, scoreText);
     
     int currentLevel = getCurrentLevel();
     if (lastLevel != currentLevel) {
@@ -249,8 +249,8 @@ void drawScore() {
     
     int textWidth = textwidth(levelText);
     int screenWidth = getmaxx();
-    int levelX = (screenWidth - textWidth) / 2;  
-    int levelY = 10;  
+    int levelX = (screenWidth) / 2;  
+    int levelY = 40;  
 
     if (blinkCounter > 0) {
         if (blinkCounter % 10 < 5) {

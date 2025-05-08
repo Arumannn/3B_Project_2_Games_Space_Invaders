@@ -51,16 +51,17 @@ void drawStars() {
         int x = rand() % getmaxwidth();
         int y = rand() % getmaxheight();
         
-        // Buat beberapa bintang lebih besar agar terlihat lebih jelas
+        // Buat beberapa bintang lebih kecil agar terlihat lebih halus
         if (rand() % 5 == 0) { 
             setcolor(YELLOW);  // Bintang lebih besar berwarna kuning
-            circle(x, y, 2);   // Ukuran lebih besar
+            circle(x, y, 1);   // Ukuran lebih kecil (radius 1)
         } else {
             setcolor(WHITE);   // Bintang kecil tetap putih
             putpixel(x, y, WHITE);
         }
     }
 }
+
 
 // Fungsi Leaderboard
 // Leaderboard: Struktur dan fungsi menggunakan linked list
@@ -229,27 +230,28 @@ void showMainMenu() {
 
 // Perbaikan handleMainMenu agar menu tetap berjalan
 void handleMainMenu() {
-    int centerX = getmaxwidth() / 2 - 400;
-    int startY = getmaxheight() / 2 - 80;
-    int buttonWidth = 400;
-    int buttonHeight = 80;
-    int buttonSpacing = 110;
-
     clearmouseclick(WM_LBUTTONDOWN);
 
     while (1) {  // **Loop utama agar menu tetap berjalan**
         showMainMenu();
 
+        // Posisi dan ukuran tombol (disamakan dengan showMainMenu)
+        int centerX = getmaxwidth() / 2 - 350;  // Geser tombol lebih ke kiri
+        int startY = getmaxheight() / 2 - 160; // Sedikit naik agar lebih proporsional
+        int buttonWidth = 300;
+        int buttonHeight = 200;
+        int buttonSpacing = 140;
+
         while (1) {
             if (ismouseclick(WM_LBUTTONDOWN)) {
                 int x, y;
                 getmouseclick(WM_LBUTTONDOWN, x, y);
+                clearmouseclick(WM_LBUTTONDOWN);
 
                 // Cek apakah klik di tombol "START"
                 if (x >= centerX && x <= centerX + buttonWidth &&
                     y >= startY && y <= startY + buttonHeight) {
                     Sleep(500);  
-                    clearmouseclick(WM_LBUTTONDOWN);
                     startGame();
                     break;  // **Keluar dari loop input dan kembali ke Main Menu setelah Game selesai**
                 }
@@ -263,7 +265,8 @@ void handleMainMenu() {
 
                 // Cek apakah klik di tombol "EXIT"
                 if (x >= centerX && x <= centerX + buttonWidth &&
-                    y >= startY + 2 * buttonSpacing && y <= startY + 2 * buttonSpacing + buttonHeight) {
+                    y >= startY + (2 * buttonSpacing) && 
+                    y <= startY + (2 * buttonSpacing) + buttonHeight) {
                         if (confirmExit() == 1) {
                             exit(0);
                         } else {
@@ -311,7 +314,7 @@ void showGuide() {
     int buttonWidth = 300;
     int buttonHeight = 200;
     int centerX = getmaxwidth() / 2 - (buttonWidth / 2);
-    int backY = guideY + guideHeight + 20;
+    int backY = guideY + guideHeight + 80 - 110;
 
     // Tombol Back di tengah
     drawImageButton("img/back.bmp", centerX, backY, buttonWidth, buttonHeight);
@@ -360,14 +363,32 @@ void showLeaderboard() {
     }
 }
 
-// Fungsi untuk EXIT
+// Fungsi untuk EXIT dengan gambar konfirmasi dan tombol YES/NO
 int confirmExit() {
     cleardevice();
     drawStars();
-    drawText(getmaxwidth() / 2, 200, "Anda yakin ingin keluar?", 3, WHITE);
-    drawButton(getmaxwidth() / 2 - 120, 300, 100, 50, CYAN, "YES");
-    drawButton(getmaxwidth() / 2 + 20, 300, 100, 50, MAGENTA, "NO");
 
+    // Ukuran dan posisi gambar konfirmasi
+    int questionWidth = 600;
+    int questionHeight = 300;
+    int questionX = getmaxwidth() / 2 - (questionWidth / 2);
+    int questionY = 50;
+
+    // Gambar konfirmasi "Anda yakin ingin keluar?"
+    readimagefile("img/question.bmp", questionX, questionY, questionX + questionWidth, questionY + questionHeight);
+
+    // Ukuran dan posisi tombol YES dan NO (disamakan dengan tombol BACK)
+    int buttonWidth = 300;
+    int buttonHeight = 200;
+    int yesX = getmaxwidth() / 2 - buttonWidth - 20;  // YES di kiri
+    int noX = getmaxwidth() / 2 + 20;                // NO di kanan
+    int buttonY = questionY + questionHeight - 100;
+
+    // Gambar tombol YES dan NO
+    readimagefile("img/yes.bmp", yesX, buttonY, yesX + buttonWidth, buttonY + buttonHeight);
+    readimagefile("img/no.bmp", noX, buttonY, noX + buttonWidth, buttonY + buttonHeight);
+
+    // Loop untuk deteksi klik tombol YES atau NO
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
@@ -375,19 +396,20 @@ int confirmExit() {
             clearmouseclick(WM_LBUTTONDOWN);
 
             // Jika klik tombol YES (Keluar dari game)
-            if (x >= getmaxwidth() / 2 - 120 && x <= getmaxwidth() / 2 - 20 && y >= 300 && y <= 350) {
-              cleardevice(); // Menutup jendela grafis
+            if (x >= yesX && x <= yesX + buttonWidth && y >= buttonY && y <= buttonY + buttonHeight) {
+                cleardevice(); // Menutup jendela grafis
                 return 1;      // Kembali ke handleMainMenu untuk exit(0)
             }
 
             // Jika klik tombol NO (Kembali ke Main Menu)
-            if (x >= getmaxwidth() / 2 + 20 && x <= getmaxwidth() / 2 + 120 && y >= 300 && y <= 350) {
+            if (x >= noX && x <= noX + buttonWidth && y >= buttonY && y <= buttonY + buttonHeight) {
                 cleardevice(); // Bersihkan layar sebelum kembali
                 return 0;      // Kembali ke main menu
             }
         }
     }
 }
+
 
 //------------------------------------------PROGRAM GAMEOVER-----------------------------------------------------
 

@@ -187,7 +187,7 @@ void showMainMenu() {
     int imgX = getmaxwidth() / 2 - imgWidth / 2;
     int imgY = 20;  // bisa kamu sesuaikan
 
-    readimagefile("judul.bmp", imgX, imgY, imgX + imgWidth, imgY + imgHeight);
+    readimagefile("img/judul.bmp", imgX, imgY, imgX + imgWidth, imgY + imgHeight);
 
     // Posisi tombol
     int centerX = getmaxwidth() / 2 - 350;  // Geser tombol lebih ke kiri
@@ -196,9 +196,9 @@ void showMainMenu() {
     int buttonHeight = 200;
     int buttonSpacing = 140; // Tambah jarak antar tombol agar lebih luas
 
-    drawImageButton("start.bmp", centerX, startY, buttonWidth, buttonHeight);
-    drawImageButton("guide.bmp", centerX, startY + buttonSpacing, buttonWidth, buttonHeight);
-    drawImageButton("exit.bmp", centerX, startY + (buttonSpacing * 2), buttonWidth, buttonHeight);
+    drawImageButton("img/start.bmp", centerX, startY, buttonWidth, buttonHeight);
+    drawImageButton("img/guide.bmp", centerX, startY + buttonSpacing, buttonWidth, buttonHeight);
+    drawImageButton("img/exit.bmp", centerX, startY + (buttonSpacing * 2), buttonWidth, buttonHeight);
 
 
      // Gambar leaderboard terlebih dahulu dan hitung tinggi tabel
@@ -224,7 +224,7 @@ void showMainMenu() {
     int leaderboardButtonY = leaderboardY + leaderboardHeight + 20;
 
     // Tombol "LEADERBOARD" berada tepat di bawah tabel
-    drawImageButton("more.bmp", leaderboardX, leaderboardButtonY, 350, 200);
+    drawImageButton("img/more.bmp", leaderboardX, leaderboardButtonY, 350, 200);
 }
 
 // Perbaikan handleMainMenu agar menu tetap berjalan
@@ -295,15 +295,28 @@ void handleMainMenu() {
     }
 }
 
+
 void showGuide() {
     cleardevice();
     drawStars();
-    drawText(getmaxwidth() / 2, 100, "GUIDE", 5, WHITE);
-    drawText(getmaxwidth() / 2, 200, "Gunakan Tombol A dan D atau panah untuk bergerak", 3, WHITE);
-    drawText(getmaxwidth() / 2, 250, "Tekan spasi untuk menembak", 3, WHITE);
-    drawText(getmaxwidth() / 2, 300, "Hindari tembakan musuh", 3, WHITE);
-    drawButton(getmaxwidth() / 2 - 100, 400, 200, 50, MAGENTA, "BACK");
+    
+    // Menampilkan gambar panduan
+    int guideWidth = 500;  // Sesuaikan ukuran gambar
+    int guideHeight = 300;
+    int guideX = getmaxwidth() / 2 - (guideWidth / 2);
+    int guideY = 150; // Posisi gambar lebih ke bawah
+    readimagefile("img/gameguide.bmp", guideX, guideY, guideX + guideWidth, guideY + guideHeight);
 
+    // Ukuran dan posisi tombol disamakan
+    int buttonWidth = 300;
+    int buttonHeight = 100;
+    int centerX = getmaxwidth() / 2 - (buttonWidth / 2);
+    int backY = guideY + guideHeight + 50; // Tepat di bawah gambar
+
+    // Tombol Back di tengah
+    drawImageButton("img/back.bmp", centerX, backY, buttonWidth, buttonHeight);
+
+    // Loop untuk deteksi klik tombol "BACK"
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
@@ -311,13 +324,15 @@ void showGuide() {
             clearmouseclick(WM_LBUTTONDOWN);
 
             // Cek apakah klik di tombol "BACK"
-            if (x >= getmaxwidth() / 2 - 100 && x <= getmaxwidth() / 2 + 100 &&
-                y >= 400 && y <= 450) {
-                return;  // **Kembali ke handleMainMenu tanpa keluar dari loop utama**
+            if (x >= centerX && x <= centerX + buttonWidth &&
+                y >= backY && y <= backY + buttonHeight) {
+                return;  // Kembali ke handleMainMenu tanpa keluar dari loop utama
             }
         }
     }
 }
+    
+   
 
 // Fungsi untuk LEADERBOARD
 void showLeaderboard() {
@@ -537,8 +552,11 @@ void gameOverScreen() {
     char ch;
     int lastIndex = -1; 
     int finalScore = getScore();
+    printf("otw loop gameover\n");
+
     
     while (1) {
+        printf("Masuk ke gameover\n");
         if (index != lastIndex) {
             setfillstyle(SOLID_FILL, BLACK);
             bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);

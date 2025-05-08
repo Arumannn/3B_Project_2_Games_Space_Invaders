@@ -13,54 +13,30 @@ extern BulletNode* ufoBulletList;
 int shootCooldown = 0;
 
 
+
 void DrawSpaceShip(Player *player) {
     if (!player->alive) return;
-
-    if (player->invincible) {
-        if ((player->invincibleTimer / 5) % 2 == 0) {
-            return; // Flicker effect
-        }
-    }
+    if (player->invincible && (player->invincibleTimer / 5) % 2 == 0) return;
 
     int x = player->X_Player;
     int y = player->Y_Player;
+    int imgWidth = 80;
+    int imgHeight = 80;
 
-    setcolor(WHITE);
-    setfillstyle(SOLID_FILL, WHITE);
-    int body[] = {x, y, x - 20, y + 50, x + 20, y + 50, x, y};
-    fillpoly(4, body);
+    FILE *f = fopen("img/spaceship.bmp", "rb");
+    if (!f) {
+        setcolor(WHITE);
+        setfillstyle(SOLID_FILL, WHITE);
+        fillellipse(x, y + 48, 20, 20);
+        line(x - 20, y + 48, x, y);
+        line(x + 20, y + 48, x, y);
+        return;
+    }
+    fclose(f);
 
-    setcolor(CYAN);
-    setfillstyle(SOLID_FILL, CYAN);
-    fillellipse(x, y + 12, 6, 10);
-    fillellipse(x, y + 28, 4, 7);
-
-    setcolor(RED);
-    setfillstyle(SOLID_FILL, RED);
-    bar(x - 15, y + 32, x - 8, y + 35);
-    bar(x + 8, y + 32, x + 15, y + 35);
-
-    setcolor(LIGHTGRAY);
-    setfillstyle(SOLID_FILL, LIGHTGRAY);
-    int leftWing[] = {x - 20, y + 50, x - 38, y + 65, x - 20, y + 70, x - 20, y + 50};
-    fillpoly(4, leftWing);
-    int rightWing[] = {x + 20, y + 50, x + 38, y + 65, x + 20, y + 70, x + 20, y + 50};
-    fillpoly(4, rightWing);
-
-    setcolor(DARKGRAY);
-    setfillstyle(SOLID_FILL, DARKGRAY);
-    int thruster[] = {x - 8, y + 50, x + 8, y + 50, x + 5, y + 72, x - 5, y + 72, x - 8, y + 50};
-    fillpoly(5, thruster);
-
-    setcolor(RED);
-    setfillstyle(SOLID_FILL, RED);
-    int flame[] = {x - 5, y + 72, x + 5, y + 72, x, y + 85, x - 5, y + 72};
-    fillpoly(4, flame);
-    int smallFlame[] = {x - 3, y + 77, x + 3, y + 77, x, y + 92, x - 3, y + 77};
-    fillpoly(4, smallFlame);
-    int tinyFlame[] = {x - 2, y + 82, x + 2, y + 82, x, y + 96, x - 2, y + 82};
-    fillpoly(4, tinyFlame);
+    readimagefile("img/spaceship.bmp", x - imgWidth/2, y, x + imgWidth/2, y + imgHeight);
 }
+
 
 void SpaceshipMove(Player *player) {
     if (player->respawning) return; // Cannot move during respawn
@@ -140,24 +116,30 @@ void drawBullets() {
         current = current->next;
     }
 }
-void checkPlayerCollisions(Player *player) {
-    if (!player->alive || player->respawning) return;
 
-    // Cek peluru alien dari linked list
+int isColliding(int l1, int r1, int t1, int b1, int l2, int r2, int t2, int b2) {
+    return !(r1 < l2 || l1 > r2 || b1 < t2 || t1 > b2);
+}
+
+void checkPlayerCollisions(Player *player) {
+    if (!player->alive || player->respawning || player->invincible) return;
+
+
+    int playerLeft   = player->X_Player - PLAYER_HITBOX_WIDTH / 2;
+    int playerRight  = player->X_Player + PLAYER_HITBOX_WIDTH / 2;
+    int playerTop    = player->Y_Player + 20;
+    int playerBottom = player->Y_Player + 20 + PLAYER_HITBOX_HEIGHT;
+
     BulletNode *currentAlienBullet = alienBullets;
     while (currentAlienBullet != NULL) {
         if (currentAlienBullet->bullet.active) {
-            int bulletLeft = currentAlienBullet->bullet.x;
-            int bulletRight = currentAlienBullet->bullet.x + BLOCK_SIZE / 2;
-            int bulletTop = currentAlienBullet->bullet.y;
+            int bulletLeft   = currentAlienBullet->bullet.x;
+            int bulletRight  = currentAlienBullet->bullet.x + BLOCK_SIZE / 2;
+            int bulletTop    = currentAlienBullet->bullet.y;
             int bulletBottom = currentAlienBullet->bullet.y + BLOCK_SIZE;
-            int playerLeft = player->X_Player - 20;
-            int playerRight = player->X_Player + 20;
-            int playerTop = player->Y_Player;
-            int playerBottom = player->Y_Player + 40;
 
-            if (bulletRight > playerLeft && bulletLeft < playerRight &&
-                bulletBottom > playerTop && bulletTop < playerBottom) {
+            if (isColliding(playerLeft, playerRight, playerTop, playerBottom,
+                            bulletLeft, bulletRight, bulletTop, bulletBottom)) {
                 currentAlienBullet->bullet.active = 0;
                 player->health--;
                 resetPlayer(player);
@@ -167,21 +149,16 @@ void checkPlayerCollisions(Player *player) {
         currentAlienBullet = currentAlienBullet->next;
     }
 
-    // Cek peluru UFO dari linked list
     BulletNode *currentUfoBullet = ufoBulletList;
     while (currentUfoBullet != NULL) {
         if (currentUfoBullet->bullet.active) {
-            int bulletLeft = currentUfoBullet->bullet.x - 3;
-            int bulletRight = currentUfoBullet->bullet.x + 3;
-            int bulletTop = currentUfoBullet->bullet.y - 3;
+            int bulletLeft   = currentUfoBullet->bullet.x - 3;
+            int bulletRight  = currentUfoBullet->bullet.x + 3;
+            int bulletTop    = currentUfoBullet->bullet.y - 3;
             int bulletBottom = currentUfoBullet->bullet.y + 3;
-            int playerLeft = player->X_Player - 20;
-            int playerRight = player->X_Player + 20;
-            int playerTop = player->Y_Player;
-            int playerBottom = player->Y_Player + 40;
 
-            if (bulletRight > playerLeft && bulletLeft < playerRight &&
-                bulletBottom > playerTop && bulletTop < playerBottom) {
+            if (isColliding(playerLeft, playerRight, playerTop, playerBottom,
+                            bulletLeft, bulletRight, bulletTop, bulletBottom)) {
                 currentUfoBullet->bullet.active = 0;
                 player->health--;
                 resetPlayer(player);
@@ -195,7 +172,7 @@ void checkPlayerCollisions(Player *player) {
 void resetPlayer(Player *player) {
     player->alive = 0;
     player->respawning = 1;
-    player->respawnTimer = 10; // Frames
+    player->respawnTimer = 30; // Frames
 
     for (int j = 0; j < MAX_EXPLOSIONS; j++) {
         if (!playerExplosions[j].active) {

@@ -118,7 +118,7 @@ void startGame() {
 
             setactivepage(page);
             cleardevice();         
-            drawCustomBackground();  
+            //drawCustomBackground();  
 
             drawScore();
             SpaceshipMove(&SpaceShip_P);
@@ -140,6 +140,7 @@ void startGame() {
             UFO(aliens); 
             
             if (SpaceShip_P.health <= 0) {
+                setvisualpage(page);
                 gameOverScreen();  
                 return;  
             }

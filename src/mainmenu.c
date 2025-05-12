@@ -225,7 +225,7 @@ void showMainMenu() {
     int leaderboardButtonY = leaderboardY + leaderboardHeight + 20;
 
     // Tombol "LEADERBOARD" berada tepat di bawah tabel
-    drawImageButton("img/more.bmp", leaderboardX, leaderboardButtonY, 350, 200);
+    drawImageButton("img/more.bmp", leaderboardX, leaderboardButtonY - 10, 300, 200);
 }
 
 // Perbaikan handleMainMenu agar menu tetap berjalan
@@ -285,7 +285,7 @@ void handleMainMenu() {
                 if (file) fclose(file);
 
                 int leaderboardHeight = 30 + (5 * rowHeight);
-                int leaderboardButtonY = (getmaxheight() / 2 - 100) + 10 + leaderboardHeight + 20;
+                int leaderboardButtonY = (getmaxheight() / 2 - 100) + 10 + 30 + (5 * 40) + 20 - 10;
 
                 if (x >= leaderboardX && x <= leaderboardX + 350 &&
                     y >= leaderboardButtonY && y <= leaderboardButtonY + 60) {
@@ -341,12 +341,22 @@ void showGuide() {
 void showLeaderboard() {
     cleardevice();
     drawStars();
-    drawText(getmaxwidth() / 2, 100, "LEADERBOARD", 5, WHITE);
+    int imgWidth = 400;
+    int imgHeight = 200;
+    int imgX = getmaxwidth() / 2 - imgWidth / 2;
+    int imgY = 5;
+    readimagefile("img/leaderboard.bmp", imgX, imgY, imgX + imgWidth, imgY + imgHeight);
+
 
     // Menampilkan leaderboard dimulai dari posisi y=150, hanya menampilkan 5 entri
     drawLeaderboard(150, 0, 1);  // Menggunakan limit 5 untuk menampilkan 5 entri leaderboard
 
-    drawButton(getmaxwidth() / 2 - 100, getmaxheight() - 100, 200, 50, MAGENTA, "BACK");
+    int backButtonWidth = 300;
+    int backButtonHeight = 200;
+    int backButtonX = getmaxwidth() / 2 - backButtonWidth / 2;
+    int backButtonY = getmaxheight() - backButtonHeight - 20;
+    drawImageButton("img/back.bmp", backButtonX, backButtonY, backButtonWidth, backButtonHeight);
+
 
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) {
@@ -355,8 +365,8 @@ void showLeaderboard() {
             clearmouseclick(WM_LBUTTONDOWN);
 
             // Cek apakah klik di tombol "BACK"
-            if (x >= getmaxwidth() / 2 - 100 && x <= getmaxwidth() / 2 + 100 &&
-                y >= getmaxheight() - 100 && y <= getmaxheight() - 50) {
+            if (x >= backButtonX && x <= backButtonX + backButtonWidth &&
+                y >= backButtonY && y <= backButtonY + backButtonHeight) {
                 return;  // Kembali ke menu utama
             }
         }
@@ -515,7 +525,6 @@ void savePlayerScore(const char *name, int score) {
     }
 }
 
-// Tampilan layar GAME OVER
 void gameOverScreen() {
     // Inisialisasi Window dan Layar 
     int screenWidth = getmaxwidth();
@@ -526,13 +535,23 @@ void gameOverScreen() {
     // Background 
     drawStars();
 
-    // Teks "GAME OVER!!" 
-    setcolor(WHITE);
-    settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 10);
+    // Gambar "GAME OVER" 
+    int imgWidth = 400; // Tentukan ukuran gambar
+    int imgHeight = 100;
+    int imgX = screenWidth / 2 - imgWidth / 2;
+    int imgY = screenHeight / 4 - imgHeight / 2;
 
-    int textWidth = textwidth((char *) "GAME OVER!!");
-    int textHeight = textheight((char*)"GAME OVER!!");
-    outtextxy((screenWidth - textWidth) / 2, (screenHeight / 4) - (textHeight / 2), (char*)"GAME OVER!!");
+    // Path gambar
+    const char *imagePath = "gameover.bmp";
+
+    // Periksa apakah file gambar ada
+    FILE *fileCheck = fopen(imagePath, "r");
+    if (fileCheck) {
+        fclose(fileCheck);
+        readimagefile(imagePath, imgX, imgY, imgX + imgWidth, imgY + imgHeight);
+    } else {
+        printf("Gambar tidak ditemukan: %s\n", imagePath);
+    }
 
     // Kotak input nama
     int inputBoxX1 = screenWidth / 2 - 150;
@@ -547,26 +566,27 @@ void gameOverScreen() {
     settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 3);
     outtextxy(inputBoxX1, inputBoxY1 - 30, (char*)"MASUKKAN NAMA:");
 
-    // Tombol "SUBMIT" 
+    // Gambar tombol "SUBMIT"
     int buttonWidth = 200, buttonHeight = 50;
     int submitButtonX1 = (screenWidth - buttonWidth) / 2;
     int submitButtonY1 = inputBoxY2 + 30;
     int submitButtonX2 = submitButtonX1 + buttonWidth;
     int submitButtonY2 = submitButtonY1 + buttonHeight;
-     
-    setfillstyle(SOLID_FILL, CYAN);
-    bar(submitButtonX1, submitButtonY1, submitButtonX2, submitButtonY2);
 
-    setcolor(WHITE);
-    setbkcolor(CYAN);
-    
-    int textSubmitWidth = textwidth((char*)"SUBMIT");
-    int textSubmitHeight = textheight((char*)"SUBMIT");
-    outtextxy((submitButtonX1 + submitButtonX2) / 2 - textSubmitWidth / 2,
-              (submitButtonY1 + submitButtonY2) / 2 - textSubmitHeight / 2, 
-              (char*)"SUBMIT");
-
-    setbkcolor(BLACK);
+    // Gambar tombol submit
+    const char *submitImagePath = "submit.bmp";
+    fileCheck = fopen(submitImagePath, "r");
+    if (fileCheck) {
+        fclose(fileCheck);
+        readimagefile(submitImagePath, submitButtonX1, submitButtonY1, submitButtonX2, submitButtonY2);
+    } else {
+        setfillstyle(SOLID_FILL, MAGENTA);
+        bar(submitButtonX1, submitButtonY1, submitButtonX2, submitButtonY2);
+        setcolor(WHITE);
+        setbkcolor(MAGENTA);
+        settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 3);
+        outtextxy(submitButtonX1 + 45, submitButtonY1 + 10, (char*)"SUBMIT");
+    }
 
     // Input Nama Pemain Secara Dinamis
     char playerName[MAX_NAME_LENGTH + 1] = "";
@@ -574,11 +594,8 @@ void gameOverScreen() {
     char ch;
     int lastIndex = -1; 
     int finalScore = getScore();
-    printf("otw loop gameover\n");
-
     
     while (1) {
-        printf("Masuk ke gameover\n");
         if (index != lastIndex) {
             setfillstyle(SOLID_FILL, BLACK);
             bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);
@@ -590,13 +607,13 @@ void gameOverScreen() {
         // Tombol Keyboard (ENTER dan BACKSPACE) 
         if (kbhit()) {
             ch = getch();
-            if (ch == 13 && index > 0) {
+            if (ch == 13 && index > 0) {  // ENTER
                 savePlayerScore(playerName, finalScore);
                 cleardevice();
                 showMainMenu();
                 return;
             } 
-            else if (ch == 8 && index > 0) {
+            else if (ch == 8 && index > 0) {  // BACKSPACE
                 index--;
                 playerName[index] = '\0';
             } 

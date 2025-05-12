@@ -3,9 +3,7 @@
     {
       "name": "windows-gcc-x86",
       "includePath": [
-        "${workspaceFolder}/include", 
-        "${workspaceFolder}/src",
-        "${workspaceFolder}"
+        "${workspaceFolder}/**"
       ],
       "defines": [],
       "compilerPath": "C:/MinGW/bin/gcc.exe",

@@ -1,6 +1,5 @@
-rina 100
-arman 1000
 nazriel 10000
-fiandra 200
 fadil 2000
-memei 300
+rani 2000
+ena 1500
+rina 1000

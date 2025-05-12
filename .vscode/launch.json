@@ -23,8 +23,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/Documents/GitHub/3B_Project_2_Games_Space_Invaders/src",
-      "program": "d:/Documents/GitHub/3B_Project_2_Games_Space_Invaders/src/build/Debug/outDebug",
+      "cwd": "c:/Users/ThinkPad/Desktop/Productive/Kuliah/3B_Project_2_Games_Space_Invaders/3B_Project_2_Games_Space_Invaders",
+      "program": "c:/Users/ThinkPad/Desktop/Productive/Kuliah/3B_Project_2_Games_Space_Invaders/3B_Project_2_Games_Space_Invaders/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

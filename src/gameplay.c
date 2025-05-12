@@ -22,7 +22,7 @@ static float alienSpeed = BASE_ALIEN_SPEED;  // Kecepatan awal alien
 static int shootInterval = BASE_SHOOT_INTERVAL;  // Interval tembakan awal
 
 static int score = 0;
-static int lastLevel = -1;  
+static int lastLevel = -1;  //ini jangan di hapus (Nazriel)
 static int blinkCounter = 0;  
 
 

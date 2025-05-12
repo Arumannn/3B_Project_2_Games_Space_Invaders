@@ -17,10 +17,6 @@
 
 
 
-
-#pragma comment(lib, "winmm.lib")
-
-
 static int currentLevel = 1;  // Level awal
 static float alienSpeed = BASE_ALIEN_SPEED;  // Kecepatan awal alien
 static int shootInterval = BASE_SHOOT_INTERVAL;  // Interval tembakan awal
@@ -29,110 +25,10 @@ static int score = 0;
 static int lastLevel = -1;  
 static int blinkCounter = 0;  
 
-extern BulletNode *playerBullets;
 
-
-
-void startGame() {
-    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-
-
-    Player SpaceShip_P = {screenWidth / 2, screenHeight - 120, 3, 1, 0, 0};
-    Alien aliens[ALIEN_ROWS][ALIEN_COLS]; // Array 2D untuk aliens
-    Barrier* barrierList = NULL;
-    int alienDir = 1;
-    int alienDirLast = 1;
-    int frameCounter = 0;  
-    initAliens();
-    initScore();
-    initExplosionsPlayer();
-    initBarriers(&barrierList);
-    initLevel();  
-
-    int gameOver = 0;
-    int page = 0;
+// void startGame() {
     
-    const double TARGET_FPS = 30.0;  
-    const double FRAME_TIME = 1000.0 / TARGET_FPS;
-    
-    LARGE_INTEGER frequency, lastTime, currentTime;
-    QueryPerformanceFrequency(&frequency);
-    QueryPerformanceCounter(&lastTime);
-
-    PlaySound(TEXT("sound/backsound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
-
-    // **Spawn UFO pertama dengan posisi dan waktu acak**
-    srand(time(NULL));
-    initUFO();
-    int ufoRespawnDelay = (rand() % 5 + 3) * 30; // 3-8 detik dalam frame 30FPS
-    
-    while (!gameOver) {
-        QueryPerformanceCounter(&currentTime);
-        double elapsedMs = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;
-
-        if (elapsedMs >= FRAME_TIME) {
-            lastTime = currentTime; // Update waktu frame terakhir
-            frameCounter++;  // Increment frameCounter
-
-            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
-                PlaySound(NULL, 0, 0);
-                break;
-            }
-
-            setactivepage(page);
-            cleardevice();         
-            drawStars();
-
-            drawScore();
-            SpaceshipMove(&SpaceShip_P);
-            updateBullets();
-            printf("Anda memiliki nyawa sebanyak : %d \n", SpaceShip_P.health);
-            checkBarrierBulletCollision(barrierList);
-            checkAlienCollisions(playerBullets);
-            updateAliens(&alienDir, &alienDirLast, frameCounter);
-            checkAlienPlayerVerticalCollision(&SpaceShip_P);  // Periksa tabrakan vertikal
-            checkAndUpdateLevel(aliens);  // Periksa dan update level
-            updateExplosionsPlayer();
-            updatePlayerRespawn(&SpaceShip_P);
-
-            drawLives(SpaceShip_P.health);
-            drawAliens();
-            drawAlienExplosions();
-            drawBullets();
-            DrawSpaceShip(&SpaceShip_P);
-            UFO(aliens); 
-            
-            if (SpaceShip_P.health <= 0) {
-                setvisualpage(page);
-                gameOverScreen();  
-                return;  
-            }
-            drawExplosionsPlayer();
-            checkPlayerCollisions(&SpaceShip_P);
-            Barrier* current = barrierList;
-            while (current != NULL) {
-                drawBarrier(current);
-                current = current->next;
-            }
-
-            setvisualpage(page);
-            page = 1 - page;
-
-            // **Tambahkan Delay jika game berjalan terlalu cepat**
-            QueryPerformanceCounter(&currentTime);
-            double frameEndTime = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;
-            
-            if (frameEndTime < FRAME_TIME) {
-                Sleep((DWORD)(FRAME_TIME - frameEndTime));  // Tunggu hingga frame selesai
-            }
-        }
-    }
-
-    PlaySound(NULL, 0, 0);  // Hentikan musik saat game selesai
-    
-    cleardevice();
-}
+// }
 
 
 void initLevel() {

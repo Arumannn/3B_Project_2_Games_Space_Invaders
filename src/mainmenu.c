@@ -252,7 +252,7 @@ void handleMainMenu() {
                 if (x >= centerX && x <= centerX + buttonWidth &&
                     y >= startY && y <= startY + buttonHeight) {
                     Sleep(500);  
-                    startGame();
+                    return;
                     break;  // **Keluar dari loop input dan kembali ke Main Menu setelah Game selesai**
                 }
 

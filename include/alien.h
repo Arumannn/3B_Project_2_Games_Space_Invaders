@@ -2,7 +2,6 @@
 #define ALIEN_H
 #include <graphics.h>
 #include "mainsprite.h"
-#include "gameplay.h"
 
 // Constants
 #define ALIEN_ROWS 6

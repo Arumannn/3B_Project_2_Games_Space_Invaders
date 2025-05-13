@@ -72,7 +72,7 @@ int main() {
             checkAlienCollisions(playerBullets);
             updateAliens(&alienDir, &alienDirLast, frameCounter);
             checkAlienPlayerVerticalCollision(&SpaceShip_P);
-            checkAndUpdateLevel(aliens);
+            checkAndUpdateLevel();
             updateExplosionsPlayer();
             updatePlayerRespawn(&SpaceShip_P);
 

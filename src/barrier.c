@@ -5,6 +5,8 @@
 #include "alien.h"
 #include "ufo.h"
 #include "mainsprite.h"
+#include "gameover.h"
+
 
 extern BulletNode* playerBullets;
 extern BulletNode* alienBullets;

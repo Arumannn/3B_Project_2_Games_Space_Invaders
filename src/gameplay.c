@@ -14,6 +14,8 @@
 #include "barrier.h"
 #include "gameplay.h"
 #include "mainmenu.h"
+#include "gameover.h"
+
 
 
 

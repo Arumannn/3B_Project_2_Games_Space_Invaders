@@ -2,6 +2,7 @@
 #include "mainsprite.h"
 #include "gameplay.h"
 #include "mainmenu.h"
+#include "gameover.h"
 #include "malloc.h"
 #include <stdio.h> 
 #include <stdlib.h>

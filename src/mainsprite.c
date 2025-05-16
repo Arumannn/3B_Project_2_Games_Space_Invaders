@@ -4,6 +4,8 @@
 #include "ufo.h"
 #include "gameplay.h"
 #include "mainmenu.h"
+#include "gameover.h"
+
 
 // Global Variables
 Explosion playerExplosions[MAX_EXPLOSIONS];

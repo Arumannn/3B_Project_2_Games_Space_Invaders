@@ -21,12 +21,38 @@ int ufoHealth = 20;
 const int ufoMaxHealth = 20;
 int ufoRespawnDelay = 0;
 
+// Inisialiasi UFO bonus
+float bonusUFOX = 0.0, bonusUFOY = 60.0;
+int bonusUFOActive = 0;
+int bonusUFODirection = 1;
+int bonusUFOTimer = 0;
+const int bonusUFOSpeed = 8;
+
 // Peluru UFO (linked list)
 BulletNode *ufoBulletList = NULL;
 int ufoBulletCount = 0;
 
 int ufoBurstCount = 0;
 int ufoShootCooldown = 0;
+
+void spawnBonusUFO() {
+    if (!bonusUFOActive && rand() % 500 == 0) { // peluang kecil tiap frame
+        bonusUFOActive = 1;
+        bonusUFODirection = (rand() % 2 == 0) ? 1 : -1;
+        bonusUFOX = (bonusUFODirection == 1) ? -50 : getmaxx() + 50;
+    }
+}
+
+void updateBonusUFO() {
+    if (!bonusUFOActive) return;
+
+    bonusUFOX += bonusUFODirection * bonusUFOSpeed;
+
+    if ((bonusUFODirection == 1 && bonusUFOX > getmaxx() + 50) ||
+        (bonusUFODirection == -1 && bonusUFOX < -50)) {
+        bonusUFOActive = 0;  // Hilang setelah melewati layar
+    }
+}
 
 void someFunction() {
     BulletNode* newNode = (BulletNode*)malloc(sizeof(BulletNode)); // Deklarasi pointer
@@ -161,6 +187,28 @@ void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
         }
         current = current->next;
     }
+        BulletNode *bonusCheck = playerBullets;
+    while (bonusCheck != NULL) {
+        if (bonusCheck->bullet.active &&
+            bonusUFOActive &&
+            bonusCheck->bullet.x > bonusUFOX - 30 &&
+            bonusCheck->bullet.x < bonusUFOX + 30 &&
+            bonusCheck->bullet.y > bonusUFOY - 20 &&
+            bonusCheck->bullet.y < bonusUFOY + 20) {
+
+            bonusCheck->bullet.active = 0;
+            bonusUFOActive = 0;
+
+            drawExplosion((int)bonusUFOX, (int)bonusUFOY);
+            PlaySound(TEXT("sound/UFO_Bonus.wav"), NULL, SND_FILENAME | SND_ASYNC);
+            addBonusScore();  // Fungsi ini perlu kamu tambahkan sendiri
+            break;
+        }
+        bonusCheck = bonusCheck->next;
+    }
+    spawnBonusUFO();
+    updateBonusUFO();
+    drawBonusUFO();
 }
 
 void initUFO() {
@@ -240,4 +288,24 @@ void drawUFO(int x, int y) {
         setfillstyle(SOLID_FILL, GREEN);
         bar(barX, barY, barX + hpWidth, barY + barHeight);
     }
+}
+
+void drawBonusUFO() {
+    if (!bonusUFOActive) return;
+
+    int x = (int)bonusUFOX;
+    int y = (int)bonusUFOY;
+
+    setcolor(LIGHTMAGENTA);
+    setfillstyle(SOLID_FILL, LIGHTMAGENTA);
+    fillellipse(x, y, 40, 20);
+
+    setcolor(MAGENTA);
+    setfillstyle(SOLID_FILL, MAGENTA);
+    fillellipse(x, y - 8, 30, 10);
+
+    setcolor(WHITE);
+    setfillstyle(SOLID_FILL, WHITE);
+    fillellipse(x - 10, y - 12, 4, 4);
+    fillellipse(x + 10, y - 12, 4, 4);
 }

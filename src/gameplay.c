@@ -92,3 +92,6 @@ void addUFOScore() {
     updateScore(1000);
 }
 
+void addBonusScore() {
+    score += 250;
+}

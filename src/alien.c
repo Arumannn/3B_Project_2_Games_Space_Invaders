@@ -13,6 +13,55 @@ int BLOCK_SIZE;
 Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS];
 AlienNode* alienRows[ALIEN_ROWS]; // Array of linked lists for each row
 BulletNode* alienBullets = NULL; // Linked list for alien bullets
+static int currentLevel = 1;  // Level awal
+static float alienSpeed = BASE_ALIEN_SPEED;  // Kecepatan awal alien
+static int shootInterval = BASE_SHOOT_INTERVAL;  // Interval tembakan awal
+static int alienShootCooldown = 0;  // Cooldown global untuk tembakan alien
+
+void initLevel() {
+    currentLevel = 1;
+    alienSpeed = BASE_ALIEN_SPEED;
+    shootInterval = BASE_SHOOT_INTERVAL;
+    alienShootCooldown = 0;
+}
+
+void checkAndUpdateLevel() {
+    int allAliensDead = 1;
+    for (int row = 0; row < ALIEN_ROWS; row++) {
+        AlienNode* current = alienRows[row];
+        while (current != NULL) {
+            if (current->alien.active) {
+                allAliensDead = 0;
+                break;
+            }
+            current = current->next;
+        }
+        if (!allAliensDead) break;
+    }
+
+    if (allAliensDead) {
+        if (currentLevel < MAX_LEVEL) {
+            currentLevel++;
+            alienSpeed += SPEED_INCREMENT;
+            shootInterval -= SHOOT_INTERVAL_DECREMENT;
+            if (shootInterval < 1000) shootInterval = 1000;
+        }
+        initAliens();
+        printf("Level %d - Alien Speed: %.2f, Shoot Interval: %d\n", currentLevel, alienSpeed, shootInterval);
+    }
+}
+
+float getAlienSpeed() {
+    return alienSpeed;
+}
+
+int getShootInterval() {
+    return shootInterval;
+}
+
+int getCurrentLevel() {
+    return currentLevel;
+}
 
 void initAliens() {
     BLOCK_SIZE = getmaxy() / 40;
@@ -69,6 +118,9 @@ void initAliens() {
             alienExplosions[row][col].lifetime = 0;
         }
     }
+
+    // Reset cooldown saat inisialisasi alien
+    alienShootCooldown = 0;
 }
 
 void drawAliens() {
@@ -201,6 +253,11 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
         currentBullet = currentBullet->next;
     }
 
+    // Kurangi cooldown tembakan
+    if (alienShootCooldown > 0) {
+        alienShootCooldown--;
+    }
+
     // Get speed and shoot interval based on level
     float currentAlienSpeed = getAlienSpeed();
     int currentShootInterval = getShootInterval();
@@ -208,6 +265,9 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
     // Calculate initial Y position for row 4 (upper bound for rows 4 and 5)
     int baseYRow4 = 4 * BLOCK_SIZE * 2 + getmaxy() / 5;
     int minY = baseYRow4 - BLOCK_SIZE;
+
+    // Flag untuk memastikan hanya satu alien menembak per frame
+    int hasShot = 0;
 
     for (int row = 0; row < ALIEN_ROWS; row++) {
         AlienNode* current = alienRows[row];
@@ -238,7 +298,7 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
                 }
 
                 // Alien shooting logic
-                if (rand() % currentShootInterval < 10) {
+                if (!hasShot && alienShootCooldown <= 0 && rand() % 100 < 5) { // 5% peluang per alien
                     // Count active bullets
                     int bulletCount = 0;
                     BulletNode* countBullet = alienBullets;
@@ -254,6 +314,9 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
                             newBullet->bullet.active = 1;
                             newBullet->next = alienBullets;
                             alienBullets = newBullet;
+                            // Set cooldown berdasarkan shootInterval (frame = detik * FPS)
+                            alienShootCooldown = currentShootInterval / 100; // Misal, 5000/100 = 50 frame (~1.67 detik di 30 FPS)
+                            hasShot = 1; // Hanya satu alien menembak
                         }
                     }
                 }

@@ -26,16 +26,5 @@ void drawScore();
 int getScore();
 void addAlienScore();
 void addUFOScore();
-void drawLevel(); 
-void startGame();
-
-// Fungsi untuk mendapatkan kecepatan alien berdasarkan level
-float getAlienSpeed();
-
-// Fungsi untuk mendapatkan interval tembakan alien berdasarkan level
-int getShootInterval();
-
-// Fungsi untuk mendapatkan level saat ini
-int getCurrentLevel();
 
 #endif

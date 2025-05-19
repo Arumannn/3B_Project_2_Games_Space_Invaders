@@ -25,7 +25,7 @@ void drawBarrier(Barrier* b) {
         bar(b->x + 10, b->y - 15, b->x + 70, b->y - 10);
         bar(b->x + 15, b->y - 20, b->x + 65, b->y - 15);
 
-        setfillstyle(SOLID_FILL, BLUE);
+        setfillstyle(SOLID_FILL, BLACK);
         bar(b->x + 15, b->y + 15, b->x + 65, b->y + 25);
         bar(b->x + 20, b->y + 10, b->x + 60, b->y + 20);
         bar(b->x + 25, b->y + 5, b->x + 55, b->y + 15);
@@ -36,10 +36,9 @@ void checkBarrierBulletCollision(Barrier* head) {
     BulletNode* bullet;
     Barrier* currentBarrier;
 
-    // Reusable logic for all bullet types
-    BulletNode* bulletLists[] = {playerBullets, alienBullets, ufoBulletList};
+    BulletNode* bulletLists[] = {playerBullets, alienBullets};
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 2; ++i) {
         bullet = bulletLists[i];
         while (bullet != NULL) {
             if (bullet->bullet.active) {
@@ -60,7 +59,7 @@ void checkBarrierBulletCollision(Barrier* head) {
                             bulletBottom > barrierTop && bulletTop < barrierBottom) {
                             bullet->bullet.active = 0;
                             currentBarrier->health--;
-                            break; // Stop checking other barriers for this bullet
+                            break;
                         }
                     }
                     currentBarrier = currentBarrier->next;
@@ -68,6 +67,34 @@ void checkBarrierBulletCollision(Barrier* head) {
             }
             bullet = bullet->next;
         }
+    }
+    BulletNode* currentUfoBullet = ufoBulletList;
+    while (currentUfoBullet != NULL) {
+        if (currentUfoBullet->bullet.active) {
+            int bulletLeft   = currentUfoBullet->bullet.x - 3;
+            int bulletRight  = currentUfoBullet->bullet.x + 3;
+            int bulletTop    = currentUfoBullet->bullet.y - 3;
+            int bulletBottom = currentUfoBullet->bullet.y + 3;
+
+            currentBarrier = head;
+            while (currentBarrier != NULL) {
+                if (currentBarrier->health > 0) {
+                    int barrierLeft   = currentBarrier->x;
+                    int barrierRight  = currentBarrier->x + 80;
+                    int barrierTop    = currentBarrier->y - 20;
+                    int barrierBottom = currentBarrier->y + 25;
+
+                    if (bulletRight > barrierLeft || bulletLeft < barrierRight ||
+                        bulletBottom > barrierTop || bulletTop < barrierBottom) {
+                        currentUfoBullet->bullet.active = 0;
+                        currentBarrier->health--;
+                        break;
+                    }
+                }
+                currentBarrier = currentBarrier->next;
+            }
+        }
+        currentUfoBullet = currentUfoBullet->next;
     }
 }
 

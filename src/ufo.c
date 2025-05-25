@@ -144,50 +144,56 @@ void drawUFOBullets() {
 }
 
 void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
-    if (!ufoActive) {
-        if (ufoRespawnDelay > 0) {
-            ufoRespawnDelay--;
+    int currentLevel = getCurrentLevel(); // Ambil level saat ini
+
+    // === UFO Biasa hanya muncul di level 5 ===
+    if (currentLevel == 5) {
+        if (!ufoActive) {
+            if (ufoRespawnDelay > 0) {
+                ufoRespawnDelay--;
+            } else {
+                ufoX = (rand() % (getmaxx() - 120)) + 60;
+                ufoY = 100;
+                ufoHealth = ufoMaxHealth;
+                ufoActive = 1;
+                ufoDirection = (rand() % 2) == 0 ? 1 : -1;
+            }
         } else {
-            ufoX = (rand() % (getmaxx() - 120)) + 60;
-            ufoY = 100;
-            ufoHealth = ufoMaxHealth;
-            ufoActive = 1;
-            ufoDirection = (rand() % 2) == 0 ? 1 : -1;
-        }
-        return;
-    }
+            ufoX += ufoDirection * ufoSpeed;
+            if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;
 
-    ufoX += ufoDirection * ufoSpeed;
-    if (ufoX > getmaxx() - 60 || ufoX < 60) ufoDirection *= -1;
+            drawUFO((int)ufoX, (int)ufoY);
+            shootUFOBullet();
+            updateUFOBullets();
+            drawUFOBullets();
 
-    drawUFO((int)ufoX, (int)ufoY);
-    shootUFOBullet();
-    updateUFOBullets();
-    drawUFOBullets();
+            BulletNode *current = playerBullets;
+            while (current != NULL) {
+                if (current->bullet.active &&
+                    current->bullet.x > ufoX - 45 &&
+                    current->bullet.x < ufoX + 45 &&
+                    current->bullet.y > ufoY - 40 &&
+                    current->bullet.y < ufoY + 20) {
 
-    BulletNode *current = playerBullets;
-    while (current != NULL) {
-        if (current->bullet.active &&
-            current->bullet.x > ufoX - 45 &&
-            current->bullet.x < ufoX + 45 &&
-            current->bullet.y > ufoY - 40 &&
-            current->bullet.y < ufoY + 20) {
+                    current->bullet.active = 0;
+                    ufoHealth--;
 
-            current->bullet.active = 0;
-            ufoHealth--;
-
-            if (ufoHealth <= 0) {
-                drawExplosion((int)ufoX, (int)ufoY);
-                PlaySound(TEXT("sound/UFO_Died.wav"), NULL, SND_FILENAME | SND_ASYNC);
-                ufoActive = 0;
-                addUFOScore();
-                ufoRespawnDelay = (rand() % 5 + 3) * 30;
-                break;
+                    if (ufoHealth <= 0) {
+                        drawExplosion((int)ufoX, (int)ufoY);
+                        PlaySound(TEXT("sound/UFO_Died.wav"), NULL, SND_FILENAME | SND_ASYNC);
+                        ufoActive = 0;
+                        addUFOScore();
+                        ufoRespawnDelay = (rand() % 5 + 3) * 30;
+                        break;
+                    }
+                }
+                current = current->next;
             }
         }
-        current = current->next;
     }
-        BulletNode *bonusCheck = playerBullets;
+
+    // === UFO Bonus selalu aktif di semua level ===
+    BulletNode *bonusCheck = playerBullets;
     while (bonusCheck != NULL) {
         if (bonusCheck->bullet.active &&
             bonusUFOActive &&
@@ -201,11 +207,12 @@ void UFO(Alien aliens[ALIEN_ROWS][ALIEN_COLS]) {
 
             drawExplosion((int)bonusUFOX, (int)bonusUFOY);
             PlaySound(TEXT("sound/UFO_Bonus.wav"), NULL, SND_FILENAME | SND_ASYNC);
-            addBonusScore();  // Fungsi ini perlu kamu tambahkan sendiri
+            addBonusScore();
             break;
         }
         bonusCheck = bonusCheck->next;
     }
+
     spawnBonusUFO();
     updateBonusUFO();
     drawBonusUFO();

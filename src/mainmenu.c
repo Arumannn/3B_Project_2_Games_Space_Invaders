@@ -9,6 +9,8 @@
 #include "gameplay.h"
 #include "mainmenu.h"
 
+extern gameState currentGameState;
+
 void mainMenu() {
     cleardevice();
     
@@ -231,7 +233,7 @@ void showMainMenu() {
 // Perbaikan handleMainMenu agar menu tetap berjalan
 void handleMainMenu() {
     clearmouseclick(WM_LBUTTONDOWN);
-
+    
     while (1) {  // **Loop utama agar menu tetap berjalan**
         showMainMenu();
 
@@ -252,14 +254,14 @@ void handleMainMenu() {
                 if (x >= centerX && x <= centerX + buttonWidth &&
                     y >= startY && y <= startY + buttonHeight) {
                     Sleep(500);  
-                    return;
+                    currentGameState = PLAY_GAME;
                     break;  // **Keluar dari loop input dan kembali ke Main Menu setelah Game selesai**
                 }
 
                 // Cek apakah klik di tombol "GUIDE"
                 if (x >= centerX && x <= centerX + buttonWidth &&
                     y >= startY + buttonSpacing && y <= startY + buttonSpacing + buttonHeight) {
-                    showGuide();
+                    currentGameState = GUIDE;
                     break;  // **Setelah kembali dari Guide, ulangi loop agar tetap di Main Menu**
                 }
 
@@ -268,7 +270,7 @@ void handleMainMenu() {
                     y >= startY + (2 * buttonSpacing) && 
                     y <= startY + (2 * buttonSpacing) + buttonHeight) {
                         if (confirmExit() == 1) {
-                            exit(0);
+                            currentGameState = EXIT;
                         } else {
                             break;  // **Tetap di Main Menu jika memilih "NO"**
                         }
@@ -289,7 +291,7 @@ void handleMainMenu() {
 
                 if (x >= leaderboardX && x <= leaderboardX + 350 &&
                     y >= leaderboardButtonY && y <= leaderboardButtonY + 60) {
-                    showLeaderboard();
+                    currentGameState = LEADERBOARD;
                     break;
                 }
 

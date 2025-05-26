@@ -13,6 +13,9 @@
 
 extern BulletNode* playerBullets;
 
+
+gameState currentGameState = MAIN_MENU;
+
 int main() {
     srand((unsigned)time(NULL));
     initwindow(getmaxwidth(), getmaxheight(), "Space Invaders");
@@ -48,63 +51,85 @@ int main() {
     int page = 0;
 
     while (!gameOver) {
-        QueryPerformanceCounter(&currentTime);
-        double elapsedMs = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;
-
-        if (elapsedMs >= FRAME_TIME) {
-            lastTime = currentTime;
-            frameCounter++;
-
-            if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
-                PlaySound(NULL, 0, 0);
-                break;
-            }
-
-            setactivepage(page);
-            cleardevice();
-
-
-            drawStars();
-            drawScore();
-            SpaceshipMove(&SpaceShip_P);
-            updateBullets();
-            checkBarrierBulletCollision(barrierList);
-            checkAlienCollisions(playerBullets);
-            updateAliens(&alienDir, &alienDirLast, frameCounter);
-            checkAlienPlayerVerticalCollision(&SpaceShip_P);
-            checkAndUpdateLevel();
-            updateExplosionsPlayer();
-            updatePlayerRespawn(&SpaceShip_P);
-
-
-            drawLives(SpaceShip_P.health);
-            drawAliens();
-            drawAlienExplosions();
-            drawBullets();
-            DrawSpaceShip(&SpaceShip_P);
-            UFO(aliens);
-            drawExplosionsPlayer();
-            checkPlayerCollisions(&SpaceShip_P);
-
-            for (Barrier* b = barrierList; b != NULL; b = b->next) {
-                drawBarrier(b);
-            }
-
-            if (SpaceShip_P.health <= 0) {
-                setvisualpage(page);
-                gameOverScreen();
-                break;
-            }
-
-            setvisualpage(page);
-            page = 1 - page;
-
-
+        switch (currentGameState)
+        {
+        case MAIN_MENU:
+            handleMainMenu();
+            break;
+        case LEADERBOARD:
+            showLeaderboard();
+            break;
+        case GUIDE:
+            handleGuide();
+            break;
+        case EXIT:
+            gameOver = 1;
+            break;
+        case PLAY_GAME:
             QueryPerformanceCounter(&currentTime);
-            double frameDuration = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;
-            if (frameDuration < FRAME_TIME) {
-                Sleep((DWORD)(FRAME_TIME - frameDuration));
+            double elapsedMs = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;
+
+            if (elapsedMs >= FRAME_TIME) {
+                lastTime = currentTime;
+                frameCounter++;
+
+                if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+                    PlaySound(NULL, 0, 0);
+                    currentGameState = MAIN_MENU;
+                }
+
+                setactivepage(page);
+                cleardevice();
+
+
+                drawStars();
+                drawScore();
+                SpaceshipMove(&SpaceShip_P);
+                updateBullets();
+                checkBarrierBulletCollision(barrierList);
+                checkAlienCollisions(playerBullets);
+                updateAliens(&alienDir, &alienDirLast, frameCounter);
+                checkAlienPlayerVerticalCollision(&SpaceShip_P);
+                checkAndUpdateLevel();
+                updateExplosionsPlayer();
+                updatePlayerRespawn(&SpaceShip_P);
+
+
+                drawLives(SpaceShip_P.health);
+                drawAliens();
+                drawAlienExplosions();
+                drawBullets();
+                DrawSpaceShip(&SpaceShip_P);
+                UFO(aliens);
+                drawExplosionsPlayer();
+                checkPlayerCollisions(&SpaceShip_P);
+
+                for (Barrier* b = barrierList; b != NULL; b = b->next) {
+                    drawBarrier(b);
+                }
+
+                if (SpaceShip_P.health <= 0) {
+                    setvisualpage(page);
+                    currentGameState = GAMEOVER;
+                    break;
+                }
+
+                setvisualpage(page);
+                page = 1 - page;
+
+
+                QueryPerformanceCounter(&currentTime);
+                double frameDuration = (double)(currentTime.QuadPart - lastTime.QuadPart) * 1000.0 / frequency.QuadPart;
+                if (frameDuration < FRAME_TIME) {
+                    Sleep((DWORD)(FRAME_TIME - frameDuration));
+                }
             }
+        break;
+        case GAMEOVER:
+            gameOverScreen();
+            break;
+        default:
+            break;
         }
     }
 

@@ -6,6 +6,15 @@
 #define MAX_NAME_LENGTH 10 // Maksimum panjang nama
 
 
+typedef enum{
+        MAIN_MENU,
+        PLAY_GAME,
+        GAMEOVER,
+        GUIDE,
+        LEADERBOARD,
+        EXIT
+    }gameState;
+
 // Struktur untuk menyimpan data leaderboard
 typedef struct LeaderboardEntry {
     char name[MAX_NAME_LENGTH];

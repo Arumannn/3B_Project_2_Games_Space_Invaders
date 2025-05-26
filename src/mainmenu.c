@@ -218,7 +218,7 @@ void showMainMenu() {
     if (file) fclose(file);
 
     // Gambar leaderboard hanya 5 entri di main menu
-    drawLeaderboardRight(leaderboardY, 5);  // Hanya menampilkan 5 entri di halaman utama
+    drawLeaderboardRight(leaderboardY, DISPLAY_MAINMENU_ENTRIES);
 
     // Hitung posisi Y untuk tombol LEADERBOARD
     int leaderboardHeight = 30 + (5 * rowHeight);  // Sesuaikan dengan jumlah yang ditampilkan
@@ -232,59 +232,50 @@ void showMainMenu() {
 void handleMainMenu() {
     clearmouseclick(WM_LBUTTONDOWN);
 
-    while (1) {  // **Loop utama agar menu tetap berjalan**
+    while (1) {  // outer loop untuk menu utama
         showMainMenu();
 
-        // Posisi dan ukuran tombol (disamakan dengan showMainMenu)
-        int centerX = getmaxwidth() / 2 - 350;  // Geser tombol lebih ke kiri
-        int startY = getmaxheight() / 2 - 160; // Sedikit naik agar lebih proporsional
+        // Posisi dan ukuran tombol
+        int centerX = getmaxwidth() / 2 - 350;
+        int startY = getmaxheight() / 2 - 160;
         int buttonWidth = 300;
         int buttonHeight = 200;
         int buttonSpacing = 140;
 
-        while (1) {
+        int goToGame = 0;  // flag untuk jalankan game
+
+        while (1) {  // inner loop untuk cek klik
             if (ismouseclick(WM_LBUTTONDOWN)) {
                 int x, y;
                 getmouseclick(WM_LBUTTONDOWN, x, y);
                 clearmouseclick(WM_LBUTTONDOWN);
 
-                // Cek apakah klik di tombol "START"
+                // START
                 if (x >= centerX && x <= centerX + buttonWidth &&
                     y >= startY && y <= startY + buttonHeight) {
-                    Sleep(500);  
-                    return;
-                    break;  // **Keluar dari loop input dan kembali ke Main Menu setelah Game selesai**
+                    Sleep(300);
+                    goToGame = 1;
+                    break;  // keluar dari inner loop
                 }
 
-                // Cek apakah klik di tombol "GUIDE"
+                // GUIDE
                 if (x >= centerX && x <= centerX + buttonWidth &&
-                    y >= startY + buttonSpacing && y <= startY + buttonSpacing + buttonHeight) {
-                    showGuide();
-                    break;  // **Setelah kembali dari Guide, ulangi loop agar tetap di Main Menu**
+                    y >= startY + buttonSpacing &&
+                    y <= startY + buttonSpacing + buttonHeight) {
+                    showGuide();  // kembali ke menu
+                    break;
                 }
 
-                // Cek apakah klik di tombol "EXIT"
+                // EXIT
                 if (x >= centerX && x <= centerX + buttonWidth &&
-                    y >= startY + (2 * buttonSpacing) && 
+                    y >= startY + (2 * buttonSpacing) &&
                     y <= startY + (2 * buttonSpacing) + buttonHeight) {
-                        if (confirmExit() == 1) {
-                            exit(0);
-                        } else {
-                            break;  // **Tetap di Main Menu jika memilih "NO"**
-                        }
+                    if (confirmExit() == 1) exit(0);
+                    break;
                 }
 
-                // Cek apakah klik di tombol "LEADERBOARD" di sisi kanan layar
+                // LEADERBOARD
                 int leaderboardX = getmaxwidth() / 2 + 150;
-                int rowHeight = 40;
-                int count = 0;
-                FILE* file = fopen("leaderboard.txt", "r");
-                char name[10];
-                int score;
-                while (file && fscanf(file, "%s %d", name, &score) != EOF) count++;
-                if (file) fclose(file);
-
-                int leaderboardHeight = 30 + (5 * rowHeight);
                 int leaderboardButtonY = (getmaxheight() / 2 - 100) + 10 + 30 + (5 * 40) + 20 - 10;
 
                 if (x >= leaderboardX && x <= leaderboardX + 350 &&
@@ -292,9 +283,15 @@ void handleMainMenu() {
                     showLeaderboard();
                     break;
                 }
-
             }
         }
+
+        // Setelah keluar dari inner loop
+        if (goToGame) {
+            return;  // keluar dari menu, jalankan game
+        }
+
+        // Jika tidak, maka loop ulang dan tetap di main menu
     }
 }
 
@@ -349,7 +346,7 @@ void showLeaderboard() {
 
 
     // Menampilkan leaderboard dimulai dari posisi y=150, hanya menampilkan 5 entri
-    drawLeaderboard(150, 0, 1);  // Menggunakan limit 5 untuk menampilkan 5 entri leaderboard
+    drawLeaderboard(150, MAX_ENTRIES, 1);  // tampilkan max 7 entri
 
     int backButtonWidth = 300;
     int backButtonHeight = 200;
@@ -426,90 +423,55 @@ int confirmExit() {
 void savePlayerScore(const char *name, int score) {
     LeaderboardEntry *head = NULL;
     LeaderboardEntry *current = NULL;
-    LeaderboardEntry *prev = NULL;
-    int found = 0;
 
     // Baca file dan isi ke linked list
     FILE *file = fopen("leaderboard.txt", "r");
     if (file) {
         char tempName[MAX_NAME_LENGTH];
         int tempScore;
-
         while (fscanf(file, "%s %d", tempName, &tempScore) == 2) {
-            LeaderboardEntry *newNode = (LeaderboardEntry*)malloc(sizeof(LeaderboardEntry));
+            LeaderboardEntry *newNode = (LeaderboardEntry *)malloc(sizeof(LeaderboardEntry));
             strcpy(newNode->name, tempName);
             newNode->score = tempScore;
-            newNode->next = NULL;
-
-            // Tambahkan ke linked list
-            if (!head) {
-                head = newNode;
-            } else {
-                current->next = newNode;
-            }
-            current = newNode;
+            newNode->next = head;
+            head = newNode;
         }
         fclose(file);
     }
 
-    // Cek apakah nama sudah ada
-    current = head;
-    while (current) {
-        if (strcmp(current->name, name) == 0) {
-            found = 1;
-            if (score > current->score) {
-                current->score = score; // update skor lebih tinggi
-            }
-            break;
-        }
-        current = current->next;
-    }
+    // Tambahkan entri baru
+    LeaderboardEntry *newEntry = (LeaderboardEntry *)malloc(sizeof(LeaderboardEntry));
+    strncpy(newEntry->name, name, MAX_NAME_LENGTH);
+    newEntry->name[MAX_NAME_LENGTH - 1] = '\0';
+    newEntry->score = score;
+    newEntry->next = head;
+    head = newEntry;
 
-    // Jika nama belum ada, tambahkan node baru
-    if (!found) {
-        LeaderboardEntry *newNode = (LeaderboardEntry*)malloc(sizeof(LeaderboardEntry));
-        strcpy(newNode->name, name);
-        newNode->score = score;
-        newNode->next = NULL;
+    // Urutkan linked list secara descending
+    LeaderboardEntry *sorted = NULL;
+    while (head) {
+        LeaderboardEntry *node = head;
+        head = head->next;
 
-        // Tambahkan di akhir
-        if (!head) {
-            head = newNode;
+        if (!sorted || node->score > sorted->score) {
+            node->next = sorted;
+            sorted = node;
         } else {
-            current = head;
-            while (current->next) {
-                current = current->next;
+            LeaderboardEntry *temp = sorted;
+            while (temp->next && temp->next->score >= node->score) {
+                temp = temp->next;
             }
-            current->next = newNode;
+            node->next = temp->next;
+            temp->next = node;
         }
     }
 
-    // Urutkan linked list berdasarkan skor (descending)
-    for (LeaderboardEntry *i = head; i != NULL; i = i->next) {
-        for (LeaderboardEntry *j = i->next; j != NULL; j = j->next) {
-            if (j->score > i->score) {
-                // tukar data
-                char tempName[MAX_NAME_LENGTH];
-                int tempScore;
-
-                strcpy(tempName, i->name);
-                tempScore = i->score;
-
-                strcpy(i->name, j->name);
-                i->score = j->score;
-
-                strcpy(j->name, tempName);
-                j->score = tempScore;
-            }
-        }
-    }
-
-    // Simpan ke file
+    // Simpan ulang maksimal MAX_ENTRIES
     file = fopen("leaderboard.txt", "w");
     if (file) {
         int count = 0;
-        current = head;
-        while (current && count < MAX_ENTRIES) {
+        current = sorted;
+        while (current && count < 7) {
             fprintf(file, "%s %d\n", current->name, current->score);
             current = current->next;
             count++;
@@ -517,123 +479,117 @@ void savePlayerScore(const char *name, int score) {
         fclose(file);
     }
 
-    // Bebaskan memori linked list
-    while (head) {
-        LeaderboardEntry *temp = head;
-        head = head->next;
+    // Bebaskan memori
+    while (sorted) {
+        LeaderboardEntry *temp = sorted;
+        sorted = sorted->next;
         free(temp);
     }
 }
 
 void gameOverScreen() {
-    // Inisialisasi Window dan Layar 
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
-    
-    cleardevice();
 
-    // Background 
+    cleardevice();
     drawStars();
 
-    // Gambar "GAME OVER" 
-    int imgWidth = 400; // Tentukan ukuran gambar
-    int imgHeight = 100;
+    // Gambar "GAME OVER" pakai gambar
+    int imgWidth = 400;
+    int imgHeight = 200;
     int imgX = screenWidth / 2 - imgWidth / 2;
-    int imgY = screenHeight / 4 - imgHeight / 2;
-
-    // Path gambar
-    const char *imagePath = "gameover.bmp";
-
-    // Periksa apakah file gambar ada
+    int imgY = screenHeight / 4 - imgHeight / 2 - 30;
+    const char *imagePath = "img/gameover.bmp";
     FILE *fileCheck = fopen(imagePath, "r");
     if (fileCheck) {
         fclose(fileCheck);
         readimagefile(imagePath, imgX, imgY, imgX + imgWidth, imgY + imgHeight);
-    } else {
-        printf("Gambar tidak ditemukan: %s\n", imagePath);
+    }
+
+    // Gambar label "MASUKKAN NAMA" pakai gambar
+    int labelWidth = 300;
+    int labelHeight = 100;
+    int labelX = screenWidth / 2 - labelWidth / 2;
+    int labelY = imgY + imgHeight + 20;
+    fileCheck = fopen("img/label_nama.bmp", "r");
+    if (fileCheck) {
+        fclose(fileCheck);
+        readimagefile("img/label_nama.bmp", labelX, labelY, labelX + labelWidth, labelY + labelHeight);
     }
 
     // Kotak input nama
     int inputBoxX1 = screenWidth / 2 - 150;
-    int inputBoxY1 = 300;
+    int inputBoxY1 = labelY + labelHeight + 10;
     int inputBoxX2 = screenWidth / 2 + 150;
-    int inputBoxY2 = 350;
-    
+    int inputBoxY2 = inputBoxY1 + 50;
     setcolor(WHITE);
     rectangle(inputBoxX1, inputBoxY1, inputBoxX2, inputBoxY2);
-    
-    // Label "MASUKKAN NAMA:" 
-    settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 3);
-    outtextxy(inputBoxX1, inputBoxY1 - 30, (char*)"MASUKKAN NAMA:");
 
-    // Gambar tombol "SUBMIT"
-    int buttonWidth = 200, buttonHeight = 50;
-    int submitButtonX1 = (screenWidth - buttonWidth) / 2;
-    int submitButtonY1 = inputBoxY2 + 30;
+    // Gambar tombol SUBMIT pakai gambar
+    int buttonWidth = 300, buttonHeight = 200;
+    int submitButtonX1 = screenWidth / 2 - buttonWidth / 2;
+    int submitButtonY1 = inputBoxY2 + 40;
     int submitButtonX2 = submitButtonX1 + buttonWidth;
     int submitButtonY2 = submitButtonY1 + buttonHeight;
 
-    // Gambar tombol submit
-    const char *submitImagePath = "submit.bmp";
+    const char *submitImagePath = "img/submit.bmp";
     fileCheck = fopen(submitImagePath, "r");
     if (fileCheck) {
         fclose(fileCheck);
         readimagefile(submitImagePath, submitButtonX1, submitButtonY1, submitButtonX2, submitButtonY2);
-    } else {
-        setfillstyle(SOLID_FILL, MAGENTA);
-        bar(submitButtonX1, submitButtonY1, submitButtonX2, submitButtonY2);
-        setcolor(WHITE);
-        setbkcolor(MAGENTA);
-        settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 3);
-        outtextxy(submitButtonX1 + 45, submitButtonY1 + 10, (char*)"SUBMIT");
     }
 
-    // Input Nama Pemain Secara Dinamis
+    // Input Nama
     char playerName[MAX_NAME_LENGTH + 1] = "";
     int index = 0;
     char ch;
-    int lastIndex = -1; 
+    int lastIndex = -1;
     int finalScore = getScore();
-    
+
+    while (kbhit()) getch(); // Membersihkan buffer keyboard sebelum mulai input
+
     while (1) {
         if (index != lastIndex) {
             setfillstyle(SOLID_FILL, BLACK);
             bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);
+
+            settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 2);
+            setbkcolor(BLACK);
             setcolor(WHITE);
-            outtextxy(inputBoxX1 + 10, inputBoxY1 + 10, playerName);
+            settextjustify(LEFT_TEXT, CENTER_TEXT);
+            outtextxy(inputBoxX1 + 10, (inputBoxY1 + inputBoxY2) / 2, playerName);
             lastIndex = index;
         }
 
-        // Tombol Keyboard (ENTER dan BACKSPACE) 
         if (kbhit()) {
             ch = getch();
-            if (ch == 13 && index > 0) {  // ENTER
+            if (ch == 13 && index > 0) { // ENTER
                 savePlayerScore(playerName, finalScore);
                 cleardevice();
                 showMainMenu();
                 return;
-            } 
-            else if (ch == 8 && index > 0) {  // BACKSPACE
+            } else if (ch == 8 && index > 0) { // BACKSPACE
                 index--;
                 playerName[index] = '\0';
-            } 
-            else if (index < MAX_NAME_LENGTH && ch >= 32 && ch <= 126) {
+            } else if (index < MAX_NAME_LENGTH && ch >= 32 && ch <= 126) {
                 playerName[index++] = ch;
                 playerName[index] = '\0';
             }
         }
 
-        // Klik Tombol SUBMIT 
         if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
             getmouseclick(WM_LBUTTONDOWN, x, y);
-            if (x >= submitButtonX1 && x <= submitButtonX2 && y >= submitButtonY1 && y <= submitButtonY2) {
-                if (strlen(playerName) > 0) {
-                    savePlayerScore(playerName, finalScore);
-                    cleardevice();
-                    showMainMenu();
-                    return;
-                }
+            clearmouseclick(WM_LBUTTONDOWN);
+            if (x >= submitButtonX1 && x <= submitButtonX2 &&
+                y >= submitButtonY1 && y <= submitButtonY2 &&
+                strlen(playerName) > 0) {
+                savePlayerScore(playerName, finalScore);
+                cleardevice();
+                showLeaderboard();  // tunggu sampai user klik BACK
+                cleardevice();
+                showMainMenu();     // baru ke main menu
+                break;
             }
         }
     }

@@ -3,3 +3,5 @@ fadil 2000
 rani 2000
 ena 1500
 rina 1000
+rahma 0
+dadag 0

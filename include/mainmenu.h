@@ -1,10 +1,10 @@
 #ifndef MAINMENU_H
 #define MAINMENU_H
 
-
-#define MAX_ENTRIES 5  // Maksimum 5 pemain
 #define MAX_NAME_LENGTH 10 // Maksimum panjang nama
 
+#define MAX_ENTRIES 7
+#define DISPLAY_MAINMENU_ENTRIES 5
 
 // Struktur untuk menyimpan data leaderboard
 typedef struct LeaderboardEntry {

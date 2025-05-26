@@ -19,5 +19,7 @@ void spawnBonusUFO();
 void updateBonusUFO();
 void drawBonusUFO();
 void addBonusScore();
+int isUFOActive();
+int isBonusUFOActive();
 
 #endif

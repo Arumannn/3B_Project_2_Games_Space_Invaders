@@ -25,6 +25,7 @@ void initLevel() {
     alienShootCooldown = 0;
 }
 
+
 void checkAndUpdateLevel() {
     int allAliensDead = 1;
     for (int row = 0; row < ALIEN_ROWS; row++) {
@@ -39,7 +40,9 @@ void checkAndUpdateLevel() {
         if (!allAliensDead) break;
     }
 
-    if (allAliensDead) {
+    int ufoCleared = (getCurrentLevel() != 5) || (!isUFOActive() && !isBonusUFOActive());
+
+    if (allAliensDead && ufoCleared) {
         if (currentLevel < MAX_LEVEL) {
             currentLevel++;
             alienSpeed += SPEED_INCREMENT;

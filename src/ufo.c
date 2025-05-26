@@ -316,3 +316,10 @@ void drawBonusUFO() {
     fillellipse(x - 10, y - 12, 4, 4);
     fillellipse(x + 10, y - 12, 4, 4);
 }
+int isUFOActive() {
+    return ufoActive;
+}
+
+int isBonusUFOActive() {
+    return bonusUFOActive;
+}

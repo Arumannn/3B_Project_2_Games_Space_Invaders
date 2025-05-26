@@ -68,6 +68,7 @@ void checkBarrierBulletCollision(Barrier* head) {
             bullet = bullet->next;
         }
     }
+    
     BulletNode* currentUfoBullet = ufoBulletList;
     while (currentUfoBullet != NULL) {
         if (currentUfoBullet->bullet.active) {
@@ -84,8 +85,8 @@ void checkBarrierBulletCollision(Barrier* head) {
                     int barrierTop    = currentBarrier->y - 20;
                     int barrierBottom = currentBarrier->y + 25;
 
-                    if (bulletRight > barrierLeft || bulletLeft < barrierRight ||
-                        bulletBottom > barrierTop || bulletTop < barrierBottom) {
+                    if (bulletRight > barrierLeft && bulletLeft < barrierRight &&
+                        bulletBottom > barrierTop && bulletTop < barrierBottom) {
                         currentUfoBullet->bullet.active = 0;
                         currentBarrier->health--;
                         break;

@@ -62,7 +62,6 @@ void drawStars() {
     }
 }
 
-
 // Fungsi Leaderboard
 // Leaderboard: Struktur dan fungsi menggunakan linked list
 typedef struct LeaderboardNode {

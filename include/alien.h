@@ -50,5 +50,7 @@ void checkAndUpdateLevel();
 float getAlienSpeed();
 int getShootInterval();
 int getCurrentLevel();
+int isUFOActive();
+int isBonusUFOActive();
 
 #endif // ALIEN_H

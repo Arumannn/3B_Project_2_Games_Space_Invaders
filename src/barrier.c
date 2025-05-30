@@ -14,7 +14,7 @@ void drawBarrier(Barrier* b) {
     if (b && b->health > 0) {
         const char* imgFile;
         if (b->health > 15 && b->health <= 30) {
-            imgFile = "img/barrierHijau.bmp";
+            imgFile = "img/barrierHijauDuwa.bmp";
         } else if (b->health > 5 && b->health <= 15) {
             imgFile = "img/barrierKuning.bmp";
         } else if (b->health > 1 && b->health <= 5) {

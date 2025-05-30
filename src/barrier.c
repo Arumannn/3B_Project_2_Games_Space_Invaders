@@ -9,6 +9,9 @@
 extern BulletNode* playerBullets;
 extern BulletNode* alienBullets;
 extern BulletNode* ufoBulletList;
+extern int getCurrentLevel();
+
+Barrier* barrierList = NULL;
 
 void drawBarrier(Barrier* b) {
     if (b && b->health > 0) {
@@ -124,5 +127,17 @@ void freeBarriers(Barrier* head) {
         temp = head;
         head = head->next;
         free(temp);
+    }
+}
+
+void handleLevelBarrierReset() {
+    int level = getCurrentLevel();
+
+    if (level % 5 == 1) {
+        if (barrierList != NULL) {
+            freeBarriers(barrierList);
+            barrierList = NULL;
+        }
+        initBarriers(&barrierList);
     }
 }

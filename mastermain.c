@@ -24,7 +24,6 @@ int main() {
 
 
     Alien aliens[ALIEN_ROWS][ALIEN_COLS];
-    Barrier* barrierList = NULL;
     int alienDir = 1, alienDirLast = 1, frameCounter = 0;
 
     initAliens();
@@ -85,6 +84,7 @@ int main() {
             UFO(aliens);
             drawExplosionsPlayer();
             checkPlayerCollisions(&SpaceShip_P);
+            handleLevelBarrierReset();
 
             for (Barrier* b = barrierList; b != NULL; b = b->next) {
                 drawBarrier(b);

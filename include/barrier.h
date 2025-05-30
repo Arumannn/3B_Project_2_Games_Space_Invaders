@@ -13,5 +13,8 @@ void drawBarrier(Barrier* b);
 void checkBarrierBulletCollision(Barrier* head);
 void initBarriers(Barrier** head);
 void freeBarriers(Barrier* head);
+void handleLevelBarrierReset();
+
+extern Barrier* barrierList;
 
 #endif

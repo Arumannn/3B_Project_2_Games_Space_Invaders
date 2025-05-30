@@ -12,23 +12,15 @@ extern BulletNode* ufoBulletList;
 
 void drawBarrier(Barrier* b) {
     if (b && b->health > 0) {
-        int color = WHITE;
-        if (b->health > 15 && b->health <= 30) color = GREEN;
-        else if (b->health > 5 && b->health <= 15) color = YELLOW;
-        else if (b->health > 1 && b->health <= 5) color = RED;
-
-        setfillstyle(SOLID_FILL, color);
-
-        bar(b->x, b->y - 5, b->x + 80, b->y + 25);
-
-        bar(b->x + 5, b->y - 10, b->x + 75, b->y - 5);
-        bar(b->x + 10, b->y - 15, b->x + 70, b->y - 10);
-        bar(b->x + 15, b->y - 20, b->x + 65, b->y - 15);
-
-        setfillstyle(SOLID_FILL, BLACK);
-        bar(b->x + 15, b->y + 15, b->x + 65, b->y + 25);
-        bar(b->x + 20, b->y + 10, b->x + 60, b->y + 20);
-        bar(b->x + 25, b->y + 5, b->x + 55, b->y + 15);
+        const char* imgFile;
+        if (b->health > 15 && b->health <= 30) {
+            imgFile = "img/barrierHijau.bmp";
+        } else if (b->health > 5 && b->health <= 15) {
+            imgFile = "img/barrierKuning.bmp";
+        } else if (b->health > 1 && b->health <= 5) {
+            imgFile = "img/barrierMerah.bmp";
+        }
+        readimagefile(imgFile, b->x, b->y + 20, b->x + 80, b->y + 20);
     }
 }
 

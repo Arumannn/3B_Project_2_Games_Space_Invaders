@@ -40,8 +40,9 @@ void checkAndUpdateLevel() {
     }
 
     if (allAliensDead) {
-        if (currentLevel < MAX_LEVEL) {
-            currentLevel++;
+        currentLevel++; // Level terus bertambah tanpa batas
+        // Batasi kesulitan pada level 5
+        if (currentLevel <= 5) {
             alienSpeed += SPEED_INCREMENT;
             shootInterval -= SHOOT_INTERVAL_DECREMENT;
             if (shootInterval < 1000) shootInterval = 1000;

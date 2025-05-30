@@ -45,7 +45,7 @@ void checkBarrierBulletCollision(Barrier* head) {
                         int barrierLeft = currentBarrier->x;
                         int barrierRight = currentBarrier->x + 80;
                         int barrierTop = currentBarrier->y - 20;
-                        int barrierBottom = currentBarrier->y + 25;
+                        int barrierBottom = currentBarrier->y + 20;
 
                         if (bulletRight > barrierLeft && bulletLeft < barrierRight &&
                             bulletBottom > barrierTop && bulletTop < barrierBottom) {
@@ -75,7 +75,7 @@ void checkBarrierBulletCollision(Barrier* head) {
                     int barrierLeft   = currentBarrier->x;
                     int barrierRight  = currentBarrier->x + 80;
                     int barrierTop    = currentBarrier->y - 20;
-                    int barrierBottom = currentBarrier->y + 25;
+                    int barrierBottom = currentBarrier->y + 20;
 
                     if (bulletRight > barrierLeft && bulletLeft < barrierRight &&
                         bulletBottom > barrierTop && bulletTop < barrierBottom) {

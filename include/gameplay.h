@@ -3,7 +3,6 @@
 #define BASE_ALIEN_SPEED 0.5  // Kecepatan dasar pergerakan alien (BLOCK_SIZE per frame)
 #define BASE_SHOOT_INTERVAL 5000  // Interval dasar untuk tembakan alien (semakin kecil, semakin cepat)
 #define SPEED_INCREMENT 0.1  // Peningkatan kecepatan per level
-#define SHOOT_INTERVAL_DECREMENT 500  // Pengurangan interval tembakan per level
 
 
 typedef struct {

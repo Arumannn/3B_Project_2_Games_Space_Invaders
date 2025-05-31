@@ -8,16 +8,17 @@
 #include <time.h>
 #include <math.h>
 
-// Global variables
+// Variabel global untuk ukuran blok, ledakan alien, daftar alien, peluru alien, level, kecepatan, dan waktu tembak
 int BLOCK_SIZE;
 Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS];
-AlienNode* alienRows[ALIEN_ROWS]; // Array of linked lists for each row
-BulletNode* alienBullets = NULL; // Linked list for alien bullets
-static int currentLevel = 1;  // Level awal
-static float alienSpeed = BASE_ALIEN_SPEED;  // Kecepatan awal alien
-static int shootInterval = BASE_SHOOT_INTERVAL;  // Interval tembakan awal
-static int alienShootCooldown = 0;  // Cooldown global untuk tembakan alien
+AlienNode* alienRows[ALIEN_ROWS]; // Daftar alien per baris
+BulletNode* alienBullets = NULL; // Daftar peluru alien
+static int currentLevel = 1;  // Level awal permainan
+static float alienSpeed = BASE_ALIEN_SPEED;  // Kecepatan gerak alien
+static int shootInterval = BASE_SHOOT_INTERVAL;  // Jeda waktu tembakan alien
+static int alienShootCooldown = 0;  // Waktu tunggu sebelum alien menembak lagi
 
+// Mengatur ulang level ke awal
 void initLevel() {
     currentLevel = 1;
     alienSpeed = BASE_ALIEN_SPEED;
@@ -25,7 +26,7 @@ void initLevel() {
     alienShootCooldown = 0;
 }
 
-
+// Cek apakah semua alien mati, jika iya, naik level dan tingkatkan kesulitan
 void checkAndUpdateLevel() {
     int allAliensDead = 1;
     for (int row = 0; row < ALIEN_ROWS; row++) {
@@ -41,69 +42,67 @@ void checkAndUpdateLevel() {
     }
 
     if (allAliensDead) {
-        currentLevel++; // Level terus bertambah tanpa batas
-        // Batasi kesulitan pada level 5
-        if (currentLevel <= 5) {
+        currentLevel++;
+        if (currentLevel <= 5) { // Batasi kesulitan sampai level 5
             alienSpeed += SPEED_INCREMENT;
             shootInterval -= SHOOT_INTERVAL_DECREMENT;
-            if (shootInterval < 1000) shootInterval = 1000;
+            if (shootInterval < 1000) shootInterval = 1000; // Jeda tembak minimal
         }
-        initAliens();
+        initAliens(); // Siapkan alien untuk level baru
         printf("Level %d - Alien Speed: %.2f, Shoot Interval: %d\n", currentLevel, alienSpeed, shootInterval);
     }
 }
 
+// Ambil kecepatan alien saat ini
 float getAlienSpeed() {
     return alienSpeed;
 }
 
+// Ambil jeda tembak alien saat ini
 int getShootInterval() {
     return shootInterval;
 }
 
+// Ambil level saat ini
 int getCurrentLevel() {
     return currentLevel;
 }
 
+// Siapkan alien di awal permainan atau level baru
 void initAliens() {
-    BLOCK_SIZE = getmaxy() / 40;
+    BLOCK_SIZE = getmaxy() / 40; // Tentukan ukuran blok berdasarkan layar
 
-    // Initialize random seed
-    srand(time(0));
+    srand(time(0)); // Inisialisasi angka acak
 
-    // Initialize alien rows
+    // Buat alien di setiap baris
     for (int row = 0; row < ALIEN_ROWS; row++) {
-        alienRows[row] = NULL; // Start with empty list
+        alienRows[row] = NULL;
         AlienNode* tail = NULL;
 
         for (int col = 0; col < ALIEN_COLS; col++) {
-            // Allocate new node
-            AlienNode* newNode = (AlienNode*)malloc(sizeof(AlienNode));
+            AlienNode* newNode = (AlienNode*)malloc(sizeof(AlienNode)); // Buat alien baru
             if (!newNode) {
                 printf("Memory allocation failed!\n");
                 exit(1);
             }
 
-            // Initialize alien data
-            newNode->alien.active = 1;
-            newNode->alien.node = newNode; // Store pointer to node for easy access
+            newNode->alien.active = 1; // Alien hidup
+            newNode->alien.node = newNode;
             newNode->next = NULL;
 
+            // Atur posisi alien berdasarkan baris
             if (row == 0 || row == 1) {
-                // Rows 0, 1: Spawn from left
-                newNode->alien.x = col * BLOCK_SIZE * 2 + getmaxx() / 10;
+                newNode->alien.x = col * BLOCK_SIZE * 2 + getmaxx() / 10; // Baris 0,1 dari kiri
                 newNode->alien.y = row * BLOCK_SIZE * 2 + getmaxy() / 5;
             } else if (row == 2 || row == 3) {
-                // Rows 2, 3: Spawn from right
-                newNode->alien.x = getmaxx() - (col + 1) * BLOCK_SIZE * 2 - getmaxx() / 10;
+                newNode->alien.x = getmaxx() - (col + 1) * BLOCK_SIZE * 2 - getmaxx() / 10; // Baris 2,3 dari kanan
                 newNode->alien.y = row * BLOCK_SIZE * 2 + getmaxy() / 5;
             } else {
-                // Rows 4, 5: Spawn from left, shifted one row down
-                newNode->alien.x = col * BLOCK_SIZE * 2 + getmaxx() / 10;
-                newNode->alien.y = (row + 1) * BLOCK_SIZE * 2 + getmaxy() / 5; // Shift down by one row
+                newNode->alien.x = col * BLOCK_SIZE * 2 + getmaxx() / 10; // Baris 4,5 dari kiri, geser ke bawah
+                newNode->alien.y = (row + 1) * BLOCK_SIZE * 2 + getmaxy() / 5;
             }
 
-            // Add to linked list
+            // Tambahkan alien ke daftar
             if (alienRows[row] == NULL) {
                 alienRows[row] = newNode;
                 tail = newNode;
@@ -114,10 +113,9 @@ void initAliens() {
         }
     }
 
-    // Initialize alien bullets
-    alienBullets = NULL;
+    alienBullets = NULL; // Kosongkan daftar peluru
 
-    // Initialize explosions
+    // Matikan semua ledakan
     for (int row = 0; row < ALIEN_ROWS; row++) {
         for (int col = 0; col < ALIEN_COLS; col++) {
             alienExplosions[row][col].active = 0;
@@ -125,23 +123,24 @@ void initAliens() {
         }
     }
 
-    // Reset cooldown saat inisialisasi alien
-    alienShootCooldown = 0;
+    alienShootCooldown = 0; // Reset waktu tunggu tembak
 }
 
+// Gambar alien dan peluru di layar
 void drawAliens() {
     for (int row = 0; row < ALIEN_ROWS; row++) {
         AlienNode* current = alienRows[row];
-        int col = 0; // Track column for explosion array
+        int col = 0;
         while (current != NULL) {
             if (current->alien.active) {
                 int x = current->alien.x, y = current->alien.y;
 
+                // Gambar alien sesuai baris
                 if (row == 0 || row == 1) {
-                    // Design for rows 0 and 1
                     setcolor(LIGHTGREEN);
                     setfillstyle(SOLID_FILL, LIGHTGREEN);
                     fillellipse(x + BLOCK_SIZE / 2, y + BLOCK_SIZE / 2, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
+                    // Tambah mata dan duri
                     int eyeSize = BLOCK_SIZE / 2;
                     int eyeX = x + BLOCK_SIZE / 4;
                     int eyeY = y + BLOCK_SIZE / 4;
@@ -166,10 +165,10 @@ void drawAliens() {
                         bar(spikeX, spikeY, spikeX + spikeSize, spikeY + spikeSize);
                     }
                 } else if (row == 2 || row == 3) {
-                    // Design for rows 2 and 3
                     setcolor(LIGHTBLUE);
                     setfillstyle(SOLID_FILL, LIGHTBLUE);
                     ellipse(x + BLOCK_SIZE / 2, y + BLOCK_SIZE / 2, 0, 360, BLOCK_SIZE / 3, BLOCK_SIZE / 2);
+                    // Tambah mata dan kaki
                     int eyeSize = BLOCK_SIZE / 2;
                     int eyeX = x + BLOCK_SIZE / 2;
                     int eyeY = y + BLOCK_SIZE / 2;
@@ -186,10 +185,10 @@ void drawAliens() {
                     line(x + BLOCK_SIZE / 4, y + BLOCK_SIZE, x + BLOCK_SIZE / 4, y + 6 * BLOCK_SIZE / 5);
                     line(x + 3 * BLOCK_SIZE / 4, y + BLOCK_SIZE, x + 3 * BLOCK_SIZE / 4, y + 6 * BLOCK_SIZE / 5);
                 } else if (row == 4 || row == 5) {
-                    // Design for rows 4 and 5
                     setcolor(LIGHTRED);
                     setfillstyle(SOLID_FILL, LIGHTRED);
                     fillellipse(x + BLOCK_SIZE / 2, y + BLOCK_SIZE / 2, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
+                    // Tambah mata dan antena
                     int eyeSize = BLOCK_SIZE / 2;
                     int eyeX = x + BLOCK_SIZE / 2;
                     int eyeY = y + BLOCK_SIZE / 2;
@@ -220,7 +219,7 @@ void drawAliens() {
         }
     }
 
-    // Draw alien bullets
+    // Gambar peluru alien
     setcolor(RED);
     setfillstyle(SOLID_FILL, RED);
     BulletNode* currentBullet = alienBullets;
@@ -233,7 +232,7 @@ void drawAliens() {
     }
 }
 
-// Function to check alien-barrier collisions
+// Cek tabrakan alien dengan penghalang
 void checkAlienBarrierCollisions(Barrier* barrierList) {
     for (int row = 0; row < ALIEN_ROWS; row++) {
         AlienNode* currentAlien = alienRows[row];
@@ -255,14 +254,14 @@ void checkAlienBarrierCollisions(Barrier* barrierList) {
 
                         if (alienRight > barrierLeft && alienLeft < barrierRight &&
                             alienBottom > barrierTop && alienTop < barrierBottom) {
-                            currentAlien->alien.active = 0;
-                            currentBarrier->health--; // Kurangi health barrier
-                            // Set explosion
+                            currentAlien->alien.active = 0; // Matikan alien
+                            currentBarrier->health--; // Kurangi nyawa penghalang
+                            // Tambah ledakan
                             alienExplosions[row][col].x = currentAlien->alien.x + BLOCK_SIZE / 2;
                             alienExplosions[row][col].y = currentAlien->alien.y + BLOCK_SIZE / 2;
                             alienExplosions[row][col].active = 1;
                             alienExplosions[row][col].lifetime = 10;
-                            break; // Stop checking other barriers for this alien
+                            break;
                         }
                     }
                     currentBarrier = currentBarrier->next;
@@ -274,17 +273,18 @@ void checkAlienBarrierCollisions(Barrier* barrierList) {
     }
 }
 
+// Perbarui posisi alien dan peluru
 void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
     int moveDownFirst = 0;
     int moveDownRest = 0;
 
-    // Update alien bullets
+    // Perbarui posisi peluru alien
     BulletNode* currentBullet = alienBullets;
     BulletNode* prevBullet = NULL;
     while (currentBullet != NULL) {
         if (currentBullet->bullet.active) {
-            currentBullet->bullet.y += BLOCK_SIZE / 2;
-            if (currentBullet->bullet.y > getmaxy()) {
+            currentBullet->bullet.y += BLOCK_SIZE / 2; // Gerakkan peluru ke bawah
+            if (currentBullet->bullet.y > getmaxy()) { // Hapus peluru jika keluar layar
                 BulletNode* temp = currentBullet;
                 if (prevBullet == NULL) {
                     alienBullets = currentBullet->next;
@@ -300,46 +300,41 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
         currentBullet = currentBullet->next;
     }
 
-    // Kurangi cooldown tembakan
+    // Kurangi waktu tunggu tembak
     if (alienShootCooldown > 0) {
         alienShootCooldown--;
     }
 
-    // Get speed and shoot interval based on level
     float currentAlienSpeed = getAlienSpeed();
     int currentShootInterval = getShootInterval();
-
-    // Flag untuk memastikan hanya satu alien menembak per frame
     int hasShot = 0;
 
     for (int row = 0; row < ALIEN_ROWS; row++) {
         AlienNode* current = alienRows[row];
         while (current != NULL) {
             if (current->alien.active) {
+                // Gerakkan alien berdasarkan arah
                 if (row == 0 || row == 1 || row == 4 || row == 5) {
-                    // Rows 0, 1, 4, 5: Move with alienDirFirst
                     current->alien.x += *alienDirFirst * (BLOCK_SIZE * currentAlienSpeed);
                     if (current->alien.x <= 0 || current->alien.x >= getmaxx() - BLOCK_SIZE) {
-                        moveDownFirst = 1;
+                        moveDownFirst = 1; // Turun jika menyentuh tepi
                     }
                 } else if (row == 2 || row == 3) {
-                    // Rows 2, 3: Move with alienDirRest
                     current->alien.x += *alienDirRest * (BLOCK_SIZE * currentAlienSpeed);
                     if (current->alien.x <= 0 || current->alien.x >= getmaxx() - BLOCK_SIZE) {
-                        moveDownRest = 1;
+                        moveDownRest = 1; // Turun jika menyentuh tepi
                     }
                 }
 
-                // Alien shooting logic
-                if (!hasShot && alienShootCooldown <= 0 && rand() % 100 < 5) { // 5% peluang per alien
-                    // Count active bullets
+                // Logika tembak alien
+                if (!hasShot && alienShootCooldown <= 0 && rand() % 100 < 5) { // 5% peluang tembak
                     int bulletCount = 0;
                     BulletNode* countBullet = alienBullets;
                     while (countBullet != NULL) {
                         bulletCount++;
                         countBullet = countBullet->next;
                     }
-                    if (bulletCount < MAX_ALIEN_BULLETS) {
+                    if (bulletCount < MAX_ALIEN_BULLETS) { // Batasi jumlah peluru
                         BulletNode* newBullet = (BulletNode*)malloc(sizeof(BulletNode));
                         if (newBullet) {
                             newBullet->bullet.x = current->alien.x + BLOCK_SIZE / 4;
@@ -347,8 +342,7 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
                             newBullet->bullet.active = 1;
                             newBullet->next = alienBullets;
                             alienBullets = newBullet;
-                            // Set cooldown berdasarkan shootInterval (frame = detik * FPS)
-                            alienShootCooldown = currentShootInterval / 100; // Misal, 5000/100 = 50 frame (~1.67 detik di 30 FPS)
+                            alienShootCooldown = currentShootInterval / 100; // Atur waktu tunggu
                             hasShot = 1; // Hanya satu alien menembak
                         }
                     }
@@ -358,9 +352,10 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
         }
     }
 
-    // Check alien-barrier collisions
+    // Cek tabrakan alien dengan penghalang
     checkAlienBarrierCollisions(barrierList);
 
+    // Turunkan alien jika menyentuh tepi
     if (moveDownFirst) {
         *alienDirFirst *= -1;
         for (int row = 0; row < ALIEN_ROWS; row++) {
@@ -386,6 +381,7 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
     }
 }
 
+// Cek tabrakan peluru pemain dengan alien
 void checkAlienCollisions(BulletNode *bullets) {
     BulletNode *currentBullet = bullets;
     while (currentBullet != NULL) {
@@ -407,14 +403,14 @@ void checkAlienCollisions(BulletNode *bullets) {
 
                         if (bulletRight > alienLeft && bulletLeft < alienRight &&
                             bulletBottom > alienTop && bulletTop < alienBottom) {
-                            currentAlien->alien.active = 0;
-                            currentBullet->bullet.active = 0;
-                            // Set explosion
+                            currentAlien->alien.active = 0; // Matikan alien
+                            currentBullet->bullet.active = 0; // Matikan peluru
+                            // Tambah ledakan
                             alienExplosions[row][col].x = currentAlien->alien.x + BLOCK_SIZE / 2;
                             alienExplosions[row][col].y = currentAlien->alien.y + BLOCK_SIZE / 2;
                             alienExplosions[row][col].active = 1;
                             alienExplosions[row][col].lifetime = 10;
-                            addAlienScore();
+                            addAlienScore(); // Tambah skor
                         }
                     }
                     currentAlien = currentAlien->next;
@@ -426,6 +422,7 @@ void checkAlienCollisions(BulletNode *bullets) {
     }
 }
 
+// Gambar efek ledakan alien
 void drawAlienExplosions() {
     for (int row = 0; row < ALIEN_ROWS; row++) {
         for (int col = 0; col < ALIEN_COLS; col++) {
@@ -438,13 +435,14 @@ void drawAlienExplosions() {
                 fillellipse(alienExplosions[row][col].x, alienExplosions[row][col].y, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
                 alienExplosions[row][col].lifetime--;
                 if (alienExplosions[row][col].lifetime <= 0) {
-                    alienExplosions[row][col].active = 0;
+                    alienExplosions[row][col].active = 0; // Matikan ledakan
                 }
             }
         }
     }
 }
 
+// Cek tabrakan alien dengan pemain
 void checkAlienPlayerVerticalCollision(Player *player, int *gameOver) {
     int playerTop = player->Y_Player;
     int playerBottom = player->Y_Player + 40;
@@ -457,9 +455,9 @@ void checkAlienPlayerVerticalCollision(Player *player, int *gameOver) {
                 int alienBottom = current->alien.y + BLOCK_SIZE;
 
                 if (alienBottom >= playerTop && alienTop <= playerBottom) {
-                    *gameOver = 1; // Tandai permainan selesai
-                    setvisualpage(getactivepage()); // Pastikan halaman grafis aktif
-                    gameOverScreen();
+                    *gameOver = 1; // Permainan selesai
+                    setvisualpage(getactivepage());
+                    gameOverScreen(); // Tampilkan layar game over
                     return;
                 }
             }

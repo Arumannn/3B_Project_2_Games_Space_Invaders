@@ -44,7 +44,7 @@ void drawAliens();
 void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter);
 void checkAlienCollisions(BulletNode *bullets);
 void drawAlienExplosions();
-void checkAlienPlayerVerticalCollision(Player *player);
+void checkAlienPlayerVerticalCollision(Player *player, int *gameOver);
 void initLevel();
 void checkAndUpdateLevel();
 float getAlienSpeed();

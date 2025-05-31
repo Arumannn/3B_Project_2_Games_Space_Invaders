@@ -64,14 +64,14 @@ int main() {
 
                 setactivepage(page);
                 cleardevice();
-
+                drawStars();
                 drawScore();
                 SpaceshipMove(&SpaceShip_P);
                 updateBullets();
                 checkBarrierBulletCollision(barrierList);
                 checkAlienCollisions(playerBullets);
                 updateAliens(&alienDir, &alienDirLast, frameCounter);
-                checkAlienPlayerVerticalCollision(&SpaceShip_P);
+                checkAlienPlayerVerticalCollision(&SpaceShip_P, &gameOver);
                 checkAndUpdateLevel();
                 updateExplosionsPlayer();
                 updatePlayerRespawn(&SpaceShip_P);

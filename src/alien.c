@@ -444,7 +444,7 @@ void drawAlienExplosions() {
     }
 }
 
-void checkAlienPlayerVerticalCollision(Player *player) {
+void checkAlienPlayerVerticalCollision(Player *player, int *gameOver) {
     int playerTop = player->Y_Player;
     int playerBottom = player->Y_Player + 40;
 
@@ -456,6 +456,8 @@ void checkAlienPlayerVerticalCollision(Player *player) {
                 int alienBottom = current->alien.y + BLOCK_SIZE;
 
                 if (alienBottom >= playerTop && alienTop <= playerBottom) {
+                    *gameOver = 1; // Tandai permainan selesai
+                    setvisualpage(getactivepage()); // Pastikan halaman grafis aktif
                     gameOverScreen();
                     return;
                 }

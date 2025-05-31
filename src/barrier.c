@@ -10,6 +10,7 @@ extern BulletNode* playerBullets;
 extern BulletNode* alienBullets;
 extern BulletNode* ufoBulletList;
 
+//Pembuatan Barrier
 void drawBarrier(Barrier* b) {
     if (b && b->health > 0) {
         int color = WHITE;
@@ -32,11 +33,11 @@ void drawBarrier(Barrier* b) {
     }
 }
 
+//Cek apakah Barrier terkena tembakan
 void checkBarrierBulletCollision(Barrier* head) {
     BulletNode* bullet;
     Barrier* currentBarrier;
 
-    // Reusable logic for all bullet types
     BulletNode* bulletLists[] = {playerBullets, alienBullets, ufoBulletList};
 
     for (int i = 0; i < 3; ++i) {
@@ -71,6 +72,7 @@ void checkBarrierBulletCollision(Barrier* head) {
     }
 }
 
+//Menentukan nilai x,y dan health barrier
 void initBarriers(Barrier** head) {
     int screenWidth = getmaxx();
     int screenHeight = getmaxy();

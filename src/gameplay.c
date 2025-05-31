@@ -15,17 +15,9 @@
 #include "gameplay.h"
 #include "mainmenu.h"
 
-
-
-
 static int score = 0;
 static int lastLevel = -1;  //ini jangan di hapus (Nazriel)
 static int blinkCounter = 0;  
-
-
-// void startGame() {
-    
-// }
 
 
 
@@ -92,3 +84,6 @@ void addUFOScore() {
     updateScore(1000);
 }
 
+void addBonusScore() {
+    score += 250;
+}

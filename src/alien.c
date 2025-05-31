@@ -2,8 +2,8 @@
 #include "mainsprite.h"
 #include "gameplay.h"
 #include "mainmenu.h"
-#include "malloc.h"
-#include <stdio.h> 
+#include "barrier.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
@@ -25,6 +25,7 @@ void initLevel() {
     alienShootCooldown = 0;
 }
 
+
 void checkAndUpdateLevel() {
     int allAliensDead = 1;
     for (int row = 0; row < ALIEN_ROWS; row++) {
@@ -40,8 +41,9 @@ void checkAndUpdateLevel() {
     }
 
     if (allAliensDead) {
-        if (currentLevel < MAX_LEVEL) {
-            currentLevel++;
+        currentLevel++; // Level terus bertambah tanpa batas
+        // Batasi kesulitan pada level 5
+        if (currentLevel <= 5) {
             alienSpeed += SPEED_INCREMENT;
             shootInterval -= SHOOT_INTERVAL_DECREMENT;
             if (shootInterval < 1000) shootInterval = 1000;
@@ -88,13 +90,17 @@ void initAliens() {
             newNode->next = NULL;
 
             if (row == 0 || row == 1) {
-                // Rows 0 and 1: Spawn from left
+                // Rows 0, 1: Spawn from left
                 newNode->alien.x = col * BLOCK_SIZE * 2 + getmaxx() / 10;
                 newNode->alien.y = row * BLOCK_SIZE * 2 + getmaxy() / 5;
-            } else {
-                // Rows 2-5: Spawn from right
+            } else if (row == 2 || row == 3) {
+                // Rows 2, 3: Spawn from right
                 newNode->alien.x = getmaxx() - (col + 1) * BLOCK_SIZE * 2 - getmaxx() / 10;
                 newNode->alien.y = row * BLOCK_SIZE * 2 + getmaxy() / 5;
+            } else {
+                // Rows 4, 5: Spawn from left, shifted one row down
+                newNode->alien.x = col * BLOCK_SIZE * 2 + getmaxx() / 10;
+                newNode->alien.y = (row + 1) * BLOCK_SIZE * 2 + getmaxy() / 5; // Shift down by one row
             }
 
             // Add to linked list
@@ -227,6 +233,47 @@ void drawAliens() {
     }
 }
 
+// Function to check alien-barrier collisions
+void checkAlienBarrierCollisions(Barrier* barrierList) {
+    for (int row = 0; row < ALIEN_ROWS; row++) {
+        AlienNode* currentAlien = alienRows[row];
+        int col = 0;
+        while (currentAlien != NULL) {
+            if (currentAlien->alien.active) {
+                int alienLeft = currentAlien->alien.x;
+                int alienRight = currentAlien->alien.x + BLOCK_SIZE;
+                int alienTop = currentAlien->alien.y;
+                int alienBottom = currentAlien->alien.y + BLOCK_SIZE;
+
+                Barrier* currentBarrier = barrierList;
+                while (currentBarrier != NULL) {
+                    if (currentBarrier->health > 0) {
+                        int barrierLeft = currentBarrier->x;
+                        int barrierRight = currentBarrier->x + 80;
+                        int barrierTop = currentBarrier->y - 20;
+                        int barrierBottom = currentBarrier->y + 25;
+
+                        if (alienRight > barrierLeft && alienLeft < barrierRight &&
+                            alienBottom > barrierTop && alienTop < barrierBottom) {
+                            currentAlien->alien.active = 0;
+                            currentBarrier->health--; // Kurangi health barrier
+                            // Set explosion
+                            alienExplosions[row][col].x = currentAlien->alien.x + BLOCK_SIZE / 2;
+                            alienExplosions[row][col].y = currentAlien->alien.y + BLOCK_SIZE / 2;
+                            alienExplosions[row][col].active = 1;
+                            alienExplosions[row][col].lifetime = 10;
+                            break; // Stop checking other barriers for this alien
+                        }
+                    }
+                    currentBarrier = currentBarrier->next;
+                }
+            }
+            currentAlien = currentAlien->next;
+            col++;
+        }
+    }
+}
+
 void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
     int moveDownFirst = 0;
     int moveDownRest = 0;
@@ -262,10 +309,6 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
     float currentAlienSpeed = getAlienSpeed();
     int currentShootInterval = getShootInterval();
 
-    // Calculate initial Y position for row 4 (upper bound for rows 4 and 5)
-    int baseYRow4 = 4 * BLOCK_SIZE * 2 + getmaxy() / 5;
-    int minY = baseYRow4 - BLOCK_SIZE;
-
     // Flag untuk memastikan hanya satu alien menembak per frame
     int hasShot = 0;
 
@@ -273,25 +316,15 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
         AlienNode* current = alienRows[row];
         while (current != NULL) {
             if (current->alien.active) {
-                if (row == 0 || row == 1) {
+                if (row == 0 || row == 1 || row == 4 || row == 5) {
+                    // Rows 0, 1, 4, 5: Move with alienDirFirst
                     current->alien.x += *alienDirFirst * (BLOCK_SIZE * currentAlienSpeed);
                     if (current->alien.x <= 0 || current->alien.x >= getmaxx() - BLOCK_SIZE) {
                         moveDownFirst = 1;
                     }
                 } else if (row == 2 || row == 3) {
+                    // Rows 2, 3: Move with alienDirRest
                     current->alien.x += *alienDirRest * (BLOCK_SIZE * currentAlienSpeed);
-                    if (current->alien.x <= 0 || current->alien.x >= getmaxx() - BLOCK_SIZE) {
-                        moveDownRest = 1;
-                    }
-                } else if (row == 4 || row == 5) {
-                    current->alien.x += *alienDirRest * (BLOCK_SIZE * currentAlienSpeed);
-                    // Sinusoidal movement
-                    int originalY = row * BLOCK_SIZE * 2 + getmaxy() / 5;
-                    int newY = current->alien.y + (int)(sin(frameCounter * 0.1) * 3);
-                    if (newY < minY) {
-                        newY = minY;
-                    }
-                    current->alien.y = newY;
                     if (current->alien.x <= 0 || current->alien.x >= getmaxx() - BLOCK_SIZE) {
                         moveDownRest = 1;
                     }
@@ -325,20 +358,25 @@ void updateAliens(int *alienDirFirst, int *alienDirRest, int frameCounter) {
         }
     }
 
+    // Check alien-barrier collisions
+    checkAlienBarrierCollisions(barrierList);
+
     if (moveDownFirst) {
         *alienDirFirst *= -1;
-        for (int row = 0; row < 2; row++) {
-            AlienNode* current = alienRows[row];
-            while (current != NULL) {
-                current->alien.y += BLOCK_SIZE * 2;
-                current = current->next;
+        for (int row = 0; row < ALIEN_ROWS; row++) {
+            if (row == 0 || row == 1 || row == 4 || row == 5) {
+                AlienNode* current = alienRows[row];
+                while (current != NULL) {
+                    current->alien.y += BLOCK_SIZE * 2;
+                    current = current->next;
+                }
             }
         }
     }
 
     if (moveDownRest) {
         *alienDirRest *= -1;
-        for (int row = 2; row < ALIEN_ROWS; row++) {
+        for (int row = 2; row <= 3; row++) {
             AlienNode* current = alienRows[row];
             while (current != NULL) {
                 current->alien.y += BLOCK_SIZE * 2;
@@ -376,6 +414,7 @@ void checkAlienCollisions(BulletNode *bullets) {
                             alienExplosions[row][col].y = currentAlien->alien.y + BLOCK_SIZE / 2;
                             alienExplosions[row][col].active = 1;
                             alienExplosions[row][col].lifetime = 10;
+                            addAlienScore();
                         }
                     }
                     currentAlien = currentAlien->next;
@@ -406,7 +445,7 @@ void drawAlienExplosions() {
     }
 }
 
-void checkAlienPlayerVerticalCollision(Player *player) {
+void checkAlienPlayerVerticalCollision(Player *player, int *gameOver) {
     int playerTop = player->Y_Player;
     int playerBottom = player->Y_Player + 40;
 
@@ -418,6 +457,8 @@ void checkAlienPlayerVerticalCollision(Player *player) {
                 int alienBottom = current->alien.y + BLOCK_SIZE;
 
                 if (alienBottom >= playerTop && alienTop <= playerBottom) {
+                    *gameOver = 1; // Tandai permainan selesai
+                    setvisualpage(getactivepage()); // Pastikan halaman grafis aktif
                     gameOverScreen();
                     return;
                 }

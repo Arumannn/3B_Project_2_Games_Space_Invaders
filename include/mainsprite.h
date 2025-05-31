@@ -15,10 +15,10 @@ typedef struct {
     int X_Player, Y_Player;
     int health;  
     int alive;
-    int invincible;      
-    int invincibleTimer;
+    int invincible;         // Kondisi yang mengatakan true or false
+    int invincibleTimer;  // Waktu invicible berapa lama
     int respawning;       // 1 = respawning, 0 = normal
-    int respawnTimer;      // co    
+    int respawnTimer;      // Waktu respawn ketika sudah mati
 } Player;
 
 

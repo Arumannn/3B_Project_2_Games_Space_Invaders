@@ -2,6 +2,7 @@
 #define ALIEN_H
 #include <graphics.h>
 #include "mainsprite.h"
+#include "barrier.h" 
 
 // Constants
 #define ALIEN_ROWS 6
@@ -12,20 +13,20 @@
 #define SPEED_INCREMENT 0.1  // Peningkatan kecepatan per level
 #define SHOOT_INTERVAL_DECREMENT 800  // Pengurangan interval tembakan per level
 
-// Structure for an alien
+// struct untuk wadah alien
 typedef struct Alien {
     int x, y;
     int active;
-    struct AlienNode* node; // Pointer to the node for easier management
+    struct AlienNode* node; // Pointer ke node alien
 } Alien;
 
-// Structure for a node in the linked list
+// struct untuk node alien pada linked list
 typedef struct AlienNode {
     Alien alien;
     struct AlienNode* next;
 } AlienNode;
 
-// Structure for explosions
+// struct untuk ledakan
 typedef struct {
     int x, y;
     int active;
@@ -34,8 +35,9 @@ typedef struct {
 
 extern int BLOCK_SIZE;
 extern Explosion alienExplosions[ALIEN_ROWS][ALIEN_COLS]; 
-extern AlienNode* alienRows[ALIEN_ROWS]; // Array of linked lists for aliens
-extern BulletNode* alienBullets; // Linked list for alien bullets
+extern AlienNode* alienRows[ALIEN_ROWS]; // Array of linked lists untuk aliens
+extern BulletNode* alienBullets; // Linked list untuk peluru alien 
+extern Barrier* barrierList; 
 
 void initAliens();
 void drawAliens();

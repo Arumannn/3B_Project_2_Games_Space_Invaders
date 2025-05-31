@@ -12,6 +12,7 @@
 #pragma comment(lib, "winmm.lib")
 
 extern BulletNode* playerBullets;
+Barrier* barrierList = NULL; // Memindahkan barrierList menjadi global
 
 int main() {
     srand((unsigned)time(NULL));
@@ -26,7 +27,6 @@ int main() {
         Player SpaceShip_P = {screenWidth / 2, screenHeight - 120, 3, 1, 0, 0};
 
         Alien aliens[ALIEN_ROWS][ALIEN_COLS];
-        Barrier* barrierList = NULL;
         int alienDir = 1, alienDirLast = 1, frameCounter = 0;
 
         initAliens();
@@ -65,7 +65,6 @@ int main() {
                 setactivepage(page);
                 cleardevice();
 
-                drawStars();
                 drawScore();
                 SpaceshipMove(&SpaceShip_P);
                 updateBullets();
@@ -109,6 +108,8 @@ int main() {
 
         PlaySound(NULL, 0, 0);
         cleardevice();
+        freeBarriers(barrierList); // Free barriers when game loop ends
+        barrierList = NULL; // Reset barrierList
     }
 
     closegraph(); 

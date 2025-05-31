@@ -3,5 +3,3 @@ rani 2000
 fadil 2000
 ena 1500
 rina 1000
-ya 0
-dadag 0

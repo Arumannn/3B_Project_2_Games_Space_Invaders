@@ -1,3 +1,12 @@
+//===============================================================================================================
+// Program dibuat oleh: Rina Permata Dewi
+// NIM                : 241511061
+// Deskripsi File     : Berisi dua program utama, yaitu:
+//                      1. mainmenu  - untuk menampilkan menu utama
+//                      2. gameover  - untuk menampilkan tampilan game over
+// Proyek 2           : Game Space Invaders 
+//===============================================================================================================
+
 #include <graphics.h>
 #include <conio.h>
 #include <stdlib.h>
@@ -9,6 +18,9 @@
 #include "gameplay.h"
 #include "mainmenu.h"
 
+//============================================== PROGRAM MAINMENU ================================================
+
+// Fungsi untuk menampilkan menu utama
 void mainMenu() {
     cleardevice();
     
@@ -164,6 +176,7 @@ void drawLeaderboard(int yOffset, int limit, int isCentered) {
     freeLeaderboard(head);
 }
 
+// Fungsi untuk menggambar leaderboard di sisi kanan layar
 void drawLeaderboardRight(int yOffset, int limit) {
     drawLeaderboard(yOffset, limit, 0);  // isCentered = 0 (artinya: di kanan layar)
 }
@@ -199,7 +212,6 @@ void showMainMenu() {
     drawImageButton("img/start.bmp", centerX, startY, buttonWidth, buttonHeight);
     drawImageButton("img/guide.bmp", centerX, startY + buttonSpacing, buttonWidth, buttonHeight);
     drawImageButton("img/exit.bmp", centerX, startY + (buttonSpacing * 2), buttonWidth, buttonHeight);
-
 
      // Gambar leaderboard terlebih dahulu dan hitung tinggi tabel
      int leaderboardX = getmaxwidth() / 2 + 150;
@@ -294,7 +306,7 @@ void handleMainMenu() {
     }
 }
 
-
+// Fungsi untuk menampilkan halaman (Guide)
 void showGuide() {
     cleardevice();
     drawStars();
@@ -330,10 +342,8 @@ void showGuide() {
         }
     }
 }
-    
-   
 
-// Fungsi untuk LEADERBOARD
+// Fungsi untuk halaman LEADERBOARD
 void showLeaderboard() {
     cleardevice();
     drawStars();
@@ -343,7 +353,6 @@ void showLeaderboard() {
     int imgY = 5;
     readimagefile("img/leaderboard.bmp", imgX, imgY, imgX + imgWidth, imgY + imgHeight);
 
-
     // Menampilkan leaderboard dimulai dari posisi y=150, hanya menampilkan 5 entri
     drawLeaderboard(150, MAX_ENTRIES, 1);  // tampilkan max 7 entri
 
@@ -352,7 +361,6 @@ void showLeaderboard() {
     int backButtonX = getmaxwidth() / 2 - backButtonWidth / 2;
     int backButtonY = getmaxheight() - backButtonHeight - 20;
     drawImageButton("img/back.bmp", backButtonX, backButtonY, backButtonWidth, backButtonHeight);
-
 
     while (1) {
         if (ismouseclick(WM_LBUTTONDOWN)) {
@@ -416,69 +424,83 @@ int confirmExit() {
     }
 }
 
+//============================================== PROGRAM GAMEOVER ================================================
 
-//------------------------------------------PROGRAM GAMEOVER-----------------------------------------------------
-
+// Menyimpan skor pemain ke leaderboard.txt dan mengurutkan entri berdasarkan skor tertinggi
 void savePlayerScore(const char *name, int score) {
     LeaderboardEntry *head = NULL;
-    LeaderboardEntry *current = NULL;
 
-    // Baca file dan isi ke linked list
-    FILE *file = fopen("leaderboard.txt", "r");
-    if (file) {
+    // Membaca leaderboard dari file
+    FILE *leaderboardFile = fopen("leaderboard.txt", "r");
+    if (leaderboardFile) {
         char tempName[MAX_NAME_LENGTH];
         int tempScore;
-        while (fscanf(file, "%s %d", tempName, &tempScore) == 2) {
+        while (fscanf(leaderboardFile, "%s %d", tempName, &tempScore) == 2) {
             LeaderboardEntry *newNode = (LeaderboardEntry *)malloc(sizeof(LeaderboardEntry));
             strcpy(newNode->name, tempName);
             newNode->score = tempScore;
             newNode->next = head;
             head = newNode;
         }
-        fclose(file);
+        fclose(leaderboardFile);
     }
 
-    // Tambahkan entri baru
-    LeaderboardEntry *newEntry = (LeaderboardEntry *)malloc(sizeof(LeaderboardEntry));
-    strncpy(newEntry->name, name, MAX_NAME_LENGTH);
-    newEntry->name[MAX_NAME_LENGTH - 1] = '\0';
-    newEntry->score = score;
-    newEntry->next = head;
-    head = newEntry;
+    // Cek apakah nama sudah ada di linked list
+    LeaderboardEntry *current = head;
+    int found = 0;
 
-    // Urutkan linked list secara descending
+    while (current != NULL) {
+        if (strcmp(current->name, name) == 0) {
+            current->score += score;  // Tambahkan skor ke pemain yang sama
+            found = 1;
+            break;
+        }
+        current = current->next;
+    }
+
+    // Jika belum ditemukan, tambahkan sebagai entri baru
+    if (!found) {
+        LeaderboardEntry *newEntry = (LeaderboardEntry *)malloc(sizeof(LeaderboardEntry));
+        strncpy(newEntry->name, name, MAX_NAME_LENGTH);
+        newEntry->name[MAX_NAME_LENGTH - 1] = '\0';
+        newEntry->score = score;
+        newEntry->next = head;
+        head = newEntry;
+    }
+
+    // Mengurutkan secara descending
     LeaderboardEntry *sorted = NULL;
     while (head) {
-        LeaderboardEntry *node = head;
+        LeaderboardEntry *currentEntry = head;
         head = head->next;
 
-        if (!sorted || node->score > sorted->score) {
-            node->next = sorted;
-            sorted = node;
+        if (!sorted || currentEntry->score > sorted->score) {
+            currentEntry->next = sorted;
+            sorted = currentEntry;
         } else {
-            LeaderboardEntry *temp = sorted;
-            while (temp->next && temp->next->score >= node->score) {
-                temp = temp->next;
+            LeaderboardEntry *currentSorted = sorted;
+            while (currentSorted->next && currentSorted->next->score >= currentEntry->score) {
+                currentSorted = currentSorted->next;
             }
-            node->next = temp->next;
-            temp->next = node;
+            currentEntry->next = currentSorted->next;
+            currentSorted->next = currentEntry;
         }
     }
 
-    // Simpan ulang maksimal MAX_ENTRIES
-    file = fopen("leaderboard.txt", "w");
-    if (file) {
+    // Menulis kembali leaderboard ke file
+    leaderboardFile = fopen("leaderboard.txt", "w");
+    if (leaderboardFile) {
         int count = 0;
-        current = sorted;
-        while (current && count < 7) {
-            fprintf(file, "%s %d\n", current->name, current->score);
+        LeaderboardEntry *current = sorted;
+        while (current && count < MAX_ENTRIES) {
+            fprintf(leaderboardFile, "%s %d\n", current->name, current->score);
             current = current->next;
             count++;
         }
-        fclose(file);
+        fclose(leaderboardFile);
     }
 
-    // Bebaskan memori
+    // Menghapus semua node linked list
     while (sorted) {
         LeaderboardEntry *temp = sorted;
         sorted = sorted->next;
@@ -486,37 +508,35 @@ void savePlayerScore(const char *name, int score) {
     }
 }
 
+// Menampilkan layar "Game Over" dan input nama untuk disimpan ke leaderboard
 void gameOverScreen() {
     int screenWidth = getmaxwidth();
     int screenHeight = getmaxheight();
-
     cleardevice();
     drawStars();
 
-    // Gambar "GAME OVER" pakai gambar
-    int imgWidth = 400;
-    int imgHeight = 200;
+    // Menampilkan gambar "GAME OVER"
+    int imgWidth = 400, imgHeight = 200;
     int imgX = screenWidth / 2 - imgWidth / 2;
     int imgY = screenHeight / 4 - imgHeight / 2 - 30;
-    const char *imagePath = "img/gameover.bmp";
-    FILE *fileCheck = fopen(imagePath, "r");
-    if (fileCheck) {
-        fclose(fileCheck);
-        readimagefile(imagePath, imgX, imgY, imgX + imgWidth, imgY + imgHeight);
+    const char *gameOverImage = "img/gameover.bmp";
+    FILE *imageFile = fopen(gameOverImage, "r");
+    if (imageFile) {
+        fclose(imageFile);
+        readimagefile(gameOverImage, imgX, imgY, imgX + imgWidth, imgY + imgHeight);
     }
 
-    // Gambar label "MASUKKAN NAMA" pakai gambar
-    int labelWidth = 300;
-    int labelHeight = 100;
+    // Menampilkan label "MASUKKAN NAMA"
+    int labelWidth = 300, labelHeight = 100;
     int labelX = screenWidth / 2 - labelWidth / 2;
     int labelY = imgY + imgHeight + 20;
-    fileCheck = fopen("img/label_nama.bmp", "r");
-    if (fileCheck) {
-        fclose(fileCheck);
+    imageFile = fopen("img/label_nama.bmp", "r");
+    if (imageFile) {
+        fclose(imageFile);
         readimagefile("img/label_nama.bmp", labelX, labelY, labelX + labelWidth, labelY + labelHeight);
     }
 
-    // Kotak input nama
+    // Kotak input
     int inputBoxX1 = screenWidth / 2 - 150;
     int inputBoxY1 = labelY + labelHeight + 10;
     int inputBoxX2 = screenWidth / 2 + 150;
@@ -524,34 +544,30 @@ void gameOverScreen() {
     setcolor(WHITE);
     rectangle(inputBoxX1, inputBoxY1, inputBoxX2, inputBoxY2);
 
-    // Gambar tombol SUBMIT pakai gambar
+    // Tombol Submit
     int buttonWidth = 300, buttonHeight = 200;
-    int submitButtonX1 = screenWidth / 2 - buttonWidth / 2;
-    int submitButtonY1 = inputBoxY2 + 40;
-    int submitButtonX2 = submitButtonX1 + buttonWidth;
-    int submitButtonY2 = submitButtonY1 + buttonHeight;
-
-    const char *submitImagePath = "img/submit.bmp";
-    fileCheck = fopen(submitImagePath, "r");
-    if (fileCheck) {
-        fclose(fileCheck);
-        readimagefile(submitImagePath, submitButtonX1, submitButtonY1, submitButtonX2, submitButtonY2);
+    int submitX1 = screenWidth / 2 - buttonWidth / 2;
+    int submitY1 = inputBoxY2 + 40;
+    int submitX2 = submitX1 + buttonWidth;
+    int submitY2 = submitY1 + buttonHeight;
+    const char *submitImage = "img/submit.bmp";
+    imageFile = fopen(submitImage, "r");
+    if (imageFile) {
+        fclose(imageFile);
+        readimagefile(submitImage, submitX1, submitY1, submitX2, submitY2);
     }
 
-    // Input Nama
+    // Input nama
     char playerName[MAX_NAME_LENGTH + 1] = "";
-    int index = 0;
-    char ch;
-    int lastIndex = -1;
+    int index = 0, lastIndex = -1;
     int finalScore = getScore();
-
-    while (kbhit()) getch(); // Membersihkan buffer keyboard sebelum mulai input
+    while (kbhit()) getch(); // Bersihkan buffer
 
     while (1) {
+        // Tampilkan nama yang diketik
         if (index != lastIndex) {
             setfillstyle(SOLID_FILL, BLACK);
             bar(inputBoxX1 + 2, inputBoxY1 + 2, inputBoxX2 - 2, inputBoxY2 - 2);
-
             settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 2);
             setbkcolor(BLACK);
             setcolor(WHITE);
@@ -560,8 +576,9 @@ void gameOverScreen() {
             lastIndex = index;
         }
 
+        // Keyboard input
         if (kbhit()) {
-            ch = getch();
+            char ch = getch();
             if (ch == 13 && index > 0) { // ENTER
                 savePlayerScore(playerName, finalScore);
                 cleardevice();
@@ -576,18 +593,17 @@ void gameOverScreen() {
             }
         }
 
+        // Mouse click pada tombol SUBMIT
         if (ismouseclick(WM_LBUTTONDOWN)) {
             int x, y;
             getmouseclick(WM_LBUTTONDOWN, x, y);
             clearmouseclick(WM_LBUTTONDOWN);
-            if (x >= submitButtonX1 && x <= submitButtonX2 &&
-                y >= submitButtonY1 && y <= submitButtonY2 &&
-                strlen(playerName) > 0) {
+            if (x >= submitX1 && x <= submitX2 && y >= submitY1 && y <= submitY2 && strlen(playerName) > 0) {
                 savePlayerScore(playerName, finalScore);
                 cleardevice();
-                showLeaderboard();  // tunggu sampai user klik BACK
+                showLeaderboard();
                 cleardevice();
-                showMainMenu();     // baru ke main menu
+                showMainMenu();
                 break;
             }
         }

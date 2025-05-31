@@ -40,11 +40,10 @@ void checkAndUpdateLevel() {
         if (!allAliensDead) break;
     }
 
-    int ufoCleared = (getCurrentLevel() != 5) || (!isUFOActive() && !isBonusUFOActive());
-
-    if (allAliensDead && ufoCleared) {
-        if (currentLevel < MAX_LEVEL) {
-            currentLevel++;
+    if (allAliensDead) {
+        currentLevel++; // Level terus bertambah tanpa batas
+        // Batasi kesulitan pada level 5
+        if (currentLevel <= 5) {
             alienSpeed += SPEED_INCREMENT;
             shootInterval -= SHOOT_INTERVAL_DECREMENT;
             if (shootInterval < 1000) shootInterval = 1000;

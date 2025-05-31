@@ -22,7 +22,7 @@
         "-luuid",
         "-loleaut32",
         "-lole32",
-        "-lwinmm" // Tambahkan library ini untuk suara
+        "-lwinmm"
       ],
       "group": {
         "kind": "build",

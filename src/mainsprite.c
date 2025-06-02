@@ -1,3 +1,9 @@
+//===============================================================================================================
+// Program dibuat oleh: Arman Yusuf Rifandi
+// NIM                : 241511038
+// Deskripsi File     : Semua yang berkaitan dengan spaceship/player termasuk collison, bullet dan move
+// Proyek 2           : Game Space Invaders 
+//===============================================================================================================
 #include <graphics.h>
 #include "mainsprite.h"
 #include "alien.h"

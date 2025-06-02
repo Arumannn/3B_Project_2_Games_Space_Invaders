@@ -1,3 +1,9 @@
+//===============================================================================================================
+// Program dibuat oleh: Abudrahman Nur fadhilah
+// NIM                : 241511033
+// Deskripsi File     : Semua yang berkaitan dengan barrier
+// Proyek 2           : Game Space Invaders 
+//===============================================================================================================
 #include <graphics.h>
 #include <conio.h>
 #include <stdlib.h>
@@ -26,7 +32,7 @@ void drawBarrier(Barrier* b) {
         bar(b->x + 10, b->y - 15, b->x + 70, b->y - 10);
         bar(b->x + 15, b->y - 20, b->x + 65, b->y - 15);
 
-        setfillstyle(SOLID_FILL, BLUE);
+        setfillstyle(SOLID_FILL, BLACK);
         bar(b->x + 15, b->y + 15, b->x + 65, b->y + 25);
         bar(b->x + 20, b->y + 10, b->x + 60, b->y + 20);
         bar(b->x + 25, b->y + 5, b->x + 55, b->y + 15);
@@ -61,7 +67,7 @@ void checkBarrierBulletCollision(Barrier* head) {
                             bulletBottom > barrierTop && bulletTop < barrierBottom) {
                             bullet->bullet.active = 0;
                             currentBarrier->health--;
-                            break; // Stop checking other barriers for this bullet
+                            break;
                         }
                     }
                     currentBarrier = currentBarrier->next;

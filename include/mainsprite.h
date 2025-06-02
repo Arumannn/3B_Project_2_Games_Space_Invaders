@@ -1,7 +1,7 @@
 // mainsprite.h
 #ifndef MAINSPRITE_H
 #define MAINSPRITE_H
-#define MAX_BULLETS 5
+#define MAX_BULLETS 10
 #define MAX_EXPLOSIONS 10  // Batas maksimum ledakan yang bisa ditampilkan
 #define PLAYER_HITBOX_WIDTH  80
 #define PLAYER_HITBOX_HEIGHT 80

@@ -1,3 +1,9 @@
+//===============================================================================================================
+// Program dibuat oleh: Fiandra
+// NIM                : 241511043
+// Deskripsi File     : Semua yang berkaitan dengan ufo termasuk collison, bullet dan move.
+// Proyek 2           : Game Space Invaders 
+//===============================================================================================================
 #include <graphics.h>
 #include "mainsprite.h"
 #include "ufo.h"
@@ -97,13 +103,17 @@ void shootUFOBullet() {
 void updateUFOBullets() {
     BulletNode *current = ufoBulletList;
     BulletNode *prev = NULL;
+
     while (current != NULL) {
         current->bullet.y += current->bullet.speed;
         current->bullet.x += current->bullet.dx;
 
-        if (current->bullet.y > getmaxy() ||
+        // === Hapus jika peluru tidak aktif atau keluar layar ===
+        if (!current->bullet.active ||
+            current->bullet.y > getmaxy() ||
             current->bullet.x < 0 ||
             current->bullet.x > getmaxx()) {
+
             BulletNode *toDelete = current;
             if (prev == NULL) {
                 ufoBulletList = current->next;

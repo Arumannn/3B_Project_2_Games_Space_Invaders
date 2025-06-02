@@ -1,3 +1,10 @@
+//===============================================================================================================
+// Program dibuat oleh: Arman Yusuf Rifandi
+// NIM                : 241511038
+// Deskripsi File     : Hanya untuk score dan bullet
+// Proyek 2           : Game Space Invaders 
+//===============================================================================================================
+
 #include <graphics.h>
 #include <conio.h>
 #include <stdio.h>

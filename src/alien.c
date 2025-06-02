@@ -1,3 +1,10 @@
+//===============================================================================================================
+// Program dibuat oleh: Nazriel Ramdhani
+// NIM                : 241511055
+// Deskripsi File     : Semua yang berkaitan dengan alien termasuk collison, bullet dan move
+// Proyek 2           : Game Space Invaders 
+//===============================================================================================================
+
 #include "alien.h"
 #include "mainsprite.h"
 #include "gameplay.h"
